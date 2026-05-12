@@ -25,7 +25,7 @@
 		<p>
 	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
 		><span>{Math.floor(Number(age))}</span></Tooltip
-	> year old,a Physics postgraduate drawn toward <Tooltip tip="tiny universes"
+	> year old Physics postgraduate drawn toward <Tooltip tip="tiny universes"
 		><span>atoms</span></Tooltip
 	>, silence, coding, and design. I like exploring ideas, creating things, and finding beauty in both <Tooltip
 		tip="order in chaos"><span>science</span></Tooltip
