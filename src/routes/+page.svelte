@@ -25,10 +25,9 @@
 
 		<div class="quote">
 			<p>
-				“My atoms love your atoms,  
-				it’s chemistry.”
+				“The finest souls are those who gulped pain and avoided making others taste it.”
 			</p>
-			<span>— Atticus</span>
+			<span>— Nizariat</span>
 		</div>
 
 		<div class="quote">
