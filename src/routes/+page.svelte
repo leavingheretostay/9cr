@@ -1,24 +1,12 @@
-<script>
-	import NavHost from '../components/molecules/NavHost.svelte';
-	import Hero from '../components/organisms/Hero.svelte';
-	import About from '../components/organisms/About.svelte';
-	import Art from '../components/organisms/Art.svelte';
-	import Projects from '../components/organisms/Projects.svelte';
-	import Repos from '../components/organisms/Repos.svelte';
-	import Footer from '../components/organisms/Footer.svelte';
-</script>
 
-<NavHost />
-<main>
-	<Hero />
-	<About />
-	<section class="poems">
+<section class="poems">
 	<h2>fragments</h2>
 
 	<div class="quote">
 		<p>
 			“Love each other or perish.”
 		</p>
+		<span>— Kurt Vonnegut</span>
 	</div>
 
 	<div class="quote">
@@ -26,6 +14,7 @@
 			“My atoms love your atoms,  
 			it’s chemistry.”
 		</p>
+		<span>— Atticus</span>
 	</div>
 
 	<div class="quote">
@@ -33,6 +22,7 @@
 			“Youth came over me like a mad storm.  
 			I was helpless to the chemicals roaring in my brain.”
 		</p>
+		<span>— Nayyirah Waheed</span>
 	</div>
 
 	<div class="quote">
@@ -41,6 +31,7 @@
 			of a better way to say,  
 			‘He loved a girl.’”
 		</p>
+		<span>— Unknown</span>
 	</div>
 
 	<div class="quote">
@@ -50,9 +41,16 @@
 			because dying has always seemed  
 			like the easier option.”
 		</p>
+		<span>— Unknown</span>
+	</div>
+
+	<div class="quote">
+		<p>
+			“While I was scared to fall in love at a young age,  
+			she whispered in my ears,  
+			‘Why fear falling in love in childhood when  
+			we all become the child in love.’”
+		</p>
+		<span>— Unknown</span>
 	</div>
 </section>
-	<Art />
-	<Repos />
-	<Footer />
-</main>
