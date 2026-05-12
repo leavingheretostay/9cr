@@ -1,23 +1,17 @@
 <script lang="ts">
 	let activity = "@nacirlone";
 	let details = "Offline";
-	let activityImage = "/default.webp";
+	let activityImage = "default.webp";
+	let state: string;
 
-	function getIndianTime() {
-		return new Date().toLocaleTimeString("en-IN", {
-			timeZone: "Asia/Kolkata",
-			hour: "numeric",
-			minute: "2-digit",
-			second: "2-digit",
-			hour12: true
+	function localTime() {
+		state = new Date().toLocaleTimeString("en-IN", {
+			timeZone: "Asia/Kolkata"
 		});
 	}
 
-	let state = getIndianTime();
-
-	setInterval(() => {
-		state = getIndianTime();
-	}, 1000);
+	localTime();
+	setInterval(() => localTime(), 1000);
 </script>
 
 <h2>activity</h2>
@@ -25,7 +19,7 @@
 <div class="contain">
 	<img src={activityImage} alt={activity} class="big" />
 
-	<div class="info">
+	<div>
 		<h3>{activity}</h3>
 		<h5>{details}</h5>
 		<h5>{state}</h5>
@@ -33,51 +27,46 @@
 </div>
 
 <style lang="scss">
-	h2 {
-		display: block;
-		margin-bottom: 1rem;
-	}
-
 	.contain {
 		display: flex;
-		align-items: center;
 		gap: 2.25rem;
+		align-items: center;
 	}
 
-	.info {
-		display: flex;
-		flex-direction: column;
+	h2 {
+		display: none;
 	}
 
 	h3 {
-		font-size: 3rem;
 		font-weight: 400;
 		line-height: 1;
 		margin: 0;
-		font-family: var(--font-mono);
-		color: var(--text-primary);
 	}
 
 	h5 {
-		font-size: 1.5rem;
+		font-size: 1.8rem;
 		font-weight: 400;
-		line-height: 1.35;
+		line-height: 1.25;
 		margin: 0;
-		font-family: var(--font-mono);
-		color: var(--text-secondary);
 	}
 
 	.big {
 		height: 135px;
 		width: 135px;
 		border-radius: 20px;
-		object-fit: cover;
 		user-select: none;
+		transition: all 0.3s var(--bezier-one);
+		object-fit: cover;
 	}
 
 	@media screen and (max-width: 868px) {
-		.contain {
-			gap: 1.5rem;
+		h2 {
+			display: block;
+			margin-bottom: 1rem;
+		}
+
+		div {
+			justify-content: left;
 		}
 
 		.big {
@@ -86,12 +75,8 @@
 			border-radius: 17px;
 		}
 
-		h3 {
-			font-size: 2.2rem;
-		}
-
 		h5 {
-			font-size: 1.2rem;
+			font-size: 1.4rem;
 		}
 	}
 </style>
