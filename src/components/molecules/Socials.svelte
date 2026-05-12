@@ -13,7 +13,7 @@
 		<InstagramIcon color="var(--accent)" />
 	</Social>
 
-	<Social tip="Nasir Lone" link="https://linkedin.com">
+	<Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
 		<LinkedInIcon color="var(--accent)" />
 	</Social>
 
