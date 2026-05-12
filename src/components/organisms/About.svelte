@@ -4,7 +4,7 @@
 
 	// i didnt write this idk
 	let getAge = () => {
-		let birthDate = new Date('2007/03/24');
+		let birthDate = new Date('1999/11/10');
 		const ageMs = Date.now() - birthDate.getTime();
 		const preciseAge = (ageMs / 31536000000).toFixed(10);
 		return preciseAge;
@@ -23,21 +23,14 @@
 	<div class="text">
 		<h2>bio</h2>
 		<p>
-			I'm <Tooltip tip="aka afn online"><span>Affan Zaman</span></Tooltip>, a <Tooltip tip={age}
-				><span>{Math.floor(Number(age))}</span></Tooltip
-			> year old studying CS at the <Tooltip tip="i am balding here"
-				><a href="https://cs.uwaterloo.ca/" target="_blank"><span>University of Waterloo</span></a
-				></Tooltip
-			>. I'm working at <Tooltip tip="finally employed"
-				><a href="https://tempo.new" target="_blank"><span>Tempo (YC S23)</span></a></Tooltip
-			> as a design engineer this spring. While my background is now in software, I have a strong love for product, <Tooltip
-				tip="like this!"><span>interaction</span></Tooltip
-			>, and design. I like to contribute to
-			<Tooltip tip="nerd"
-				><a href="https://github.com/xafn" target="_blank"><span>open source</span></a></Tooltip
-			> in my free time, and most notably worked frontend for <Tooltip tip="might be DMCA'd"
-				><a href="https://revanced.app" target="_blank"><span>ReVanced</span></a></Tooltip
-			>.
+	I'm <Tooltip tip="aka Bitta online"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
+		><span>{Math.floor(Number(age))}</span></Tooltip
+	> year old Physics postgraduate drawn toward <Tooltip tip="tiny universes"
+		><span>atoms</span></Tooltip
+	>, silence, coding, and design. I like exploring ideas, creating things, and finding beauty in both <Tooltip
+		tip="order in chaos"><span>science</span></Tooltip
+	> and <Tooltip tip="quiet expression"><span>art</span></Tooltip
+	>. Still learning, still wandering, and still trying to understand the universe one thought at a time.
 		</p> 
 	</div>
 </section>
