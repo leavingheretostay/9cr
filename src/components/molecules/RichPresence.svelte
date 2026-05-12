@@ -1,23 +1,23 @@
 <script lang="ts">
 	let activity = "@nacirlone";
 	let details = "Offline";
-	let state = "drawn toward atoms, silence & poetry";
 	let activityImage = "/default.webp";
 
-	const statuses = [
-		"drawn toward atoms, silence & poetry",
-		"probably reading poetry",
-		"studying the universe",
-		"lost somewhere in thought",
-		"romanticizing existence"
-	];
+	function getIndianTime() {
+		return new Date().toLocaleTimeString("en-IN", {
+			timeZone: "Asia/Kolkata",
+			hour: "numeric",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: true
+		});
+	}
 
-	let current = 0;
+	let state = getIndianTime();
 
 	setInterval(() => {
-		current = (current + 1) % statuses.length;
-		state = statuses[current];
-	}, 4000);
+		state = getIndianTime();
+	}, 1000);
 </script>
 
 <h2>activity</h2>
@@ -34,29 +34,28 @@
 
 <style lang="scss">
 	h2 {
-		display: none;
+		display: block;
+		margin-bottom: 1rem;
 	}
 
 	.contain {
 		display: flex;
 		align-items: center;
 		gap: 2.25rem;
-		margin-top: 1rem;
 	}
 
 	.info {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 	}
 
 	h3 {
-		font-size: 3.2rem;
+		font-size: 3rem;
 		font-weight: 400;
 		line-height: 1;
 		margin: 0;
-		color: var(--text-primary);
 		font-family: var(--font-mono);
+		color: var(--text-primary);
 	}
 
 	h5 {
@@ -64,8 +63,8 @@
 		font-weight: 400;
 		line-height: 1.35;
 		margin: 0;
-		color: var(--text-secondary);
 		font-family: var(--font-mono);
+		color: var(--text-secondary);
 	}
 
 	.big {
@@ -74,22 +73,11 @@
 		border-radius: 20px;
 		object-fit: cover;
 		user-select: none;
-		transition: all 0.3s ease;
-	}
-
-	.big:hover {
-		transform: scale(1.03);
 	}
 
 	@media screen and (max-width: 868px) {
-		h2 {
-			display: block;
-			margin-bottom: 1rem;
-		}
-
 		.contain {
 			gap: 1.5rem;
-			align-items: center;
 		}
 
 		.big {
@@ -104,7 +92,6 @@
 
 		h5 {
 			font-size: 1.2rem;
-			line-height: 1.3;
 		}
 	}
 </style>
