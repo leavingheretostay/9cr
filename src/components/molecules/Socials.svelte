@@ -31,26 +31,28 @@
         }
 </script>
 
-<div class="socials-container">
-        <Social tip="@nacirlone" link="https://instagram.com/nacirlone">
-                <InstagramIcon color="var(--accent)" width="24px" height="24px" />
-        </Social>
+<div class="socials-wrapper">
+        <div class="socials-container">
+                <Social tip="@nacirlone" link="https://instagram.com/nacirlone">
+                        <InstagramIcon color="var(--accent)" width="24px" height="24px" />
+                </Social>
 
-        <Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
-                <LinkedInIcon color="var(--accent)" width="24px" height="24px" />
-        </Social>
+                <Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
+                        <LinkedInIcon color="var(--accent)" width="24px" height="24px" />
+                </Social>
 
-        <Social tip="@beingkashmire" link="https://twitter.com/beingkashmire">
-                <XIcon color="var(--accent)" width="24px" height="24px" />
-        </Social>
+                <Social tip="@beingkashmire" link="https://twitter.com/beingkashmire">
+                        <XIcon color="var(--accent)" width="24px" height="24px" />
+                </Social>
 
-        <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
-                <MailIcon color="var(--accent)" width="24px" height="24px" />
-        </Social>
+                <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
+                        <MailIcon color="var(--accent)" width="24px" height="24px" />
+                </Social>
 
-        <a href="#/" class="social-link" on:click|preventDefault={() => showDonate = !showDonate} title="Buy me a coffee">
-                <CoffeeCupIcon color="var(--accent)" width="24px" height="24px" />
-        </a>
+                <a href="#/" class="social-link" on:click|preventDefault={() => showDonate = !showDonate} title="Buy me a coffee">
+                        <CoffeeCupIcon color="var(--accent)" width="24px" height="24px" />
+                </a>
+        </div>
 
         {#if showDonate}
                 <div class="donate-overlay" on:click={() => showDonate = false}>
@@ -87,10 +89,17 @@
 </div>
 
 <style>
+        .socials-wrapper {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+        }
+
         .socials-container {
                 display: flex;
                 gap: 0.75rem;
                 align-items: center;
+                justify-content: center;
         }
 
         .social-link {
