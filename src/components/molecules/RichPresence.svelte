@@ -4,7 +4,7 @@
 
     let activity = '@9cr';
     let details = 'Offline';
-    let activityImage = 'https://i.postimg.cc/sfNJWsm3/IMG-20240131-233024.jpg'; // Replace with your image path
+    let activityImage = 'https://i.postimg.cc/s2Hmshnf/1778611198152.jpg'; // Replace with your image path
     let state: string;
     let smallImage: string = '';
     let isSpotify: boolean = false;
