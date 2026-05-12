@@ -38,17 +38,19 @@
 	}
 
 	h3 {
-		font-weight: 400;
-		line-height: 1;
-		margin: 0;
-	}
+	font-size: 3.2rem;
+	font-weight: 400;
+	line-height: 1;
+	margin: 0;
+}
 
-	h5 {
-		font-size: 1.8rem;
-		font-weight: 400;
-		line-height: 1.25;
-		margin: 0;
-	}
+h5 {
+	font-size: 1.35rem;
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+	margin-top: 0.15rem;
+}
 
 	.big {
 		height: 135px;
