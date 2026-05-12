@@ -12,16 +12,16 @@
 
 <section id="home" class="wrapper">
 	<div>
-		<h1 aria-label="affan">
-			<span class="char">a</span><span class="char long">f</span><span class="char">f</span><span
-				class="char long">a</span
-			><span class="char">n</span>
+		<h1 aria-label="Nasir">
+			<span class="char">n</span><span class="char long">a</span><span class="char">s</span><span
+				class="char long">i</span
+			><span class="char">r</span>
 		</h1>
-		<h4>computer science at uwaterloo,<br />swe, design engineer, illustrator.</h4>
+		<h4>Physical Science at University of Kashmir,<br />drawn toward silence, poetry, atoms and everything they become.</h4>
 		<div class="socials">
 			<Socials />
 		</div>
-		<Button side on:click={handleClick} on:keypress={handleClick}>Explore my work ↓</Button>
+		<Button side on:click={handleClick} on:keypress={handleClick}>Anyway, here ↓</Button>
 	</div>
 	<HeroImage />
 </section>
