@@ -2,8 +2,8 @@
     import { onMount } from 'svelte';
     import Tooltip from '../atoms/Tooltip.svelte';
 
-    let activity = '@nacirlone';
-    let details = 'Online';
+    let activity = '@9cr';
+    let details = 'Offline';
     let activityImage = '/default.webp'; // Replace with your image path
     let state: string;
     let smallImage: string = '';
