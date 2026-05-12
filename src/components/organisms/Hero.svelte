@@ -17,7 +17,7 @@
 				class="char long">i</span
 			><span class="char">r</span>
 		</h1>
-		<h4>Physical Science at University of Kashmir.<br />Drawn toward silence, poetry, atoms and everything they become.</h4>
+		<h4>Physical Science at KU.<br />Drawn toward silence, poetry, atoms and everything they become.</h4>
 		<div class="socials">
 			<Socials />
 		</div>
