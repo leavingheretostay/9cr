@@ -332,7 +332,7 @@
 <footer class="wrapper">
 	<Socials />
 	<h6 class="footer-meta">
-		Made with love.🩷 
+		Made with love...🩷 
 		<Tooltip tip="you're here"><span>V2</span></Tooltip>
 		<Tooltip tip="how to delete">
 			<a href="https://v1.afn.im/" target="_blank" rel="noreferrer">V1</a>
