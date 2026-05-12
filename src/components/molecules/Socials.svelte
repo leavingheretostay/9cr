@@ -49,9 +49,9 @@
                         <MailIcon color="var(--accent)" width="24px" height="24px" />
                 </Social>
 
-                <a href="#/" class="social-link" on:click|preventDefault={() => showDonate = !showDonate} title="Buy me a coffee">
+                <button class="coffee-btn" on:click={() => showDonate = !showDonate} title="Buy me a coffee">
                         <CoffeeCupIcon color="var(--accent)" width="24px" height="24px" />
-                </a>
+                </button>
         </div>
 
         {#if showDonate}
@@ -102,10 +102,21 @@
                 justify-content: center;
         }
 
-        .social-link {
+        .coffee-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                margin: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                line-height: 0;
+        }
+
+        .coffee-btn:hover {
+                transform: scale(1.1);
+                transition: transform 0.2s;
         }
 
         .donate-overlay {
