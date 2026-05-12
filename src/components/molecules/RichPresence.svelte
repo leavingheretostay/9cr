@@ -4,9 +4,11 @@
 		align-items: center;
 		gap: 1.4rem;
 		margin-top: 1rem;
+		margin-bottom: 4rem;
 	}
 
 	h2 {
+		display: block;
 		font-size: 3rem;
 		margin-bottom: 1rem;
 	}
@@ -99,6 +101,7 @@
 	@media screen and (max-width: 868px) {
 		.contain {
 			gap: 1rem;
+			align-items: center;
 		}
 
 		.big {
