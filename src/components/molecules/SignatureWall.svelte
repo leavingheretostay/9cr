@@ -70,10 +70,10 @@
 <section id="signature-wall" class="wrapper signature-wall">
 	<div class="signature-header">
 		<div>
-			<h3 class="signature-name" aria-label="affan">
-				<span class="char">a</span><span class="char long">f</span><span class="char">f</span><span
-					class="char long">a</span
-				><span class="char">n</span>
+			<h3 class="signature-name" aria-label="nasir">
+				<span class="char">n</span><span class="char long">a</span><span class="char">s</span><span
+					class="char long">i</span
+				><span class="char">r</span>
 			</h3>
 			<p>Sign my website!</p>
 		</div>
