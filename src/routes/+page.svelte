@@ -41,11 +41,9 @@
 
 		<div class="quote">
 			<p>
-				“Poets spend their whole lives trying to think  
-				of a better way to say,  
-				‘He loved a girl.’”
+				“Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls.”
 			</p>
-			<span>— Unknown</span>
+			<span>— Khalil Gibran</span>
 		</div>
 
 		<div class="quote">
@@ -55,17 +53,20 @@
 				because dying has always seemed  
 				like the easier option.”
 			</p>
-			<span>— Unknown</span>
+			<span>— Christopher Poindexter</span>
 		</div>
 
 		<div class="quote">
 			<p>
-				“While I was scared to fall in love at a young age,  
-				she whispered in my ears,  
-				‘Why fear falling in love in childhood when  
-				we all become the child in love.’”
+				“While I was scared to fall in love at a young age,
+She whispered it in my ears,
+"Why fear falling in love in childhood when we all become the child in love,"
+Love turns us all into children and turns the dead alive.
+She was so close to my chest that I could hear our hearts beating and her love breathing.
+Her love felt so deep that I could just relate it to an ocean and made up my mind,
+"even if I know how to swim I will prefer to drown in love".”
 			</p>
-			<span>— Unknown</span>
+			<span>— </span>
 		</div>
 	</section>
 
