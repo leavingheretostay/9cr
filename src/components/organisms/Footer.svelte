@@ -333,10 +333,6 @@
 	<Socials />
 	<h6 class="footer-meta">
 		Made with love. 🩷 
-		<Tooltip tip="you're here"><span>V2</span></Tooltip>
-		<Tooltip tip="how to delete">
-			<a href="https://v1.afn.im/" target="_blank" rel="noreferrer">V1</a>
-		</Tooltip>
 	</h6>
 </footer>
 
@@ -363,14 +359,17 @@
 	}
 
 	footer {
-		padding-bottom: 2.4rem;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+        padding-bottom: 2.4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
 
-		@media screen and (max-width: 768px) {
-			flex-direction: column;
-		}
+        @media screen and (max-width: 768px) {
+                flex-direction: column;
+        }
+}
 	}
 
 	.footer-meta {
