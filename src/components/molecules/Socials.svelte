@@ -29,32 +29,28 @@
                         window.open(`upi://pay?pa=${upiID}&pn=${encodeURIComponent(upiName)}&cu=INR`, '_blank');
                 }
         }
-
-        function handleCoffeeClick() {
-                showDonate = !showDonate;
-        }
 </script>
 
 <div class="socials-container">
-        <Social tip="Instagram" link="https://instagram.com/nacirlone">
-                <InstagramIcon color="var(--accent)" />
+        <Social tip="@nacirlone" link="https://instagram.com/nacirlone">
+                <InstagramIcon color="var(--accent)" width="24px" height="24px" />
         </Social>
 
-        <Social tip="Linkedin" link="https://in.linkedin.com/in/leavingheretostay">
-                <LinkedInIcon color="var(--accent)" />
+        <Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
+                <LinkedInIcon color="var(--accent)" width="24px" height="24px" />
         </Social>
 
-        <Social tip="X (Formerly Twitter)" link="https://twitter.com/beingkashmire">
-                <XIcon color="var(--accent)" />
+        <Social tip="@beingkashmire" link="https://twitter.com/beingkashmire">
+                <XIcon color="var(--accent)" width="24px" height="24px" />
         </Social>
 
         <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
-                <MailIcon color="var(--accent)" />
+                <MailIcon color="var(--accent)" width="24px" height="24px" />
         </Social>
 
-        <Social tip="Buy me a coffee" onClick={handleCoffeeClick}>
-                <CoffeeCupIcon color="var(--accent)" />
-        </Social>
+        <a href="#/" class="social-link" on:click|preventDefault={() => showDonate = !showDonate} title="Buy me a coffee">
+                <CoffeeCupIcon color="var(--accent)" width="24px" height="24px" />
+        </a>
 
         {#if showDonate}
                 <div class="donate-overlay" on:click={() => showDonate = false}>
@@ -94,6 +90,11 @@
         .socials-container {
                 display: flex;
                 gap: 0.75rem;
+                align-items: center;
+        }
+
+        .social-link {
+                display: flex;
                 align-items: center;
                 justify-content: center;
         }
