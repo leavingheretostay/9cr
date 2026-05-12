@@ -33,10 +33,9 @@
 
 		<div class="quote">
 			<p>
-				“Youth came over me like a mad storm.  
-				I was helpless to the chemicals roaring in my brain.”
+				“Obsession is the price I pay for my flaws.”
 			</p>
-			<span>— Atticus</span>
+			<span>— 9cr</span>
 		</div>
 
 		<div class="quote">
