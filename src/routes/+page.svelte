@@ -36,7 +36,7 @@
 				“Youth came over me like a mad storm.  
 				I was helpless to the chemicals roaring in my brain.”
 			</p>
-			<span>— Nayyirah Waheed</span>
+			<span>— Atticus</span>
 		</div>
 
 		<div class="quote">
