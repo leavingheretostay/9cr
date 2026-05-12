@@ -1,8 +1,7 @@
 <script lang="ts">
 	let activity = '@nacirlone';
 	let details = 'Physics Postgraduate';
-	let state = 'drawn toward atoms, silence & the unknown';
-
+	
 	let activityImage =
 		'https://raw.githubusercontent.com/leavingheretostay/9cr/main/static/nasir.jpg';
 </script>
