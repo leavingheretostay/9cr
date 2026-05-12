@@ -21,7 +21,7 @@
 		<XIcon color="var(--accent)" />
 	</Social>
 
-	<Social tip="mail me" link="mailto:lonenasir724@gmail.com">
+	<Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
 		<MailIcon color="var(--accent)" />
 	</Social>
 
