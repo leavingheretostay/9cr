@@ -30,7 +30,7 @@
 	>, silence, coding, and design. I like exploring ideas, creating things, and finding beauty in both <Tooltip
 		tip="order in chaos"><span>science</span></Tooltip
 	> and <Tooltip tip="quiet expression"><span>art</span></Tooltip
-	>. Still learning. Still wandering A little tired but still curious.
+	>. Still learning. Still wandering. A little tired but still curious.
 		</p> 
 	</div>
 </section>
