@@ -36,15 +36,15 @@
 </script>
 
 <div class="socials-container">
-        <Social tip="@nacirlone" link="https://instagram.com/nacirlone">
+        <Social tip="Instagram" link="https://instagram.com/nacirlone">
                 <InstagramIcon color="var(--accent)" />
         </Social>
 
-        <Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
+        <Social tip="Linkedin" link="https://in.linkedin.com/in/leavingheretostay">
                 <LinkedInIcon color="var(--accent)" />
         </Social>
 
-        <Social tip="@beingkashmire" link="https://twitter.com/beingkashmire">
+        <Social tip="X (Formerly Twitter)" link="https://twitter.com/beingkashmire">
                 <XIcon color="var(--accent)" />
         </Social>
 
