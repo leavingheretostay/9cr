@@ -4,7 +4,7 @@
 
     let activity = '@nacirlone';
     let details = 'Online';
-    let activityImage = 'your-profile-picture.jpg'; // Replace with your image path
+    let activityImage = '/default.webp'; // Replace with your image path
     let state: string;
     let smallImage: string = '';
     let isSpotify: boolean = false;
