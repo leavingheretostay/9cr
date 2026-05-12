@@ -23,14 +23,14 @@
 	<div class="text">
 		<h2>bio</h2>
 		<p>
-	I'm <Tooltip tip="aka Bitta online"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
+	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
 		><span>{Math.floor(Number(age))}</span></Tooltip
-	> year old Physics postgraduate drawn toward <Tooltip tip="tiny universes"
+	> year old,a Physics postgraduate drawn toward <Tooltip tip="tiny universes"
 		><span>atoms</span></Tooltip
 	>, silence, coding, and design. I like exploring ideas, creating things, and finding beauty in both <Tooltip
 		tip="order in chaos"><span>science</span></Tooltip
 	> and <Tooltip tip="quiet expression"><span>art</span></Tooltip
-	>. Still learning, still wandering, and still trying to understand the universe one thought at a time.
+	>. Still learning. Still wandering A little tired but still curious.
 		</p> 
 	</div>
 </section>
