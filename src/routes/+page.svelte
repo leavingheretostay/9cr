@@ -13,7 +13,7 @@
 	<Hero />
 	<About />
 
-	<section class="poems">
+	<section class="poems wrapper">
 		<h2>fragments</h2>
 
 		<div class="quote">
