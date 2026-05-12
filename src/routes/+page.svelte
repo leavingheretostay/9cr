@@ -66,7 +66,7 @@ She was so close to my chest that I could hear our hearts beating and her love b
 Her love felt so deep that I could just relate it to an ocean and made up my mind,
 "even if I know how to swim I will prefer to drown in love".”
 			</p>
-			<span>— </span>
+			<span>— 9cr</span>
 		</div>
 	</section>
 
