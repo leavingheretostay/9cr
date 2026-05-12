@@ -1,5 +1,6 @@
 <script lang="ts">
         import Social from '../atoms/Social.svelte';
+        import Tooltip from '../atoms/Tooltip.svelte';
 
         import { InstagramIcon } from '@indaco/svelte-iconoir/instagram';
         import { XIcon } from '@indaco/svelte-iconoir/x';
@@ -31,34 +32,36 @@
         }
 </script>
 
-<div class="socials-wrapper">
-        <div class="socials-container">
-                <Social tip="Instagram" link="https://instagram.com/nacirlone">
-                        <InstagramIcon color="var(--accent)" width="24px" height="24px" />
-                </Social>
+<div class="socials-container">
+        <Social tip="Instagram" link="https://instagram.com/nacirlone">
+                <InstagramIcon color="var(--accent)" />
+        </Social>
 
-                <Social tip="@Linkedin" link="https://in.linkedin.com/in/leavingheretostay">
-                        <LinkedInIcon color="var(--accent)" width="24px" height="24px" />
-                </Social>
+        <Social tip="LinkedIn" link="https://in.linkedin.com/in/leavingheretostay">
+                <LinkedInIcon color="var(--accent)" />
+        </Social>
 
-                <Social tip="X (Formerly Twitter)" link="https://twitter.com/beingkashmire">
-                        <XIcon color="var(--accent)" width="24px" height="24px" />
-                </Social>
+        <Social tip="X (Formerly Twitter)" link="https://twitter.com/beingkashmire">
+                <XIcon color="var(--accent)" />
+        </Social>
 
-                <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
-                        <MailIcon color="var(--accent)" width="24px" height="24px" />
-                </Social>
+        <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
+                <MailIcon color="var(--accent)" />
+        </Social>
 
-                <button class="coffee-btn" on:click={() => showDonate = !showDonate} title="Buy me a coffee">
-                        <CoffeeCupIcon color="var(--accent)" width="24px" height="24px" />
-                </button>
-        </div>
+        <Tooltip tip="Buy me a coffee">
+                <div class="social-div">
+                        <button class="coffee-btn" on:click={() => showDonate = !showDonate}>
+                                <CoffeeCupIcon color="var(--accent)" />
+                        </button>
+                </div>
+        </Tooltip>
 
         {#if showDonate}
                 <div class="donate-overlay" on:click={() => showDonate = false}>
                         <div class="donate-popup" on:click|stopPropagation>
                                 <h4>Buy me a coffee ☕</h4>
-                                
+
                                 <div class="upi-apps">
                                         <button class="upi-app gpay" on:click={() => openUPIApp('gpay')}>
                                                 Google Pay
@@ -81,7 +84,7 @@
                                                 {copied ? 'Copied!' : 'Copy'}
                                         </button>
                                 </div>
-                                
+
                                 <p class="upi-note">Opens your payment app to send support 💛</p>
                         </div>
                 </div>
@@ -89,12 +92,6 @@
 </div>
 
 <style>
-        .socials-wrapper {
-                display: flex;
-                justify-content: center;
-                width: 100%;
-        }
-
         .socials-container {
                 display: flex;
                 gap: 0.75rem;
@@ -102,21 +99,30 @@
                 justify-content: center;
         }
 
-        .coffee-btn {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-                margin: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                line-height: 0;
+        .social-div {
+                transition: all 0.3s var(--bezier-one);
         }
 
-        .coffee-btn:hover {
-                transform: scale(1.1);
-                transition: transform 0.2s;
+        .social-div:hover .coffee-btn {
+                background-color: var(--elevation-one);
+        }
+
+        .social-div:active {
+                transform: scale(98%);
+        }
+
+        .coffee-btn {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 50px;
+                height: 50px;
+                background-color: transparent;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                padding: 0;
+                transition: all 0.3s var(--bezier-one);
         }
 
         .donate-overlay {
