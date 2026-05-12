@@ -29,18 +29,22 @@
                         window.open(`upi://pay?pa=${upiID}&pn=${encodeURIComponent(upiName)}&cu=INR`, '_blank');
                 }
         }
+
+        function handleCoffeeClick() {
+                showDonate = !showDonate;
+        }
 </script>
 
 <div class="socials-container">
-        <Social tip="Instagram" link="https://instagram.com/nacirlone">
+        <Social tip="@nacirlone" link="https://instagram.com/nacirlone">
                 <InstagramIcon color="var(--accent)" />
         </Social>
 
-        <Social tip="Linkedin" link="https://in.linkedin.com/in/leavingheretostay">
+        <Social tip="@leavingheretostay" link="https://in.linkedin.com/in/leavingheretostay">
                 <LinkedInIcon color="var(--accent)" />
         </Social>
 
-        <Social tip="Twitter" link="https://twitter.com/beingkashmire">
+        <Social tip="@beingkashmire" link="https://twitter.com/beingkashmire">
                 <XIcon color="var(--accent)" />
         </Social>
 
@@ -48,9 +52,9 @@
                 <MailIcon color="var(--accent)" />
         </Social>
 
-        <button class="coffee-btn" on:click={() => showDonate = !showDonate} title="Buy me a coffee">
+        <Social tip="Buy me a coffee" onClick={handleCoffeeClick}>
                 <CoffeeCupIcon color="var(--accent)" />
-        </button>
+        </Social>
 
         {#if showDonate}
                 <div class="donate-overlay" on:click={() => showDonate = false}>
@@ -91,21 +95,7 @@
                 display: flex;
                 gap: 0.75rem;
                 align-items: center;
-                position: relative;
-        }
-
-        .coffee-btn {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                transition: transform 0.2s;
-        }
-
-        .coffee-btn:hover {
-                transform: scale(1.1);
+                justify-content: center;
         }
 
         .donate-overlay {
