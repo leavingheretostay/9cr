@@ -13,11 +13,11 @@
 <section id="home" class="wrapper">
 	<div>
 		<h1 aria-label="Nasir">
-			<span class="char">n</span><span class="char long">a</span><span class="char">s</span><span
+			<span class="char">N</span><span class="char long">a</span><span class="char">s</span><span
 				class="char long">i</span
 			><span class="char">r</span>
 		</h1>
-		<h4>Physical Science at University of Kashmir,<br />drawn toward silence, poetry, atoms and everything they become.</h4>
+		<h4>Physical Science at University of Kashmir.<br />drawn toward silence, poetry, atoms and everything they become.</h4>
 		<div class="socials">
 			<Socials />
 		</div>
