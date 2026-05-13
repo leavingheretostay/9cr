@@ -241,7 +241,7 @@
                 label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-top: 0.5rem; }
                 input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; &:focus { outline: none; border-color: var(--accent); } }
         }
-        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #0d0d0d; }
+        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #1e1e1e; }
         .signature-canvas { width: 100%; height: 180px; cursor: crosshair; touch-action: none; display: block; @media (max-width: 500px) { height: 140px; } }
         .clear-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text-secondary); font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; &:hover { color: var(--text-primary); } }
         .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
