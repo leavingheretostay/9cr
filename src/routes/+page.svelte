@@ -113,39 +113,6 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 </main>
 
 <style lang="scss">
-	.poems {
-		margin-top: 5rem;
-		width: 100%;
-		max-width: 700px;
-	}
-
-	.poems h2 {
-		font-size: 2rem;
-		margin-bottom: 2.5rem;
-	}
-
-	.quote {
-		padding: 1.8rem;
-		margin-bottom: 2rem;
-		border: 1px solid rgba(255,255,255,0.08);
-		border-radius: 18px;
-		background: rgba(255,255,255,0.03);
-		backdrop-filter: blur(8px);
-	}
-
-	.quote p {
-		line-height: 2rem;
-		font-size: 1rem;
-		white-space: pre-line;
-		margin-bottom: 1rem;
-	}
-
-	.quote span {
-		opacity: 0.7;
-		font-size: 0.9rem;
-		font-style: italic;
-	}
-
 .books {
         margin-top: 5rem;
         width: 100%;
@@ -168,57 +135,77 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
         align-items: center;
         gap: 1.25rem;
         padding: 1.25rem 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         transition: all 0.3s var(--bezier-one);
 }
 
 .book:hover {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         border-color: var(--accent-opacity);
-        transform: translateY(-2px);
 }
 
 .book-cover {
-        width: 56px;
-        height: 80px;
-        border-radius: 8px;
-        background: var(--elevation-one);
+        width: 48px;
+        height: 68px;
+        border-radius: 6px;
+        background: var(--elevation-two);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .cover-icon {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+        opacity: 0.6;
 }
 
 .book-info {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        gap: 0.15rem;
 }
 
 .book-info h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
         margin: 0;
         color: var(--text-primary);
+        font-weight: 500;
 }
 
 .book-info .author {
-        font-size: 0.85rem;
-        opacity: 0.7;
+        font-size: 0.8rem;
+        opacity: 0.55;
+        color: var(--text-secondary);
 }
 
 .book-info .tag {
-        font-size: 0.7rem;
-        opacity: 0.45;
+        font-size: 0.65rem;
+        opacity: 0.35;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-top: 0.25rem;
+        letter-spacing: 1.5px;
+        margin-top: 0.15rem;
+        color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+        .book {
+                padding: 1rem 1.15rem;
+                gap: 1rem;
+        }
+        
+        .book-cover {
+                width: 42px;
+                height: 60px;
+        }
+        
+        .book-info h3 {
+                font-size: 0.95rem;
+        }
 }
 </style>
