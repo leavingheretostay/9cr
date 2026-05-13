@@ -7,9 +7,11 @@
                 getSignatureOrder,
                 getSignatureRotation
         } from '../../util/signatureVisuals';
+        import { supabase } from '../../util/supabase';
 
         export let signatures: FooterSignature[] = [];
         export let hideAddButton = false;
+        export let loading = false;
 
         let signatureGridEl: HTMLDivElement | null = null;
         let gridColumns = 1;
@@ -23,19 +25,26 @@
         let userMessage = '';
         let hasDrawn = false;
         let modalError = '';
+        let isSubmitting = false;
 
         onMount(() => {
-                const saved = localStorage.getItem('site-signatures');
-                if (saved) {
-                        try { signatures = JSON.parse(saved); } catch (e) {}
-                }
+                loadSignatures();
                 updateGridColumns();
                 window.addEventListener('resize', updateGridColumns);
                 return () => window.removeEventListener('resize', updateGridColumns);
         });
 
-        function saveSignatures() {
-                localStorage.setItem('site-signatures', JSON.stringify(signatures));
+        async function loadSignatures() {
+                if (!supabase) return;
+                loading = true;
+                const { data, error } = await supabase
+                        .from('footer_signatures')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                if (!error && data) {
+                        signatures = data as FooterSignature[];
+                }
+                loading = false;
         }
 
         function initCanvas() {
@@ -96,11 +105,15 @@
                 modalError = '';
         }
 
-        function handleSubmit() {
+        async function handleSubmit() {
                 if (!userName.trim()) { modalError = 'Please enter your name'; return; }
                 if (!hasDrawn) { modalError = 'Please draw your signature'; return; }
+                if (!supabase) { modalError = 'Database not connected'; return; }
 
-                const newSig: FooterSignature = {
+                isSubmitting = true;
+                modalError = '';
+
+                const newSig = {
                         id: `sig-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
                         name: userName.trim(),
                         message: userMessage.trim(),
@@ -108,9 +121,17 @@
                         created_at: new Date().toISOString()
                 };
 
-                signatures = [...signatures, newSig];
-                saveSignatures();
-                handleClose();
+                const { error } = await supabase
+                        .from('footer_signatures')
+                        .insert([newSig]);
+
+                if (error) {
+                        modalError = 'Failed to save. Try again.';
+                } else {
+                        signatures = [newSig, ...signatures];
+                        handleClose();
+                }
+                isSubmitting = false;
         }
 
         function updateGridColumns() {
@@ -147,7 +168,9 @@
                 {/if}
         </div>
 
-        {#if signatures.length === 0}
+        {#if loading}
+                <p class="notice">Loading signatures…</p>
+        {:else if signatures.length === 0}
                 <p class="notice">No signatures yet :&#123;</p>
         {/if}
 
@@ -178,10 +201,10 @@
                                 <button class="close-btn" on:click={handleClose}>✕</button>
                         </div>
                         <div class="modal-body">
-                                <label>Your name</label>
-                                <input type="text" bind:value={userName} placeholder="Enter your name" maxlength="30" />
-                                <label>Message (optional)</label>
-                                <input type="text" bind:value={userMessage} placeholder="Say something nice..." maxlength="80" />
+                                <label for="name-input">Your name</label>
+                                <input id="name-input" type="text" bind:value={userName} placeholder="Enter your name" maxlength="30" />
+                                <label for="message-input">Message (optional)</label>
+                                <input id="message-input" type="text" bind:value={userMessage} placeholder="Say something nice..." maxlength="80" />
                                 <label>Draw your signature</label>
                                 <div class="canvas-container">
                                         <canvas bind:this={canvasEl} class="signature-canvas"
@@ -193,7 +216,9 @@
                         </div>
                         <div class="modal-footer">
                                 <button class="cancel-btn" on:click={handleClose}>Cancel</button>
-                                <button class="submit-btn" on:click={handleSubmit}>Add signature ✦</button>
+                                <button class="submit-btn" on:click={handleSubmit} disabled={isSubmitting}>
+                                        {isSubmitting ? 'Saving...' : 'Add signature ✦'}
+                                </button>
                         </div>
                 </div>
         </div>
@@ -251,5 +276,6 @@
         .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
         .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; button { font-family: var(--font-two); font-size: 0.9rem; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; } }
         .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); &:hover { color: var(--text-primary); } }
-        .submit-btn { background: var(--accent); border: none; color: white; &:hover { filter: brightness(1.1); } }
+        .submit-btn { background: var(--accent); border: none; color: white; &:hover { filter: brightness(1.1); }
+                &:disabled { opacity: 0.6; cursor: not-allowed; } }
 </style>
