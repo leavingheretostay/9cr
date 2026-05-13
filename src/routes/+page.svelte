@@ -74,7 +74,7 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
         <div class="book-grid">
                 <div class="book">
                         <div class="book-cover">
-                                <span class="cover-icon">📖</span>
+                                <img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="Love Her Wild" />
                         </div>
                         <div class="book-info">
                                 <h3>Love Her Wild</h3>
@@ -85,7 +85,7 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 
                 <div class="book">
                         <div class="book-cover">
-                                <span class="cover-icon">📖</span>
+                                <img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="The Alchemist" />
                         </div>
                         <div class="book-info">
                                 <h3>The Alchemist</h3>
@@ -96,7 +96,7 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 
                 <div class="book">
                         <div class="book-cover">
-                                <span class="cover-icon">📖</span>
+                                <img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" />
                         </div>
                         <div class="book-info">
                                 <h3>You Are The Best Wife</h3>
