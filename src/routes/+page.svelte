@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
         import { onMount } from 'svelte';
         import NavHost from '../components/molecules/NavHost.svelte';
         import Hero from '../components/organisms/Hero.svelte';
