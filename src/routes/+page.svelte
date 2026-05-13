@@ -1,10 +1,26 @@
 <script>
+        import { onMount } from 'svelte';
         import NavHost from '../components/molecules/NavHost.svelte';
         import Hero from '../components/organisms/Hero.svelte';
         import About from '../components/organisms/About.svelte';
         import Art from '../components/organisms/Art.svelte';
         import Repos from '../components/organisms/Repos.svelte';
         import Footer from '../components/organisms/Footer.svelte';
+
+        let likes = [0, 0, 0, 0, 0, 0];
+
+        onMount(() => {
+                const saved = localStorage.getItem('poem-likes');
+                if (saved) {
+                        try { likes = JSON.parse(saved); } catch (e) {}
+                }
+        });
+
+        function handleLike(index: number) {
+                likes[index]++;
+                likes = likes;
+                localStorage.setItem('poem-likes', JSON.stringify(likes));
+        }
 </script>
 
 <NavHost />
@@ -17,48 +33,51 @@
                 <h2>fragments</h2>
 
                 <div class="quote">
-                        <p>
-                                "Love each other or perish."
-                        </p>
-                        <span>— Kurt Vonnegut</span>
+                        <p>"Love each other or perish."</p>
+                        <div class="quote-footer">
+                                <span>— Kurt Vonnegut</span>
+                                <button class="like-btn" on:click={() => handleLike(0)}>❤️ {likes[0]}</button>
+                        </div>
                 </div>
 
                 <div class="quote">
-                        <p>
-                                "The finest souls are those who gulped pain and avoided making others taste it."
-                        </p>
-                        <span>— Nizariat</span>
+                        <p>"The finest souls are those who gulped pain and avoided making others taste it."</p>
+                        <div class="quote-footer">
+                                <span>— Nizariat</span>
+                                <button class="like-btn" on:click={() => handleLike(1)}>❤️ {likes[1]}</button>
+                        </div>
                 </div>
 
                 <div class="quote">
-                        <p>
-                                "Obsession is the price I pay for my flaws."
-                        </p>
-                        <span>— 9cr</span>
+                        <p>"Obsession is the price I pay for my flaws."</p>
+                        <div class="quote-footer">
+                                <span>— 9cr</span>
+                                <button class="like-btn" on:click={() => handleLike(2)}>❤️ {likes[2]}</button>
+                        </div>
                 </div>
 
                 <div class="quote">
-                        <p>
-                                "Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls."
-                        </p>
-                        <span>— Khalil Gibran</span>
+                        <p>"Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls."</p>
+                        <div class="quote-footer">
+                                <span>— Khalil Gibran</span>
+                                <button class="like-btn" on:click={() => handleLike(3)}>❤️ {likes[3]}</button>
+                        </div>
                 </div>
 
                 <div class="quote">
-                        <p>
-                                "Sometimes I am terrified  
-                                of my intense hunger to live,  
-                                because dying has always seemed  
-                                like the easier option."
-                        </p>
-                        <span>— Christopher Poindexter</span>
+                        <p>"Sometimes I am terrified of my intense hunger to live, because dying has always seemed like the easier option."</p>
+                        <div class="quote-footer">
+                                <span>— Christopher Poindexter</span>
+                                <button class="like-btn" on:click={() => handleLike(4)}>❤️ {likes[4]}</button>
+                        </div>
                 </div>
 
                 <div class="quote">
-                        <p>
-                                "Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."
-                        </p>
-                        <span>— Margaret Atwood</span>
+                        <p>"Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."</p>
+                        <div class="quote-footer">
+                                <span>— Margaret Atwood</span>
+                                <button class="like-btn" on:click={() => handleLike(5)}>❤️ {likes[5]}</button>
+                        </div>
                 </div>
         </section>
 
@@ -132,13 +151,37 @@
                 line-height: 2rem;
                 font-size: 1rem;
                 white-space: pre-line;
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
+        }
+
+        .quote-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 0.75rem;
         }
 
         .quote span {
                 opacity: 0.7;
                 font-size: 0.9rem;
                 font-style: italic;
+        }
+
+        .like-btn {
+                background: var(--elevation-one);
+                border: 1px solid var(--elevation-four);
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+                padding: 0.35rem 0.75rem;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: all 0.2s;
+        }
+
+        .like-btn:hover {
+                background: var(--elevation-two);
+                color: #ef4444;
+                border-color: #ef4444;
         }
 
         .books {
