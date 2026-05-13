@@ -145,4 +145,80 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 		font-size: 0.9rem;
 		font-style: italic;
 	}
+
+.books {
+        margin-top: 5rem;
+        width: 100%;
+        max-width: 700px;
+}
+
+.books h2 {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+}
+
+.book-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+}
+
+.book {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(8px);
+        transition: all 0.3s var(--bezier-one);
+}
+
+.book:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--accent-opacity);
+        transform: translateY(-2px);
+}
+
+.book-cover {
+        width: 56px;
+        height: 80px;
+        border-radius: 8px;
+        background: var(--elevation-one);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cover-icon {
+        font-size: 1.5rem;
+}
+
+.book-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+}
+
+.book-info h3 {
+        font-size: 1.1rem;
+        margin: 0;
+        color: var(--text-primary);
+}
+
+.book-info .author {
+        font-size: 0.85rem;
+        opacity: 0.7;
+}
+
+.book-info .tag {
+        font-size: 0.7rem;
+        opacity: 0.45;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.25rem;
+}
 </style>
