@@ -41,7 +41,7 @@
         function initCanvas() {
                 if (!canvasEl) return;
                 ctx = canvasEl.getContext('2d')!;
-                ctx.strokeStyle = '#ffffff';
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
                 ctx.lineWidth = 3;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -225,10 +225,11 @@
                 &:hover { transform: rotate(0deg); }
         }
         .signature-img {
-                display: block; width: clamp(92px, 15vw, 160px); height: 64px; object-fit: contain; filter: brightness(0) invert(1);
+                display: block; width: clamp(92px, 15vw, 160px); height: 64px; object-fit: contain;
+                filter: brightness(0) saturate(100%) invert(55%) sepia(80%) saturate(2000%) hue-rotate(360deg);
                 @media (max-width: 768px) { width: clamp(70px, 20vw, 106px); height: 42px; }
         }
-        .signature-item:hover .signature-img { filter: brightness(0) invert(1) drop-shadow(0 0 3px var(--accent)); }
+        .signature-item:hover .signature-img { filter: brightness(0) saturate(100%) invert(55%) sepia(80%) saturate(2000%) hue-rotate(360deg) drop-shadow(0 0 4px var(--accent)); }
 
         // Modal
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
@@ -240,9 +241,9 @@
                 label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-top: 0.5rem; }
                 input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; &:focus { outline: none; border-color: var(--accent); } }
         }
-        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #1a1a1a; }
+        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #0d0d0d; }
         .signature-canvas { width: 100%; height: 180px; cursor: crosshair; touch-action: none; display: block; @media (max-width: 500px) { height: 140px; } }
-        .clear-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; }
+        .clear-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text-secondary); font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; &:hover { color: var(--text-primary); } }
         .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
         .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; button { font-family: var(--font-two); font-size: 0.9rem; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; } }
         .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); &:hover { color: var(--text-primary); } }
