@@ -7,7 +7,7 @@
         import Repos from '../components/organisms/Repos.svelte';
         import Footer from '../components/organisms/Footer.svelte';
 
-        let likes = [0, 0, 0, 0, 0, 0];
+        let likes: number[] = [0, 0, 0, 0, 0, 0];
 
         onMount(() => {
                 const saved = localStorage.getItem('poem-likes');
@@ -16,9 +16,9 @@
                 }
         });
 
-        function handleLike(index: number) {
+        function handleLike(index: number): void {
                 likes[index]++;
-                likes = likes;
+                likes = [...likes];
                 localStorage.setItem('poem-likes', JSON.stringify(likes));
         }
 </script>
