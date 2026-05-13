@@ -8,18 +8,25 @@
         import Footer from '../components/organisms/Footer.svelte';
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
+        let liked: boolean[] = [false, false, false, false, false, false];
 
         onMount(() => {
-                const saved = localStorage.getItem('poem-likes');
-                if (saved) {
-                        try { likes = JSON.parse(saved); } catch (e) {}
+                const savedLikes = localStorage.getItem('poem-likes');
+                if (savedLikes) {
+                        try { likes = JSON.parse(savedLikes); } catch (e) {}
+                }
+                const savedLiked = localStorage.getItem('poem-liked');
+                if (savedLiked) {
+                        try { liked = JSON.parse(savedLiked); } catch (e) {}
                 }
         });
 
         function handleLike(index: number): void {
+                if (liked[index]) return;
                 likes[index]++;
-                likes = [...likes];
+                liked[index] = true;
                 localStorage.setItem('poem-likes', JSON.stringify(likes));
+                localStorage.setItem('poem-liked', JSON.stringify(liked));
         }
 </script>
 
