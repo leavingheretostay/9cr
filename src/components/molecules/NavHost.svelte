@@ -33,12 +33,12 @@
                         <Nav href="#books" section="books" isSelected={y > 500 && y < 750}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        height="24px"
-                                        viewBox="0 -960 960 960"
-                                        width="24px"
+                                        width="24"
+                                        height="24"
                                         fill="var(--accent)"
-                                        ><path
-                                                d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h160l170 170 170-170h160q33 0 56.5 23.5T880-800v640q0 33-23.5 56.5T800-80H240Zm0-80h480v-640h-80L520-680 400-800h-80l-80 80v640Zm120-160h240v-80H360v80Zm0-160h240v-80H360v80Zm0-160h120v-80H360v80Z"
+                                        viewBox="0 0 24 24"
+                                        ><path fill="none" d="M0 0h24v24H0z" /><path
+                                                d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM10 9h8v2h-8V9zm0 3h4v2h-4v-2zm0-6h8v2h-8V6z"
                                         /></svg
                                 >
                         </Nav>
@@ -83,7 +83,7 @@
 
                 ul {
                         display: flex;
-                        gap: 3rem;
+                        gap: 2.5rem;
                         justify-content: center;
                 }
         }
@@ -106,14 +106,15 @@
                 div {
                         bottom: 0;
                         top: auto;
-                        padding: 0rem;
+                        padding: 0.25rem 0.5rem;
                         background-color: var(--elevation-one);
                 }
 
                 div ul {
                         display: flex;
-                        justify-content: space-evenly;
-                        gap: 2vw;
+                        justify-content: space-around;
+                        gap: 1vw;
+                        padding: 0 0.25rem;
                 }
         }
 </style>
