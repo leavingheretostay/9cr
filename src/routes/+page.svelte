@@ -63,12 +63,11 @@
         </section>
 
         <section id="books" class="books wrapper">
-        <h2>bookshelf</h2>
-        <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
+                <h2>bookshelf</h2>
+                <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
 
-        <div class="book-grid">
-                <a href="https://www.amazon.com/s?k=Love+Her+Wild+Atticus" target="_blank" rel="noreferrer" class="book-link">
-                        <div class="book">
+                <div class="book-grid">
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" />
                                 </div>
@@ -78,10 +77,8 @@
                                         <span class="tag">Poetry</span>
                                 </div>
                         </div>
-                </a>
 
-                <a href="https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho" target="_blank" rel="noreferrer" class="book-link">
-                        <div class="book">
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} role="button" tabindex="0">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" />
                                 </div>
@@ -91,10 +88,8 @@
                                         <span class="tag">Fiction</span>
                                 </div>
                         </div>
-                </a>
 
-                <a href="https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey" target="_blank" rel="noreferrer" class="book-link">
-                        <div class="book">
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} role="button" tabindex="0">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" />
                                 </div>
@@ -104,9 +99,8 @@
                                         <span class="tag">Fiction</span>
                                 </div>
                         </div>
-                </a>
-        </div>
-</section>
+                </div>
+        </section>
 
         <Art />
         <Repos />
@@ -173,6 +167,7 @@
         }
 
         .book {
+                cursor: pointer;
                 display: flex;
                 align-items: center;
                 gap: 1.25rem;
