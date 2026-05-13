@@ -38,7 +38,7 @@
                                         width="24px"
                                         fill="var(--accent)"
                                         ><path
-                                                d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640H240v640Zm80-80h320v-80H320v80Zm0-160h320v-80H320v80Zm0-160h200v-80H320v80Zm-80 400v-640 640Z"
+                                                d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h160l170 170 170-170h160q33 0 56.5 23.5T880-800v640q0 33-23.5 56.5T800-80H240Zm0-80h480v-640h-80L520-680 400-800h-80l-80 80v640Zm120-160h240v-80H360v80Zm0-160h240v-80H360v80Zm0-160h120v-80H360v80Z"
                                         /></svg
                                 >
                         </Nav>
@@ -58,6 +58,7 @@
         </div>
 </nav>
 
+<!-- this is the coolest thing ever wtf?? -->
 <svelte:window bind:scrollY={y} />
 
 <style lang="scss">
@@ -82,7 +83,7 @@
 
                 ul {
                         display: flex;
-                        gap: 2.5rem;
+                        gap: 3rem;
                         justify-content: center;
                 }
         }
