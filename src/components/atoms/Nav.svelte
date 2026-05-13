@@ -68,31 +68,31 @@
                 opacity: 1;
         }
 
-
         h5 {
                 opacity: 0.8;
         }
 
         @media screen and (max-width: 868px) {
+                button {
+                        flex-direction: column;
+                        gap: 0;
+                        font-size: 0.75rem;
+                        padding: 6px 8px;
+                        margin-bottom: 0;
+                }
 
                 h5 {
                         transition-delay: 0.5s;
+                        font-size: 0.65rem;
                 }
 
                 .icon-container {
                         display: block;
-                        padding: 6px 24px;
+                        padding: 6px 14px;
                         border-radius: 100px;
-                        margin-bottom: 0.4rem;
+                        margin-bottom: 0.3rem;
                         transition: all 0.5s var(--bezier-one);
                         transition-delay: 0.3s;
-                }
-
-                button {
-                        flex-direction: column;
-                        gap: 0;
-                        font-size: 0.9rem;
-                        margin-bottom: 0;
                 }
 
                 button:hover {
