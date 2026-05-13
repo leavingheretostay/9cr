@@ -10,7 +10,7 @@
 <footer class="wrapper">
         <Socials />
         <h6 class="footer-meta">
-                Made with love 💗
+                Made with 💗 by Nasir Lone
         </h6>
 </footer>
 
