@@ -41,7 +41,7 @@
         function initCanvas() {
                 if (!canvasEl) return;
                 ctx = canvasEl.getContext('2d')!;
-                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
+                ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 3;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -159,12 +159,10 @@
                         >
                                 <Tooltip tip={getSignatureTip(signature)}>
                                         <button class="signature-item" type="button" aria-label="Signature by {signature.name}">
-                                                <img
-                                                        class="signature-img"
-                                                        src={signature.signature_data}
-                                                        alt="Signature by {signature.name}"
-                                                        style="opacity: {getSignatureInkOpacity(signature.id)}"
-                                                />
+                                                <span
+                                                        class="signature-ink"
+                                                        style="--signature-image: url('{signature.signature_data}'); --ink-opacity: {getSignatureInkOpacity(signature.id)}"
+                                                ></span>
                                         </button>
                                 </Tooltip>
                         </div>
@@ -211,7 +209,7 @@
         }
         .notice { font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-secondary); }
         .cta {
-                font-family: var(--font-two); font-size: 1rem; padding: 0.7rem 1.1rem; border-radius: 12px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); cursor: pointer; transition: all 0.2s;
+                font-family: var(--font-two); font-size: 1rem; padding: 0.7rem 1.1rem; border-radius: 12px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); cursor: pointer; transition: all 0.2s var(--bezier-one);
                 &:hover { filter: brightness(108%); transform: translateY(-1px); }
                 @media (max-width: 768px) { font-size: 0.85rem; padding: 0.5rem 0.75rem; }
         }
@@ -221,19 +219,25 @@
         }
         .signature-cell { order: var(--order); display: flex; justify-content: center; transform: translateX(var(--stagger-x)); }
         .signature-item {
-                background: transparent; border: 0; cursor: pointer; padding: 0; transform: rotate(var(--rotation)); transition: transform 0.18s var(--bezier-one), filter 0.18s var(--bezier-one);
+                position: relative; padding: 0; margin: 0; border: 0; background: transparent; cursor: pointer; transform: rotate(var(--rotation)); transition: transform 0.18s var(--bezier-one), filter 0.18s var(--bezier-one); will-change: transform;
                 &:hover { transform: rotate(0deg); }
         }
-        .signature-img {
-                display: block; width: clamp(92px, 15vw, 160px); height: 64px; object-fit: contain;
-                filter: brightness(0) saturate(100%) invert(55%) sepia(80%) saturate(2000%) hue-rotate(360deg);
+        .signature-ink {
+                display: block; width: clamp(92px, 15vw, 160px); height: 64px;
+                background-color: var(--accent);
+                -webkit-mask-image: var(--signature-image); mask-image: var(--signature-image);
+                -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+                -webkit-mask-position: center; mask-position: center;
+                -webkit-mask-size: contain; mask-size: contain;
+                opacity: var(--ink-opacity, 0.82);
+                transition: filter 0.18s ease, opacity 0.18s ease;
+                .signature-item:hover &, .signature-item:focus-visible & { filter: brightness(1.08) saturate(1.2); opacity: 1; }
                 @media (max-width: 768px) { width: clamp(70px, 20vw, 106px); height: 42px; }
         }
-        .signature-item:hover .signature-img { filter: brightness(0) saturate(100%) invert(55%) sepia(80%) saturate(2000%) hue-rotate(360deg) drop-shadow(0 0 4px var(--accent)); }
 
         // Modal
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
-        .modal-content { background: var(--bg-color); border: 1px solid var(--elevation-four); border-radius: 16px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease; }
+        .modal-content { background: var(--bg-color); border: 1px solid var(--elevation-four); border-radius: 16px; padding: 1.5rem; max-width: 460px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s var(--bezier-one); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; h3 { margin: 0; font-size: 1.25rem; } }
         .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 6px; &:hover { background: var(--elevation-two); color: var(--text-primary); } }
@@ -241,9 +245,9 @@
                 label { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-top: 0.5rem; }
                 input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; &:focus { outline: none; border-color: var(--accent); } }
         }
-        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #1e1e1e; }
+        .canvas-container { position: relative; border: 2px dashed var(--elevation-four); border-radius: 12px; overflow: hidden; background: #1a1a1a; }
         .signature-canvas { width: 100%; height: 180px; cursor: crosshair; touch-action: none; display: block; @media (max-width: 500px) { height: 140px; } }
-        .clear-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text-secondary); font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; &:hover { color: var(--text-primary); } }
+        .clear-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: var(--text-secondary); font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; &:hover { color: var(--text-primary); } }
         .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
         .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; button { font-family: var(--font-two); font-size: 0.9rem; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; } }
         .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); &:hover { color: var(--text-primary); } }
