@@ -35,6 +35,9 @@
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
         onMount(() => {
+                // Clear old localStorage signatures permanently
+                localStorage.removeItem('site-signatures');
+                
                 loadSignatures();
                 updateGridColumns();
                 window.addEventListener('resize', updateGridColumns);
