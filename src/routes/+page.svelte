@@ -64,6 +64,7 @@
 
         <section id="books" class="books wrapper">
                 <h2>bookshelf</h2>
+                <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
 
                 <div class="book-grid">
                         <div class="book">
@@ -148,14 +149,14 @@
 
         .books h2 {
                 font-size: 2rem;
-                margin-bottom: 2.5rem;
+                margin-bottom: 0.5rem;
         }
 
         .books-subtitle {
                 font-size: 0.9rem;
                 color: var(--text-secondary);
                 opacity: 0.6;
-                margin-top: -2rem;
+                margin-top: 0;
                 margin-bottom: 2rem;
         }
 
