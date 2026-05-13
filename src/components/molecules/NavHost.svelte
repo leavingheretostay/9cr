@@ -6,7 +6,7 @@
 <nav>
         <div class:scrolled={y > 20}>
                 <ul>
-                        <Nav href="#home" section="/" isSelected={y < 350}>
+                        <Nav href="#home" section="/" isSelected={y < 250}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="24"
@@ -18,7 +18,7 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#fragments" section="fragments" isSelected={y > 350 && y < 675}>
+                        <Nav href="#fragments" section="fragments" isSelected={y > 250 && y < 500}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="24px"
@@ -30,7 +30,19 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#aw" section="museum" isSelected={y > 675}>
+                        <Nav href="#books" section="books" isSelected={y > 500 && y < 750}>
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="24px"
+                                        viewBox="0 -960 960 960"
+                                        width="24px"
+                                        fill="var(--accent)"
+                                        ><path
+                                                d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640H240v640Zm80-80h320v-80H320v80Zm0-160h320v-80H320v80Zm0-160h200v-80H320v80Zm-80 400v-640 640Z"
+                                        /></svg
+                                >
+                        </Nav>
+                        <Nav href="#aw" section="museum" isSelected={y > 750}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="24px"
@@ -46,7 +58,6 @@
         </div>
 </nav>
 
-<!-- this is the coolest thing ever wtf?? -->
 <svelte:window bind:scrollY={y} />
 
 <style lang="scss">
@@ -71,7 +82,7 @@
 
                 ul {
                         display: flex;
-                        gap: 4rem;
+                        gap: 2.5rem;
                         justify-content: center;
                 }
         }
