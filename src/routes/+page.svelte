@@ -63,10 +63,11 @@
         </section>
 
         <section id="books" class="books wrapper">
-                <h2>bookshelf</h2>
-                <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
+        <h2>bookshelf</h2>
+        <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
 
-                <div class="book-grid">
+        <div class="book-grid">
+                <a href="https://www.amazon.com/s?k=Love+Her+Wild+Atticus" target="_blank" rel="noreferrer" class="book-link">
                         <div class="book">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" />
@@ -77,7 +78,9 @@
                                         <span class="tag">Poetry</span>
                                 </div>
                         </div>
+                </a>
 
+                <a href="https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho" target="_blank" rel="noreferrer" class="book-link">
                         <div class="book">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" />
@@ -88,7 +91,9 @@
                                         <span class="tag">Fiction</span>
                                 </div>
                         </div>
+                </a>
 
+                <a href="https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey" target="_blank" rel="noreferrer" class="book-link">
                         <div class="book">
                                 <div class="book-cover">
                                         <img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" />
@@ -99,8 +104,9 @@
                                         <span class="tag">Fiction</span>
                                 </div>
                         </div>
-                </div>
-        </section>
+                </a>
+        </div>
+</section>
 
         <Art />
         <Repos />
