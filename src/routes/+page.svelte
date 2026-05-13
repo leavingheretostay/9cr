@@ -68,6 +68,45 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 		</div>
 	</section>
 
+<section id="books" class="books wrapper">
+        <h2>bookshelf</h2>
+
+        <div class="book-grid">
+                <div class="book">
+                        <div class="book-cover">
+                                <span class="cover-icon">📖</span>
+                        </div>
+                        <div class="book-info">
+                                <h3>Love Her Wild</h3>
+                                <span class="author">Atticus</span>
+                                <span class="tag">Poetry</span>
+                        </div>
+                </div>
+
+                <div class="book">
+                        <div class="book-cover">
+                                <span class="cover-icon">📖</span>
+                        </div>
+                        <div class="book-info">
+                                <h3>The Alchemist</h3>
+                                <span class="author">Paulo Coelho</span>
+                                <span class="tag">Fiction</span>
+                        </div>
+                </div>
+
+                <div class="book">
+                        <div class="book-cover">
+                                <span class="cover-icon">📖</span>
+                        </div>
+                        <div class="book-info">
+                                <h3>You Are The Best Wife</h3>
+                                <span class="author">Ajay K. Pandey</span>
+                                <span class="tag">Fiction</span>
+                        </div>
+                </div>
+        </div>
+</section>
+
 	<Art />
 	<Repos />
 	<Footer />
