@@ -150,19 +150,22 @@ Her love felt so deep that I could just relate it to an ocean and made up my min
 
 .book-cover {
         width: 48px;
-        height: 68px;
+        height: 70px;
         border-radius: 6px;
         background: var(--elevation-two);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.cover-icon {
-        font-size: 1.2rem;
-        opacity: 0.6;
+.book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
 }
 
 .book-info {
