@@ -27,6 +27,13 @@
         let modalError = '';
         let isSubmitting = false;
 
+        // Delete
+        let deleteTarget: string | null = null;
+        let showDeleteConfirm = false;
+        let deletePassword = '';
+        let deleteError = '';
+        let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
         onMount(() => {
                 loadSignatures();
                 updateGridColumns();
@@ -42,7 +49,10 @@
                         .select('*')
                         .order('created_at', { ascending: false });
                 if (!error && data) {
-                        signatures = data as FooterSignature[];
+                        signatures = data.map((sig: any) => ({
+                                ...sig,
+                                signature_data: sig.signature_data?.replace('http://', 'https://')
+                        })) as FooterSignature[];
                 }
                 loading = false;
         }
@@ -134,6 +144,44 @@
                 isSubmitting = false;
         }
 
+        // Long press for delete
+        function startLongPress(sigId: string) {
+                longPressTimer = setTimeout(() => {
+                        deleteTarget = sigId;
+                        showDeleteConfirm = true;
+                        deletePassword = '';
+                        deleteError = '';
+                }, 800);
+        }
+
+        function cancelLongPress() {
+                if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                }
+        }
+
+        async function confirmDelete() {
+                if (deletePassword !== '9cr2026') {
+                        deleteError = 'Wrong password';
+                        return;
+                }
+                if (!supabase || !deleteTarget) return;
+
+                const { error } = await supabase
+                        .from('footer_signatures')
+                        .delete()
+                        .eq('id', deleteTarget);
+
+                if (!error) {
+                        signatures = signatures.filter(s => s.id !== deleteTarget);
+                        showDeleteConfirm = false;
+                        deleteTarget = null;
+                } else {
+                        deleteError = 'Failed to delete';
+                }
+        }
+
         function updateGridColumns() {
                 if (!signatureGridEl || typeof window === 'undefined') return;
                 const computed = window.getComputedStyle(signatureGridEl).gridTemplateColumns;
@@ -181,7 +229,17 @@
                                 style="--rotation: {getSignatureRotation(signature.id)}deg; --order: {getSignatureOrder(signature.id)}; --stagger-x: {getRowStagger(index)}px"
                         >
                                 <Tooltip tip={getSignatureTip(signature)}>
-                                        <button class="signature-item" type="button" aria-label="Signature by {signature.name}">
+                                        <button
+                                                class="signature-item"
+                                                type="button"
+                                                aria-label="Signature by {signature.name}"
+                                                on:touchstart={() => startLongPress(signature.id)}
+                                                on:touchend={cancelLongPress}
+                                                on:touchmove={cancelLongPress}
+                                                on:mousedown={() => startLongPress(signature.id)}
+                                                on:mouseup={cancelLongPress}
+                                                on:mouseleave={cancelLongPress}
+                                        >
                                                 <span
                                                         class="signature-ink"
                                                         style="--signature-image: url('{signature.signature_data}'); --ink-opacity: {getSignatureInkOpacity(signature.id)}"
@@ -193,6 +251,7 @@
         </div>
 </section>
 
+<!-- Add Signature Modal -->
 {#if showModal}
         <div class="modal-overlay" on:click={handleClose} role="dialog" aria-modal="true">
                 <div class="modal-content" on:click|stopPropagation>
@@ -219,6 +278,27 @@
                                 <button class="submit-btn" on:click={handleSubmit} disabled={isSubmitting}>
                                         {isSubmitting ? 'Saving...' : 'Add signature ✦'}
                                 </button>
+                        </div>
+                </div>
+        </div>
+{/if}
+
+<!-- Delete Confirmation Modal -->
+{#if showDeleteConfirm}
+        <div class="modal-overlay" on:click={() => showDeleteConfirm = false} role="dialog" aria-modal="true">
+                <div class="modal-content" on:click|stopPropagation>
+                        <div class="modal-header">
+                                <h3>Delete Signature</h3>
+                                <button class="close-btn" on:click={() => showDeleteConfirm = false}>✕</button>
+                        </div>
+                        <div class="modal-body">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p>
+                                <input type="password" bind:value={deletePassword} placeholder="Password" />
+                                {#if deleteError}<p class="error">{deleteError}</p>{/if}
+                        </div>
+                        <div class="modal-footer">
+                                <button class="cancel-btn" on:click={() => showDeleteConfirm = false}>Cancel</button>
+                                <button class="delete-btn" on:click={confirmDelete}>Delete</button>
                         </div>
                 </div>
         </div>
@@ -278,4 +358,5 @@
         .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); &:hover { color: var(--text-primary); } }
         .submit-btn { background: var(--accent); border: none; color: white; &:hover { filter: brightness(1.1); }
                 &:disabled { opacity: 0.6; cursor: not-allowed; } }
+        .delete-btn { background: #ef4444; border: none; color: white; &:hover { filter: brightness(1.1); } }
 </style>
