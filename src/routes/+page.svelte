@@ -68,7 +68,7 @@
                 <div class="book-grid">
                         <div class="book">
                                 <div class="book-cover">
-                                        <img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="Love Her Wild" />
+                                        <img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" />
                                 </div>
                                 <div class="book-info">
                                         <h3>Love Her Wild</h3>
@@ -79,7 +79,7 @@
 
                         <div class="book">
                                 <div class="book-cover">
-                                        <img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="The Alchemist" />
+                                        <img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" />
                                 </div>
                                 <div class="book-info">
                                         <h3>The Alchemist</h3>
