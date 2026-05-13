@@ -65,6 +65,13 @@
         <section id="books" class="books wrapper">
                 <h2>bookshelf</h2>
 
+<section id="books" class="books wrapper">
+        <h2>bookshelf</h2>
+        <p class="books-subtitle">A few favourites.Free downloads coming soon.</p>
+
+        <div class="book-grid">
+                ...rest stays same...
+
                 <div class="book-grid">
                         <div class="book">
                                 <div class="book-cover">
