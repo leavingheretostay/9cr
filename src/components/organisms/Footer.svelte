@@ -332,7 +332,7 @@
 <footer class="wrapper">
         <Socials />
         <h6 class="footer-meta">
-                Made with love 💗
+                Made with love 💗 by Nasir Lone
         </h6>
 </footer>
 
