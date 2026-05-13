@@ -42,12 +42,12 @@
 <svelte:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="og:title" content="nasir" />
-        <meta content="/default.png" property="og:image" />
-        <meta property="og:description" content="Drawn toward silence, poetry, atoms and everything they become." />
-        <meta name="twitter:image" itemprop="image" content="/default.png" />
+        <meta name="og:title" content="9cr" />
+        <meta content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" property="og:image" />
+        <meta property="og:description" content="Just a boy on the yellow brick road, searching for the viz!" />
+        <meta name="twitter:image" itemprop="image" content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" />
         <meta name="twitter:card" content="summary" />
-        <title>nasir</title>
+        <title>9cr</title>
 </svelte:head>
 
 <svelte:window on:click={playSFX} />
