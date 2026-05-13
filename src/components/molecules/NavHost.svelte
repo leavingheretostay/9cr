@@ -18,7 +18,7 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#fragments" section="fragments" isSelected={y > 250 && y < 500}>
+                        <Nav href="#fragments" section="fragments" isSelected={y > 250 && y < 450}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="24px"
@@ -30,7 +30,7 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#books" section="books" isSelected={y > 500 && y < 750}>
+                        <Nav href="#books" section="books" isSelected={y > 450 && y < 650}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="24"
@@ -42,7 +42,7 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#aw" section="museum" isSelected={y > 750}>
+                        <Nav href="#aw" section="museum" isSelected={y > 650}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="24px"
@@ -83,7 +83,7 @@
 
                 ul {
                         display: flex;
-                        gap: 2.5rem;
+                        gap: 2rem;
                         justify-content: center;
                 }
         }
@@ -106,15 +106,14 @@
                 div {
                         bottom: 0;
                         top: auto;
-                        padding: 0.25rem 0.5rem;
+                        padding: 0rem;
                         background-color: var(--elevation-one);
                 }
 
                 div ul {
                         display: flex;
-                        justify-content: space-around;
+                        justify-content: space-evenly;
                         gap: 1vw;
-                        padding: 0 0.25rem;
                 }
         }
 </style>
