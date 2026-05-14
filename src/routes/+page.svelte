@@ -59,6 +59,7 @@
                 if (songLiked) return;
                 songLiked = true;
                 songLikes++;
+                localStorage.setItem('song-liked', 'true');
                 if (supabase) {
                         await supabase
                                 .from('poem_likes')
@@ -70,11 +71,8 @@
                 liked = [false, false, false, false, false, false];
                 localStorage.removeItem('poem-liked');
 
-                // Load song likes
-                if (supabase) {
-                        const { data } = await supabase.from('poem_likes').select('*').eq('poem_index', 99).single();
-                        if (data) songLikes = data.like_count;
-                }
+                // Song like
+                if (localStorage.getItem('song-liked') === 'true') songLiked = true;
 
                 if (supabase) {
                         const { data: likeData, error: likeError } = await supabase
@@ -84,6 +82,7 @@
                         if (!likeError && likeData) {
                                 likeData.forEach((row: any) => {
                                         if (row.poem_index < 6) likes[row.poem_index] = row.like_count;
+                                        if (row.poem_index === 99) songLikes = row.like_count;
                                 });
                         }
 
@@ -181,34 +180,24 @@
                                 </div>
                                 <div class="player-buttons">
                                         <button class="ctrl-btn small" aria-label="Previous">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                                                        <polygon points="19,4 8,12 19,20"/>
-                                                        <rect x="4" y="4" width="3" height="16" rx="1"/>
-                                                </svg>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="19,4 8,12 19,20"/><rect x="4" y="4" width="3" height="16" rx="1"/></svg>
                                         </button>
                                         <button class="ctrl-btn play-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
                                                 {#if playing}
-                                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-                                                                <rect x="6" y="4" width="4" height="16" rx="1"/>
-                                                                <rect x="14" y="4" width="4" height="16" rx="1"/>
-                                                        </svg>
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
                                                 {:else}
-                                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-                                                                <polygon points="7,4 20,12 7,20"/>
-                                                        </svg>
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="7,4 20,12 7,20"/></svg>
                                                 {/if}
                                         </button>
                                         <button class="ctrl-btn small" aria-label="Next">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                                                        <polygon points="5,4 16,12 5,20"/>
-                                                        <rect x="17" y="4" width="3" height="16" rx="1"/>
-                                                </svg>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,4 16,12 5,20"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg>
                                         </button>
                                         <button class="ctrl-btn small like-btn" class:liked={songLiked} on:click={likeSong} aria-label="Like">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2">
                                                         <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
                                                         <rect x="2" y="9" width="4" height="11"/>
                                                 </svg>
+                                                <span class="like-count">{songLikes}</span>
                                         </button>
                                 </div>
                                 <div class="progress-area">
@@ -405,24 +394,26 @@
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
         .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-        .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; position: relative; }
-        .music-overlay { background: linear-gradient(transparent 20%, rgba(0,0,0,0.9)); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; min-height: 200px; justify-content: flex-end; }
-        .player-header { display: flex; justify-content: space-between; align-items: center; }
-        .player-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
-        .player-info { }
-        .song-title { font-size: 1.1rem; color: white; font-weight: 600; margin: 0 0 0.15rem 0; }
-        .song-artist { font-size: 0.85rem; color: rgba(255,255,255,0.7); margin: 0; }
-        .player-buttons { display: flex; align-items: center; gap: 0.75rem; }
+        .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; height: 200px; position: relative; }
+        .music-overlay { background: linear-gradient(transparent 20%, rgba(0,0,0,0.9)); padding: 1rem 1.25rem; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.4rem; }
+        .player-header { }
+        .player-label { font-size: 0.65rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
+        .player-info { display: flex; flex-direction: column; gap: 0.1rem; }
+        .song-title { font-size: 1.1rem; color: white; font-weight: 600; margin: 0; }
+        .song-artist { font-size: 0.8rem; color: rgba(255,255,255,0.65); margin: 0; }
+        .player-buttons { display: flex; align-items: center; gap: 0.5rem; }
         .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .ctrl-btn.small { width: 36px; height: 36px; }
-        .ctrl-btn.play-btn { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 50%; }
-        .ctrl-btn:hover { transform: scale(1.1); }
-        .like-btn.liked { opacity: 1; }
-        .progress-area { width: 100%; }
-        .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; position: relative; }
+        .ctrl-btn.small { width: 34px; height: 34px; }
+        .ctrl-btn.play-btn { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .ctrl-btn:hover { transform: scale(1.08); }
+        .like-btn { gap: 0.25rem; }
+        .like-btn.liked { }
+        .like-count { font-size: 0.7rem; color: rgba(255,255,255,0.7); }
+        .progress-area { width: 100%; margin-top: 0.25rem; }
+        .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; }
         .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
-        .time-labels { display: flex; justify-content: space-between; margin-top: 0.25rem; }
-        .time-labels span { font-size: 0.6rem; color: rgba(255,255,255,0.5); }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.2rem; }
+        .time-labels span { font-size: 0.6rem; color: rgba(255,255,255,0.45); }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
