@@ -15,7 +15,44 @@
         let commentNames: string[] = ['', '', '', '', '', ''];
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
-        let showPlayer = false;
+
+        // Audio player
+        let audioEl: HTMLAudioElement;
+        let playing = false;
+        let progress = 0;
+        let currentTime = '0:00';
+        let duration = '0:00';
+
+        function togglePlay() {
+                if (!audioEl) return;
+                if (playing) { audioEl.pause(); }
+                else { audioEl.play(); }
+                playing = !playing;
+        }
+
+        function updateProgress() {
+                if (!audioEl) return;
+                progress = (audioEl.currentTime / audioEl.duration) * 100 || 0;
+                const mins = Math.floor(audioEl.currentTime / 60);
+                const secs = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0');
+                currentTime = `${mins}:${secs}`;
+        }
+
+        function updateDuration() {
+                if (!audioEl) return;
+                const mins = Math.floor(audioEl.duration / 60);
+                const secs = Math.floor(audioEl.duration % 60).toString().padStart(2, '0');
+                duration = `${mins}:${secs}`;
+        }
+
+        function seek(e: MouseEvent | TouchEvent) {
+                if (!audioEl) return;
+                const bar = e.currentTarget as HTMLElement;
+                const rect = bar.getBoundingClientRect();
+                const x = 'touches' in e ? e.touches[0].clientX - rect.left : (e as MouseEvent).clientX - rect.left;
+                const pct = x / rect.width;
+                audioEl.currentTime = pct * audioEl.duration;
+        }
 
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
@@ -114,31 +151,34 @@
         <About />
 
         <section id="music" class="music wrapper">
-        <h2>music</h2>
-        <div class="music-player">
-                <div class="music-card">
-                        <div class="music-cover">
-                                <img src="https://img.youtube.com/vi/3PzCqgup2eT5BKqbTVCKPW/maxresdefault.jpg" alt="Iraaday" />
-                                <button class="play-btn" on:click={() => showPlayer = !showPlayer}>
-                                        {#if showPlayer}
-                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                <h2>music</h2>
+                <div class="spotify-style-player">
+                        <div class="player-artwork">
+                                <img src="https://img.youtube.com/vi/TWwlyLyUTjo/maxresdefault.jpg" alt="Deedaar" />
+                                <button class="play-btn" on:click={togglePlay}>
+                                        {#if playing}
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                                         {:else}
-                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
                                         {/if}
                                 </button>
                         </div>
-                        <div class="music-info">
-                                <h3 class="song-title">Iraaday</h3>
-                                <p class="song-artist">Abdul Hannan & Rovalio</p>
+                        <div class="player-controls">
+                                <div class="player-info">
+                                        <p class="song-title">Deedaar</p>
+                                        <p class="song-artist">Third Hour</p>
+                                </div>
+                                <div class="progress-container" on:mousedown={seek} on:touchstart={seek}>
+                                        <div class="progress-bar" style="width: {progress}%"></div>
+                                </div>
+                                <div class="time-labels">
+                                        <span>{currentTime}</span>
+                                        <span>{duration}</span>
+                                </div>
                         </div>
                 </div>
-                {#if showPlayer}
-                        <div class="player-embed">
-                                <iframe width="100%" height="80" src="https://www.youtube.com/embed/3PzCqgup2eT5BKqbTVCKPW?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0" title="Iraaday" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                {/if}
-        </div>
-</section>
+                <audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
+        </section>
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
@@ -336,21 +376,19 @@
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-.music h2 { font-size: 2rem; margin-bottom: 2rem; }
-.music-player { border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); overflow: hidden; }
-.music-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; }
-.music-cover { position: relative; width: 80px; height: 80px; flex-shrink: 0; border-radius: 12px; overflow: hidden; }
-.music-cover img { width: 100%; height: 100%; object-fit: cover; }
-.play-btn { position: absolute; inset: 0; background: rgba(0,0,0,0.4); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-.music-cover:hover .play-btn, .music-card:active .play-btn { opacity: 1; }
-.music-info { display: flex; flex-direction: column; gap: 0.3rem; }
-.song-title { font-size: 1.05rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-.song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
-.player-embed { height: 80px; overflow: hidden; }
-.player-embed iframe { margin-top: -60px; height: 140px; display: block; border: none; }
-
-        .player-embed { border-top: 1px solid rgba(255,255,255,0.08); }
-        .player-embed iframe { display: block; }
+        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
+        .spotify-style-player { display: flex; gap: 1rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); }
+        .player-artwork { position: relative; width: 80px; height: 80px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: var(--elevation-two); }
+        .player-artwork img { width: 100%; height: 100%; object-fit: cover; }
+        .play-btn { position: absolute; inset: 0; background: rgba(0,0,0,0.4); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .player-artwork:hover .play-btn { opacity: 1; }
+        .player-controls { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; }
+        .player-info { display: flex; justify-content: space-between; align-items: center; }
+        .song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+        .song-artist { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+        .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; cursor: pointer; }
+        .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s linear; }
+        .time-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-secondary); opacity: 0.5; }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
