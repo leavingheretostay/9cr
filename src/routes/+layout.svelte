@@ -8,6 +8,7 @@
         let loading = true;
         let playSFX: (() => void) | undefined;
         let showBackTop = false;
+        let scrollTimeout: ReturnType<typeof setTimeout>;
 
         onMount(() => {
                 playSFX = () => {
@@ -36,9 +37,17 @@
                 };
                 stopResizeAnimation();
 
-                // Back to top visibility
+                // Back to top - appears on scroll, disappears after stopping
                 window.addEventListener('scroll', () => {
-                        showBackTop = window.scrollY > 300;
+                        if (window.scrollY > 300) {
+                                showBackTop = true;
+                                clearTimeout(scrollTimeout);
+                                scrollTimeout = setTimeout(() => {
+                                        showBackTop = false;
+                                }, 1500);
+                        } else {
+                                showBackTop = false;
+                        }
                 });
 
                 // Particles
@@ -128,7 +137,7 @@
                 cursor: pointer; display: flex; align-items: center; justify-content: center;
                 z-index: 9998; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
                 animation: fadeInUp 0.3s ease;
-                transition: transform 0.2s, filter 0.2s;
+                transition: transform 0.2s, filter 0.2s, opacity 0.3s;
         }
 
         .back-to-top:hover {
