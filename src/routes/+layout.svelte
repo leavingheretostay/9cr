@@ -7,6 +7,7 @@
 
         let loading = true;
         let playSFX: (() => void) | undefined;
+        let showBackTop = false;
 
         onMount(() => {
                 playSFX = () => {
@@ -34,6 +35,11 @@
                         });
                 };
                 stopResizeAnimation();
+
+                // Back to top visibility
+                window.addEventListener('scroll', () => {
+                        showBackTop = window.scrollY > 300;
+                });
 
                 // Particles
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
@@ -94,11 +100,13 @@
 
 <canvas id="particles"></canvas>
 
-<button class="back-to-top" on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="18 15 12 9 6 15"/>
-        </svg>
-</button>
+{#if showBackTop}
+        <button class="back-to-top" on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="18 15 12 9 6 15"/>
+                </svg>
+        </button>
+{/if}
 
 <Cursor />
 <span class:loading>
@@ -119,11 +127,17 @@
                 background: var(--accent); border: none; color: white;
                 cursor: pointer; display: flex; align-items: center; justify-content: center;
                 z-index: 9998; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                animation: fadeInUp 0.3s ease;
                 transition: transform 0.2s, filter 0.2s;
         }
 
         .back-to-top:hover {
                 transform: translateY(-3px); filter: brightness(1.15);
+        }
+
+        @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 768px) {
