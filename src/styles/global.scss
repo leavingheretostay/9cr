@@ -1,39 +1,154 @@
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background: var(--bg-color);
+@import url(theme.light.scss) (prefers-color-scheme: light);
+@import url(theme.dark.scss) (prefers-color-scheme: dark);
+
+* {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-one);
+    scroll-behavior: smooth;
+    scroll-margin-top: 6rem;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    @media (max-width: 868px) {
+        scroll-margin-top: 1rem;
+    }
 }
 
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    opacity: 0.5;
-    background: 
-        radial-gradient(ellipse at 20% 50%, rgba(120, 50, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(50, 150, 255, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(255, 50, 120, 0.1) 0%, transparent 50%);
-    animation: gradientShift 15s ease infinite;
+html {
+    box-sizing: border-box;
+    letter-spacing: -0.05em;
+    overflow-x: hidden;
 }
 
-@keyframes gradientShift {
-    0%, 100% { 
-        opacity: 0.5;
-        transform: scale(1);
+body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    background-color: var(--bg-color);
+    overflow-x: hidden;
+}
+
+.wrapper {
+    min-height: 0vw;
+    margin-inline: auto;
+    width: min(90%, 62rem) !important;
+
+    @media (max-width: 868px) {
+        margin-bottom: 4.75rem;
     }
-    25% { 
-        opacity: 0.7;
-        transform: scale(1.1);
+
+    @media (max-width: 768px) {
+        width: min(88%, 65rem) !important;
     }
-    50% { 
-        opacity: 0.4;
-        transform: scale(0.95);
+}
+
+body.stop-transitions * {
+    transition: none !important;
+}
+
+:root {
+    --font-one: "Geist Pixel", "Space Grotesk", sans-serif;
+    --font-two: "Geist Mono", monospace;
+    --bezier-one: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+::selection {
+    background: var(--accent-opacity);
+}
+
+/*-----headings-----*/
+
+h1 {
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: -0.075em;
+    line-height: 0.05rem;
+    line-height: 101.6%;
+    font-size: 6rem;
+}
+
+h2 {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 3.5rem;
+    letter-spacing: -0.075em;
+    border-radius: 12px;
+    width: fit-content;
+    text-align: left;
+}
+
+h3 {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
+h4 {
+    color: var(--text-secondary);
+    font-weight: 300;
+    font-size: 1.6rem;
+}
+
+h5 {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    font-family: var(--font-two);
+    font-weight: 300;
+    letter-spacing: -0.075em;
+}
+
+h6 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-family: var(--font-one);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+}
+
+p {
+    color: var(--text-secondary);
+    font-weight: 300;
+    font-size: 1.1rem;
+    letter-spacing: -0rem;
+    line-height: 1.75rem;
+}
+
+@media (max-width: 868px) {
+    h2 {
+        display: block;
+        padding: 0;
+        background-color: transparent;
+        font-size: 1.75rem;
+        margin-bottom: 0.3rem;
+        display: inline-block;
     }
-    75% { 
-        opacity: 0.6;
-        transform: scale(1.05);
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    h5 {
+        font-size: 1rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
+
+/*-----scrollbar-----*/
+
+::-webkit-scrollbar {
+    width: 11px;
+    background-color: transparent;
+
+    &-thumb {
+        background-color: var(--elevation-three);
+        background-clip: content-box;
+    }
+
+    &-thumb:hover {
+        background-color: var(--elevation-one);
     }
 }
