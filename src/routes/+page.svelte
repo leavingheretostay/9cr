@@ -116,11 +116,11 @@
         <section id="music" class="music wrapper">
         <h2>music</h2>
         <div class="music-player">
-                <iframe width="100%" height="200" src="https://www.youtube.com/embed/7BiSMHfwYbY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe style="border-radius:16px" src="https://open.spotify.com/embed/track/3PzCqgup2eT5BKqbTVCKPW?utm_source=generator" width="100%" height="152" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
         <div class="music-label">
-                <p class="song-title">Fiza</p>
-                <p class="song-artist">Third Hour & Jlok</p>
+                <p class="song-title">Iraaday</p>
+                <p class="song-artist">Abdul Hannan & Rovalio</p>
         </div>
 </section>
 
@@ -322,7 +322,6 @@
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
 .music h2 { font-size: 2rem; margin-bottom: 2rem; }
 .music-player { border-radius: 16px; overflow: hidden; }
-.music-player iframe { display: block; border-radius: 16px; }
 .music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
 .song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
 .song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
