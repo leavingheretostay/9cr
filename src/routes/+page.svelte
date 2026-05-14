@@ -116,11 +116,27 @@
         <section id="music" class="music wrapper">
         <h2>music</h2>
         <div class="music-player">
-                <iframe style="border-radius:16px" src="https://open.spotify.com/embed/track/3PzCqgup2eT5BKqbTVCKPW?utm_source=generator" width="100%" height="152" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        </div>
-        <div class="music-label">
-                <p class="song-title">Iraaday</p>
-                <p class="song-artist">Abdul Hannan & Rovalio</p>
+                <div class="music-card">
+                        <div class="music-cover">
+                                <img src="https://img.youtube.com/vi/3PzCqgup2eT5BKqbTVCKPW/maxresdefault.jpg" alt="Iraaday" />
+                                <button class="play-btn" on:click={() => showPlayer = !showPlayer}>
+                                        {#if showPlayer}
+                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                        {:else}
+                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
+                                        {/if}
+                                </button>
+                        </div>
+                        <div class="music-info">
+                                <h3 class="song-title">Iraaday</h3>
+                                <p class="song-artist">Abdul Hannan & Rovalio</p>
+                        </div>
+                </div>
+                {#if showPlayer}
+                        <div class="player-embed">
+                                <iframe width="100%" height="80" src="https://www.youtube.com/embed/3PzCqgup2eT5BKqbTVCKPW?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0" title="Iraaday" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                {/if}
         </div>
 </section>
 
@@ -321,10 +337,18 @@
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
 .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-.music-player { border-radius: 16px; overflow: hidden; }
-.music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
-.song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+.music-player { border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); overflow: hidden; }
+.music-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; }
+.music-cover { position: relative; width: 80px; height: 80px; flex-shrink: 0; border-radius: 12px; overflow: hidden; }
+.music-cover img { width: 100%; height: 100%; object-fit: cover; }
+.play-btn { position: absolute; inset: 0; background: rgba(0,0,0,0.4); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+.music-cover:hover .play-btn, .music-card:active .play-btn { opacity: 1; }
+.music-info { display: flex; flex-direction: column; gap: 0.3rem; }
+.song-title { font-size: 1.05rem; color: var(--text-primary); font-weight: 600; margin: 0; }
 .song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+.player-embed { height: 80px; overflow: hidden; }
+.player-embed iframe { margin-top: -60px; height: 140px; display: block; border: none; }
+
         .player-embed { border-top: 1px solid rgba(255,255,255,0.08); }
         .player-embed iframe { display: block; }
 
