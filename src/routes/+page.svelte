@@ -6,27 +6,42 @@
         import Art from '../components/organisms/Art.svelte';
         import Repos from '../components/organisms/Repos.svelte';
         import Footer from '../components/organisms/Footer.svelte';
+        import { supabase } from '../util/supabase';
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
         let liked: boolean[] = [false, false, false, false, false, false];
 
-        onMount(() => {
-                const savedLikes = localStorage.getItem('poem-likes');
-                if (savedLikes) {
-                        try { likes = JSON.parse(savedLikes); } catch (e) {}
-                }
+        onMount(async () => {
                 const savedLiked = localStorage.getItem('poem-liked');
                 if (savedLiked) {
                         try { liked = JSON.parse(savedLiked); } catch (e) {}
                 }
+
+                if (supabase) {
+                        const { data, error } = await supabase
+                                .from('poem_likes')
+                                .select('*')
+                                .order('poem_index');
+                        if (!error && data) {
+                                data.forEach((row: any) => {
+                                        likes[row.poem_index] = row.like_count;
+                                });
+                        }
+                }
         });
 
-        function handleLike(index: number): void {
+        async function handleLike(index: number): Promise<void> {
                 if (liked[index]) return;
-                likes[index]++;
                 liked[index] = true;
-                localStorage.setItem('poem-likes', JSON.stringify(likes));
+                likes[index]++;
                 localStorage.setItem('poem-liked', JSON.stringify(liked));
+
+                if (supabase) {
+                        await supabase
+                                .from('poem_likes')
+                                .update({ like_count: likes[index] })
+                                .eq('poem_index', index);
+                }
         }
 </script>
 
