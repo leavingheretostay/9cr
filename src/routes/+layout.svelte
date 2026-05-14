@@ -7,7 +7,6 @@
 
         let loading = true;
         let playSFX: (() => void) | undefined;
-        let progress = 0;
 
         onMount(() => {
                 playSFX = () => {
@@ -37,13 +36,6 @@
                 };
 
                 stopResizeAnimation();
-
-                // Reading progress
-                window.addEventListener('scroll', () => {
-                        const scrollTop = window.scrollY;
-                        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                        progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-                });
         });
 </script>
 
@@ -60,9 +52,6 @@
 
 <svelte:window on:click={playSFX} />
 
-<!-- Reading Progress Bar -->
-<div class="progress-bar" style="width: {progress}%"></div>
-
 <Cursor />
 <span class:loading>
         <slot />
@@ -71,16 +60,5 @@
 <style>
         .loading * {
                 transition: none;
-        }
-
-        .progress-bar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 3px;
-                background: var(--accent);
-                z-index: 9999;
-                transition: width 0.1s linear;
-                border-radius: 0 3px 3px 0;
         }
 </style>
