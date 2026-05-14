@@ -114,27 +114,15 @@
         <About />
 
         <section id="music" class="music wrapper">
-                <h2>music</h2>
-                <div class="music-player">
-                        <div class="music-card" on:click={() => showPlayer = !showPlayer} on:keydown={(e) => e.key === 'Enter' && (showPlayer = !showPlayer)} role="button" tabindex="0">
-                                <div class="music-cover">
-                                        <img src="https://img.youtube.com/vi/7BiSMHfwYbY/maxresdefault.jpg" alt="Fiza" />
-                                        <div class="play-overlay">
-                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
-                                        </div>
-                                </div>
-                                <div class="music-info">
-                                        <h3 class="song-title">Fiza</h3>
-                                        <p class="song-artist">Third Hour & Jlok</p>
-                                </div>
-                        </div>
-                        {#if showPlayer}
-                                <div class="player-embed">
-                                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/7BiSMHfwYbY?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                </div>
-                        {/if}
-                </div>
-        </section>
+        <h2>music</h2>
+        <div class="music-player">
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/7BiSMHfwYbY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="music-label">
+                <p class="song-title">Fiza</p>
+                <p class="song-artist">Third Hour & Jlok</p>
+        </div>
+</section>
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
@@ -332,17 +320,12 @@
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-        .music-player { border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); overflow: hidden; }
-        .music-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; cursor: pointer; transition: background 0.3s; }
-        .music-card:hover { background: rgba(255,255,255,0.04); }
-        .music-cover { position: relative; width: 100px; height: 100px; flex-shrink: 0; border-radius: 12px; overflow: hidden; }
-        .music-cover img { width: 100%; height: 100%; object-fit: cover; }
-        .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        .music-card:hover .play-overlay { opacity: 1; }
-        .music-info { display: flex; flex-direction: column; gap: 0.3rem; }
-        .song-title { font-size: 1.1rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-        .song-artist { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+.music h2 { font-size: 2rem; margin-bottom: 2rem; }
+.music-player { border-radius: 16px; overflow: hidden; }
+.music-player iframe { display: block; border-radius: 16px; }
+.music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
+.song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+.song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
         .player-embed { border-top: 1px solid rgba(255,255,255,0.08); }
         .player-embed iframe { display: block; }
 
