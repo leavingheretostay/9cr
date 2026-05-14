@@ -16,6 +16,43 @@
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
+        // Audio player
+        let audioEl: HTMLAudioElement;
+        let playing = false;
+        let progress = 0;
+        let currentTime = '0:00';
+        let duration = '0:00';
+
+        function togglePlay() {
+                if (!audioEl) return;
+                if (playing) { audioEl.pause(); }
+                else { audioEl.play(); }
+                playing = !playing;
+        }
+
+        function updateProgress() {
+                if (!audioEl) return;
+                progress = (audioEl.currentTime / audioEl.duration) * 100 || 0;
+                const m = Math.floor(audioEl.currentTime / 60);
+                const s = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0');
+                currentTime = `${m}:${s}`;
+        }
+
+        function updateDuration() {
+                if (!audioEl) return;
+                const m = Math.floor(audioEl.duration / 60);
+                const s = Math.floor(audioEl.duration % 60).toString().padStart(2, '0');
+                duration = `${m}:${s}`;
+        }
+
+        function seek(e: MouseEvent | TouchEvent) {
+                if (!audioEl) return;
+                const bar = e.currentTarget as HTMLElement;
+                const rect = bar.getBoundingClientRect();
+                const x = 'touches' in e ? e.touches[0].clientX - rect.left : (e as MouseEvent).clientX - rect.left;
+                audioEl.currentTime = (x / rect.width) * audioEl.duration;
+        }
+
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
                 localStorage.removeItem('poem-liked');
@@ -113,19 +150,41 @@
         <About />
 
         <section id="music" class="music wrapper">
-        <h2>music</h2>
-        <div class="music-player" style="background-image: url('https://i.postimg.cc/tJ3DDYyt/3fbc804b902583553c7626f1926a23a9.jpg');">
-                <div class="music-overlay">
-                        <audio controls style="width:100%;">
-                                <source src="https://files.catbox.moe/7ezaax.mp3" type="audio/mpeg">
-                        </audio>
+                <h2>music</h2>
+                <div class="music-player" style="background-image: url('https://i.postimg.cc/tJ3DDYyt/3fbc804b902583553c7626f1926a23a9.jpg');">
+                        <div class="music-overlay">
+                                <div class="player-controls">
+                                        <button class="ctrl-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
+                                                {#if playing}
+                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                                                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                                                                <rect x="14" y="4" width="4" height="16" rx="1"/>
+                                                        </svg>
+                                                {:else}
+                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                                                <polygon points="7,4 20,12 7,20"/>
+                                                        </svg>
+                                                {/if}
+                                        </button>
+                                </div>
+                                <div class="progress-area">
+                                        <div class="progress-track" on:mousedown={seek} on:touchstart={seek}>
+                                                <div class="progress-fill" style="width: {progress}%"></div>
+                                                <div class="progress-thumb" style="left: {progress}%"></div>
+                                        </div>
+                                        <div class="time-labels">
+                                                <span>{currentTime}</span>
+                                                <span>{duration}</span>
+                                        </div>
+                                </div>
+                        </div>
                 </div>
-        </div>
-        <div class="music-label">
-                <p class="song-title">Deedaar</p>
-                <p class="song-artist">Third Hour</p>
-        </div>
-</section>
+                <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
+                <div class="music-label">
+                        <p class="song-title">Deedaar</p>
+                        <p class="song-artist">Third Hour</p>
+                </div>
+        </section>
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
@@ -323,20 +382,45 @@
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-.music h2 { font-size: 2rem; margin-bottom: 2rem; }
-.music-player { 
-        border-radius: 16px; overflow: hidden; 
-        background-size: cover; background-position: center;
-        min-height: 180px; display: flex; align-items: flex-end;
-}
-.music-overlay { 
-        background: linear-gradient(transparent, rgba(0,0,0,0.8)); 
-        width: 100%; padding: 3rem 1rem 1rem 1rem;
-}
-.music-overlay audio { display: block; width: 100%; }
-.music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
-.song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-.song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
+        .music-player { 
+                border-radius: 20px; overflow: hidden; 
+                background-size: cover; background-position: center;
+                min-height: 220px; display: flex; align-items: flex-end;
+                position: relative;
+        }
+        .music-overlay { 
+                background: linear-gradient(transparent 30%, rgba(0,0,0,0.85)); 
+                width: 100%; padding: 6rem 1.5rem 1.5rem 1.5rem;
+                display: flex; flex-direction: column; gap: 1rem;
+        }
+        .player-controls { display: flex; justify-content: center; }
+        .ctrl-btn { 
+                background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
+                width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        .progress-area { width: 100%; }
+        .progress-track { 
+                width: 100%; height: 4px; background: rgba(255,255,255,0.2); 
+                border-radius: 2px; position: relative; cursor: pointer;
+        }
+        .progress-fill { 
+                height: 100%; background: white; border-radius: 2px; 
+                transition: width 0.3s linear; position: absolute; top: 0; left: 0;
+        }
+        .progress-thumb {
+                width: 12px; height: 12px; background: white; border-radius: 50%;
+                position: absolute; top: -4px; transform: translateX(-50%);
+                opacity: 0; transition: opacity 0.2s;
+        }
+        .progress-track:hover .progress-thumb { opacity: 1; }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.35rem; }
+        .time-labels span { font-size: 0.65rem; color: rgba(255,255,255,0.6); }
+        .music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
+        .song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+        .song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
