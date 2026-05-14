@@ -68,9 +68,11 @@
         }
 
         onMount(async () => {
-                liked = [false, false, false, false, false, false];
-                localStorage.removeItem('poem-liked');
-
+        const savedLiked = localStorage.getItem('poem-liked');
+        if (savedLiked) {
+                try { liked = JSON.parse(savedLiked); } catch (e) {}
+        }
+        // ... rest (keep everything else as is)
                 // Song like
                 if (localStorage.getItem('song-liked') === 'true') songLiked = true;
 
