@@ -113,17 +113,19 @@
         <About />
 
         <section id="music" class="music wrapper">
-                <h2>music</h2>
-                <div class="music-player">
-                        <audio controls style="width:100%;border-radius:16px;background:var(--elevation-one);">
+        <h2>music</h2>
+        <div class="music-player" style="background-image: url('https://i.postimg.cc/tJ3DDYyt/3fbc804b902583553c7626f1926a23a9.jpg');">
+                <div class="music-overlay">
+                        <audio controls style="width:100%;">
                                 <source src="https://files.catbox.moe/7ezaax.mp3" type="audio/mpeg">
                         </audio>
                 </div>
-                <div class="music-label">
-                        <p class="song-title">Deedaar</p>
-                        <p class="song-artist">Third Hour</p>
-                </div>
-        </section>
+        </div>
+        <div class="music-label">
+                <p class="song-title">Deedaar</p>
+                <p class="song-artist">Third Hour</p>
+        </div>
+</section>
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
@@ -321,12 +323,20 @@
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-        .music-player { border-radius: 16px; overflow: hidden; }
-        .music-player audio { display: block; }
-        .music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
-        .song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-        .song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+.music h2 { font-size: 2rem; margin-bottom: 2rem; }
+.music-player { 
+        border-radius: 16px; overflow: hidden; 
+        background-size: cover; background-position: center;
+        min-height: 180px; display: flex; align-items: flex-end;
+}
+.music-overlay { 
+        background: linear-gradient(transparent, rgba(0,0,0,0.8)); 
+        width: 100%; padding: 3rem 1rem 1rem 1rem;
+}
+.music-overlay audio { display: block; width: 100%; }
+.music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
+.song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+.song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
