@@ -76,16 +76,6 @@
                         }
                         animate();
                 }
-
-                // Back to top visibility
-                const backBtn = document.querySelector('.back-to-top');
-                window.addEventListener('scroll', () => {
-                        if (window.scrollY > 300) {
-                                backBtn?.classList.add('visible');
-                        } else {
-                                backBtn?.classList.remove('visible');
-                        }
-                });
         });
 </script>
 
@@ -129,16 +119,11 @@
                 background: var(--accent); border: none; color: white;
                 cursor: pointer; display: flex; align-items: center; justify-content: center;
                 z-index: 9998; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                transition: all 0.3s ease;
-                opacity: 0; pointer-events: none; transform: translateY(20px);
-        }
-
-        .back-to-top.visible {
-                opacity: 1; pointer-events: auto; transform: translateY(0);
+                transition: transform 0.2s, filter 0.2s;
         }
 
         .back-to-top:hover {
-                transform: translateY(-3px) !important; filter: brightness(1.15);
+                transform: translateY(-3px); filter: brightness(1.15);
         }
 
         @media (max-width: 768px) {
