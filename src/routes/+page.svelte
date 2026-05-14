@@ -15,29 +15,7 @@
         let commentNames: string[] = ['', '', '', '', '', ''];
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
-
-        let currentTrack: { name: string; artist: string; album: string; image: string; url: string } | null = null;
-
-        async function fetchNowPlaying() {
-                try {
-                        const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=nasailone&api_key=8f10877f57d9dbe9d0825b6a25049edd&format=json&limit=1`);
-                        const data = await res.json();
-                        const track = data.recenttracks?.track?.[0];
-                        if (track && track['@attr']?.nowplaying === 'true') {
-                                currentTrack = {
-                                        name: track.name,
-                                        artist: track.artist['#text'],
-                                        album: track.album['#text'] || 'Unknown Album',
-                                        image: track.image?.find((img: any) => img.size === 'large')?.['#text'] || '/default.png',
-                                        url: track.url
-                                };
-                        } else {
-                                currentTrack = null;
-                        }
-                } catch (e) {
-                        currentTrack = null;
-                }
-        }
+        let showPlayer = false;
 
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
@@ -70,9 +48,6 @@
                                 comments = newComments;
                         }
                 }
-
-                fetchNowPlaying();
-                setInterval(fetchNowPlaying, 30000);
         });
 
         async function handleLike(index: number): Promise<void> {
@@ -138,22 +113,27 @@
         <Hero />
         <About />
 
-        <section id="now-playing" class="music wrapper">
-                <h2>now playing</h2>
-                {#if currentTrack}
-                        <a href={currentTrack.url} target="_blank" rel="noreferrer" class="track-link">
-                                <div class="track-card">
-                                        <img src={currentTrack.image} alt={currentTrack.album} class="album-art" />
-                                        <div class="track-info">
-                                                <h3 class="track-name">🎵 {currentTrack.name}</h3>
-                                                <p class="artist-name">{currentTrack.artist}</p>
-                                                <p class="album-name">{currentTrack.album}</p>
+        <section id="music" class="music wrapper">
+                <h2>music</h2>
+                <div class="music-player">
+                        <div class="music-card" on:click={() => showPlayer = !showPlayer} on:keydown={(e) => e.key === 'Enter' && (showPlayer = !showPlayer)} role="button" tabindex="0">
+                                <div class="music-cover">
+                                        <img src="https://img.youtube.com/vi/7BiSMHfwYbY/maxresdefault.jpg" alt="Fiza" on:error={(e) => { const img = e.target as HTMLImageElement; img.src = 'https://img.youtube.com/vi/7BiSMHfwYbY/0.jpg'; }} />
+                                        <div class="play-overlay">
+                                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
                                         </div>
                                 </div>
-                        </a>
-                {:else}
-                        <p class="music-status">Not listening right now</p>
-                {/if}
+                                <div class="music-info">
+                                        <h3 class="song-title">Fiza</h3>
+                                        <p class="song-artist">Third Hour & Jlok</p>
+                                </div>
+                        </div>
+                        {#if showPlayer}
+                                <div class="player-embed">
+                                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/7BiSMHfwYbY?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                        {/if}
+                </div>
         </section>
 
         <section id="fragments" class="poems wrapper">
@@ -353,15 +333,18 @@
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
         .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-        .music-status { color: var(--text-secondary); opacity: 0.7; font-size: 0.95rem; }
-        .track-link { text-decoration: none; color: inherit; }
-        .track-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); transition: all 0.3s; }
-        .track-card:hover { background: rgba(255,255,255,0.06); border-color: var(--accent-opacity); }
-        .album-art { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--elevation-two); }
-        .track-info { display: flex; flex-direction: column; gap: 0.2rem; }
-        .track-name { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 600; }
-        .artist-name { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
-        .album-name { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; margin: 0; }
+        .music-player { border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); overflow: hidden; }
+        .music-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; cursor: pointer; transition: background 0.3s; }
+        .music-card:hover { background: rgba(255,255,255,0.04); }
+        .music-cover { position: relative; width: 100px; height: 100px; flex-shrink: 0; border-radius: 12px; overflow: hidden; }
+        .music-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .music-card:hover .play-overlay { opacity: 1; }
+        .music-info { display: flex; flex-direction: column; gap: 0.3rem; }
+        .song-title { font-size: 1.1rem; color: var(--text-primary); font-weight: 600; margin: 0; }
+        .song-artist { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+        .player-embed { border-top: 1px solid rgba(255,255,255,0.08); }
+        .player-embed iframe { display: block; }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
