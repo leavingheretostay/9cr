@@ -37,10 +37,13 @@
                 localStorage.setItem('poem-liked', JSON.stringify(liked));
 
                 if (supabase) {
-                        await supabase
+                        const { error } = await supabase
                                 .from('poem_likes')
-                                .update({ like_count: likes[index] })
-                                .eq('poem_index', index);
+                                .upsert({ poem_index: index, like_count: likes[index] }, { onConflict: 'poem_index' });
+
+                        if (error) {
+                                console.error('Like error:', error.message);
+                        }
                 }
         }
 </script>
