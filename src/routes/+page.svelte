@@ -10,19 +10,32 @@
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
         let liked: boolean[] = [false, false, false, false, false, false];
+        let comments: string[][] = [[], [], [], [], [], []];
+        let commentInputs: string[] = ['', '', '', '', '', ''];
 
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
                 localStorage.removeItem('poem-liked');
 
                 if (supabase) {
-                        const { data, error } = await supabase
+                        const { data: likeData, error: likeError } = await supabase
                                 .from('poem_likes')
                                 .select('*')
                                 .order('poem_index');
-                        if (!error && data) {
-                                data.forEach((row: any) => {
+                        if (!likeError && likeData) {
+                                likeData.forEach((row: any) => {
                                         likes[row.poem_index] = row.like_count;
+                                });
+                        }
+
+                        const { data: commentData, error: commentError } = await supabase
+                                .from('poem_comments')
+                                .select('*')
+                                .order('created_at', { ascending: true });
+                        if (!commentError && commentData) {
+                                commentData.forEach((row: any) => {
+                                        if (!comments[row.poem_index]) comments[row.poem_index] = [];
+                                        comments[row.poem_index].push(row.comment_text);
                                 });
                         }
                 }
@@ -38,6 +51,21 @@
                         await supabase
                                 .from('poem_likes')
                                 .upsert({ poem_index: index, like_count: likes[index] }, { onConflict: 'poem_index' });
+                }
+        }
+
+        async function postComment(index: number): Promise<void> {
+                const text = commentInputs[index].trim();
+                if (!text || !supabase) return;
+
+                const { error } = await supabase
+                        .from('poem_comments')
+                        .insert({ poem_index: index, comment_text: text });
+
+                if (!error) {
+                        if (!comments[index]) comments[index] = [];
+                        comments[index] = [...comments[index], text];
+                        commentInputs[index] = '';
                 }
         }
 
@@ -72,14 +100,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-0')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[0]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('Love each other or perish.', 0)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[0]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[0] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-0">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[0]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(0)}>Post</button>
                         </div>
                 </div>
 
@@ -93,14 +129,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-1')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[1]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('The finest souls are those who gulped pain and avoided making others taste it.', 1)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[1]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[1] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-1">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[1]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(1)}>Post</button>
                         </div>
                 </div>
 
@@ -114,14 +158,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-2')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[2]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('Obsession is the price I pay for my flaws.', 2)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[2]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[2] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-2">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[2]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(2)}>Post</button>
                         </div>
                 </div>
 
@@ -135,14 +187,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-3')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[3]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('Love one another, but make not a bond of love.', 3)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[3]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[3] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-3">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[3]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(3)}>Post</button>
                         </div>
                 </div>
 
@@ -156,14 +216,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-4')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[4]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('Sometimes I am terrified of my intense hunger to live...', 4)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[4]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[4] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-4">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[4]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(4)}>Post</button>
                         </div>
                 </div>
 
@@ -177,14 +245,22 @@
                                 </button>
                                 <button class="action-btn" on:click={() => document.getElementById('comment-5')?.focus()}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        <span>{comments[5]?.length || 0}</span>
                                 </button>
                                 <button class="action-btn" on:click={() => sharePoem('Having experienced both, I am not sure which is worse...', 5)}>
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
+                        {#if comments[5]?.length > 0}
+                                <div class="comments-list">
+                                        {#each comments[5] as comment}
+                                                <p class="comment-item">{comment}</p>
+                                        {/each}
+                                </div>
+                        {/if}
                         <div class="comment-box" id="comment-5">
-                                <input type="text" placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn">Post</button>
+                                <input type="text" bind:value={commentInputs[5]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(5)}>Post</button>
                         </div>
                 </div>
         </section>
@@ -192,7 +268,6 @@
         <section id="books" class="books wrapper">
                 <h2>bookshelf</h2>
                 <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
-
                 <div class="book-grid">
                         <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0">
                                 <div class="book-cover"><img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" /></div>
@@ -217,40 +292,24 @@
 <style lang="scss">
         .poems { margin-top: 5rem; width: 100%; max-width: 700px; }
         .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
-
-        .quote {
-                padding: 1.8rem; margin-bottom: 2rem;
-                border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
-                background: rgba(255,255,255,0.03); backdrop-filter: blur(8px);
-        }
+        .quote { padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); }
         .quote p { line-height: 2rem; font-size: 1rem; white-space: pre-line; margin-bottom: 0.5rem; }
-
         .quote-author { display: block; opacity: 0.7; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; }
-
         .quote-actions { display: flex; gap: 1.5rem; align-items: center; }
-
-        .action-btn {
-                display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none;
-                color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem;
-                -webkit-tap-highlight-color: transparent; transition: color 0.2s;
-        }
+        .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
         .action-btn:hover { color: var(--text-primary); }
         .action-btn.liked { color: #ef4444; }
-
         .heart-icon, .comment-icon, .share-icon { width: 20px; height: 20px; }
         .heart-icon { fill: transparent; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; }
         .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
         .comment-icon, .share-icon { stroke: currentColor; }
-
-        @keyframes heartPop {
-                0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); }
-        }
-
-        .comment-box { display: flex; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); }
+        @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
+        .comments-list { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .comment-item { font-size: 0.8rem; color: var(--text-secondary); padding: 0.3rem 0; margin: 0; line-height: 1.4; }
+        .comment-box { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
         .comment-box input { flex: 1; padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
         .comment-box input:focus { outline: none; border-color: var(--accent); }
         .post-btn { background: var(--accent); border: none; color: white; padding: 0.4rem 0.9rem; border-radius: 10px; font-size: 0.8rem; cursor: pointer; font-family: var(--font-two); }
-
         .books { margin-top: 5rem; width: 100%; max-width: 700px; }
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
         .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0; margin-bottom: 2rem; }
@@ -263,10 +322,5 @@
         .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; }
         .book-info .author { font-size: 0.8rem; opacity: 0.55; color: var(--text-secondary); }
         .book-info .tag { font-size: 0.65rem; opacity: 0.35; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.15rem; color: var(--text-secondary); }
-
-        @media (max-width: 600px) {
-                .book { padding: 1rem 1.15rem; gap: 1rem; }
-                .book-cover { width: 42px; height: 60px; }
-                .book-info h3 { font-size: 0.95rem; }
-        }
+        @media (max-width: 600px) { .book { padding: 1rem 1.15rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } .book-info h3 { font-size: 0.95rem; } }
 </style>
