@@ -118,7 +118,7 @@
                 <div class="music-player">
                         <div class="music-card" on:click={() => showPlayer = !showPlayer} on:keydown={(e) => e.key === 'Enter' && (showPlayer = !showPlayer)} role="button" tabindex="0">
                                 <div class="music-cover">
-                                        <img src="https://img.youtube.com/vi/7BiSMHfwYbY/maxresdefault.jpg" alt="Fiza" on:error={(e) => { const img = e.target as HTMLImageElement; img.src = 'https://img.youtube.com/vi/7BiSMHfwYbY/0.jpg'; }} />
+                                        <img src="https://img.youtube.com/vi/7BiSMHfwYbY/maxresdefault.jpg" alt="Fiza" />
                                         <div class="play-overlay">
                                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg>
                                         </div>
