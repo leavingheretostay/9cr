@@ -61,7 +61,12 @@
                         <p>"Love each other or perish."</p>
                         <div class="quote-footer">
                                 <span>— Kurt Vonnegut</span>
-                                <button class="like-btn" on:click={() => handleLike(0)}>❤️ {likes[0]}</button>
+                                <button class="like-btn" class:liked={liked[0]} on:click={() => handleLike(0)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[0]}
+                                </button>
                         </div>
                 </div>
 
@@ -69,7 +74,12 @@
                         <p>"The finest souls are those who gulped pain and avoided making others taste it."</p>
                         <div class="quote-footer">
                                 <span>— Nizariat</span>
-                                <button class="like-btn" on:click={() => handleLike(1)}>❤️ {likes[1]}</button>
+                                <button class="like-btn" class:liked={liked[1]} on:click={() => handleLike(1)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[1]}
+                                </button>
                         </div>
                 </div>
 
@@ -77,7 +87,12 @@
                         <p>"Obsession is the price I pay for my flaws."</p>
                         <div class="quote-footer">
                                 <span>— 9cr</span>
-                                <button class="like-btn" on:click={() => handleLike(2)}>❤️ {likes[2]}</button>
+                                <button class="like-btn" class:liked={liked[2]} on:click={() => handleLike(2)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[2]}
+                                </button>
                         </div>
                 </div>
 
@@ -85,7 +100,12 @@
                         <p>"Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls."</p>
                         <div class="quote-footer">
                                 <span>— Khalil Gibran</span>
-                                <button class="like-btn" on:click={() => handleLike(3)}>❤️ {likes[3]}</button>
+                                <button class="like-btn" class:liked={liked[3]} on:click={() => handleLike(3)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[3]}
+                                </button>
                         </div>
                 </div>
 
@@ -93,7 +113,12 @@
                         <p>"Sometimes I am terrified of my intense hunger to live, because dying has always seemed like the easier option."</p>
                         <div class="quote-footer">
                                 <span>— Christopher Poindexter</span>
-                                <button class="like-btn" on:click={() => handleLike(4)}>❤️ {likes[4]}</button>
+                                <button class="like-btn" class:liked={liked[4]} on:click={() => handleLike(4)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[4]}
+                                </button>
                         </div>
                 </div>
 
@@ -101,7 +126,12 @@
                         <p>"Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."</p>
                         <div class="quote-footer">
                                 <span>— Margaret Atwood</span>
-                                <button class="like-btn" on:click={() => handleLike(5)}>❤️ {likes[5]}</button>
+                                <button class="like-btn" class:liked={liked[5]} on:click={() => handleLike(5)}>
+                                        <svg class="heart-icon" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        {likes[5]}
+                                </button>
                         </div>
                 </div>
         </section>
@@ -193,20 +223,44 @@
         }
 
         .like-btn {
-                background: var(--elevation-one);
-                border: 1px solid var(--elevation-four);
-                color: var(--text-secondary);
-                font-size: 0.8rem;
-                padding: 0.35rem 0.75rem;
-                border-radius: 20px;
+                background: transparent;
+                border: none;
                 cursor: pointer;
-                transition: all 0.2s;
+                padding: 0.25rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+                transition: color 0.2s;
         }
 
-        .like-btn:hover {
-                background: var(--elevation-two);
+        .like-btn.liked {
                 color: #ef4444;
-                border-color: #ef4444;
+        }
+
+        .heart-icon {
+                width: 22px;
+                height: 22px;
+                fill: transparent;
+                stroke: currentColor;
+                stroke-width: 2;
+                transition: all 0.3s ease;
+        }
+
+        .like-btn.liked .heart-icon {
+                fill: #ef4444;
+                stroke: #ef4444;
+                animation: heartPop 0.4s ease;
+        }
+
+        @keyframes heartPop {
+                0% { transform: scale(1); }
+                30% { transform: scale(1.35); }
+                60% { transform: scale(0.85); }
+                100% { transform: scale(1); }
         }
 
         .books {
