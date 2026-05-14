@@ -22,6 +22,8 @@
         let progress = 0;
         let currentTime = '0:00';
         let duration = '0:00';
+        let songLikes = 0;
+        let songLiked = false;
 
         function togglePlay() {
                 if (!audioEl) return;
@@ -53,9 +55,26 @@
                 audioEl.currentTime = (x / rect.width) * audioEl.duration;
         }
 
+        async function likeSong() {
+                if (songLiked) return;
+                songLiked = true;
+                songLikes++;
+                if (supabase) {
+                        await supabase
+                                .from('poem_likes')
+                                .upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' });
+                }
+        }
+
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
                 localStorage.removeItem('poem-liked');
+
+                // Load song likes
+                if (supabase) {
+                        const { data } = await supabase.from('poem_likes').select('*').eq('poem_index', 99).single();
+                        if (data) songLikes = data.like_count;
+                }
 
                 if (supabase) {
                         const { data: likeData, error: likeError } = await supabase
@@ -64,7 +83,7 @@
                                 .order('poem_index');
                         if (!likeError && likeData) {
                                 likeData.forEach((row: any) => {
-                                        likes[row.poem_index] = row.like_count;
+                                        if (row.poem_index < 6) likes[row.poem_index] = row.like_count;
                                 });
                         }
 
@@ -153,24 +172,48 @@
                 <h2>music</h2>
                 <div class="music-player" style="background-image: url('https://i.postimg.cc/tJ3DDYyt/3fbc804b902583553c7626f1926a23a9.jpg');">
                         <div class="music-overlay">
-                                <div class="player-controls">
-                                        <button class="ctrl-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
+                                <div class="player-header">
+                                        <span class="player-label">9CR Player</span>
+                                </div>
+                                <div class="player-info">
+                                        <h3 class="song-title">Deedaar</h3>
+                                        <p class="song-artist">Third Hour</p>
+                                </div>
+                                <div class="player-buttons">
+                                        <button class="ctrl-btn small" aria-label="Previous">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                                        <polygon points="19,4 8,12 19,20"/>
+                                                        <rect x="4" y="4" width="3" height="16" rx="1"/>
+                                                </svg>
+                                        </button>
+                                        <button class="ctrl-btn play-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
                                                 {#if playing}
-                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
                                                                 <rect x="6" y="4" width="4" height="16" rx="1"/>
                                                                 <rect x="14" y="4" width="4" height="16" rx="1"/>
                                                         </svg>
                                                 {:else}
-                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
                                                                 <polygon points="7,4 20,12 7,20"/>
                                                         </svg>
                                                 {/if}
+                                        </button>
+                                        <button class="ctrl-btn small" aria-label="Next">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                                        <polygon points="5,4 16,12 5,20"/>
+                                                        <rect x="17" y="4" width="3" height="16" rx="1"/>
+                                                </svg>
+                                        </button>
+                                        <button class="ctrl-btn small like-btn" class:liked={songLiked} on:click={likeSong} aria-label="Like">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2">
+                                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                                                        <rect x="2" y="9" width="4" height="11"/>
+                                                </svg>
                                         </button>
                                 </div>
                                 <div class="progress-area">
                                         <div class="progress-track" on:mousedown={seek} on:touchstart={seek}>
                                                 <div class="progress-fill" style="width: {progress}%"></div>
-                                                <div class="progress-thumb" style="left: {progress}%"></div>
                                         </div>
                                         <div class="time-labels">
                                                 <span>{currentTime}</span>
@@ -180,10 +223,6 @@
                         </div>
                 </div>
                 <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
-                <div class="music-label">
-                        <p class="song-title">Deedaar</p>
-                        <p class="song-artist">Third Hour</p>
-                </div>
         </section>
 
         <section id="fragments" class="poems wrapper">
@@ -325,24 +364,11 @@
 {#if activeSheet >= 0}
         <div class="comments-overlay" on:click={() => activeSheet = -1}>
                 <div class="comments-sheet" on:click|stopPropagation>
-                        <div class="sheet-header">
-                                <h3>Comments</h3>
-                                <button class="action-btn" on:click={() => activeSheet = -1}>✕</button>
-                        </div>
+                        <div class="sheet-header"><h3>Comments</h3><button class="action-btn" on:click={() => activeSheet = -1}>✕</button></div>
                         <div class="sheet-body">
                                 {#if comments[activeSheet]?.length > 0}
                                         {#each comments[activeSheet] as comment, i}
-                                                <div class="comment-bubble"
-                                                        on:touchstart={() => {
-                                                                longPressTimer = setTimeout(() => {
-                                                                        if (confirm('Delete this comment?')) {
-                                                                                deleteComment(activeSheet, i);
-                                                                        }
-                                                                }, 800);
-                                                        }}
-                                                        on:touchend={() => clearTimeout(longPressTimer)}
-                                                        on:touchmove={() => clearTimeout(longPressTimer)}
-                                                >
+                                                <div class="comment-bubble" on:touchstart={() => { longPressTimer = setTimeout(() => { if (confirm('Delete this comment?')) { deleteComment(activeSheet, i); } }, 800); }} on:touchend={() => clearTimeout(longPressTimer)} on:touchmove={() => clearTimeout(longPressTimer)}>
                                                         <span class="comment-name">{comment.name}</span>
                                                         <p class="comment-text">{comment.text}</p>
                                                 </div>
@@ -355,10 +381,7 @@
                                 <input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" />
                                 <input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" />
                                 <button class="send-btn" on:click={() => postComment(activeSheet)}>
-                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2">
-                                                <line x1="22" y1="2" x2="11" y2="13"/>
-                                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                                        </svg>
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
                 </div>
@@ -372,55 +395,34 @@
         .quote p { line-height: 2rem; font-size: 1rem; white-space: pre-line; margin-bottom: 0.5rem; }
         .quote-author { display: block; opacity: 0.7; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; }
         .quote-actions { display: flex; gap: 1.5rem; align-items: center; }
-        .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
+        .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; transition: color 0.2s; }
         .action-btn:hover { color: var(--text-primary); }
         .action-btn.liked { color: #ef4444; }
         .heart-icon, .comment-icon, .share-icon { width: 20px; height: 20px; }
         .heart-icon { fill: transparent; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; }
         .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
-        .comment-icon, .share-icon { stroke: currentColor; }
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
         .music h2 { font-size: 2rem; margin-bottom: 2rem; }
-        .music-player { 
-                border-radius: 20px; overflow: hidden; 
-                background-size: cover; background-position: center;
-                min-height: 220px; display: flex; align-items: flex-end;
-                position: relative;
-        }
-        .music-overlay { 
-                background: linear-gradient(transparent 30%, rgba(0,0,0,0.85)); 
-                width: 100%; padding: 6rem 1.5rem 1.5rem 1.5rem;
-                display: flex; flex-direction: column; gap: 1rem;
-        }
-        .player-controls { display: flex; justify-content: center; }
-        .ctrl-btn { 
-                background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
-                width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
-                cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s;
-        }
-        .ctrl-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; position: relative; }
+        .music-overlay { background: linear-gradient(transparent 20%, rgba(0,0,0,0.9)); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; min-height: 200px; justify-content: flex-end; }
+        .player-header { display: flex; justify-content: space-between; align-items: center; }
+        .player-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
+        .player-info { }
+        .song-title { font-size: 1.1rem; color: white; font-weight: 600; margin: 0 0 0.15rem 0; }
+        .song-artist { font-size: 0.85rem; color: rgba(255,255,255,0.7); margin: 0; }
+        .player-buttons { display: flex; align-items: center; gap: 0.75rem; }
+        .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .ctrl-btn.small { width: 36px; height: 36px; }
+        .ctrl-btn.play-btn { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .ctrl-btn:hover { transform: scale(1.1); }
+        .like-btn.liked { opacity: 1; }
         .progress-area { width: 100%; }
-        .progress-track { 
-                width: 100%; height: 4px; background: rgba(255,255,255,0.2); 
-                border-radius: 2px; position: relative; cursor: pointer;
-        }
-        .progress-fill { 
-                height: 100%; background: white; border-radius: 2px; 
-                transition: width 0.3s linear; position: absolute; top: 0; left: 0;
-        }
-        .progress-thumb {
-                width: 12px; height: 12px; background: white; border-radius: 50%;
-                position: absolute; top: -4px; transform: translateX(-50%);
-                opacity: 0; transition: opacity 0.2s;
-        }
-        .progress-track:hover .progress-thumb { opacity: 1; }
-        .time-labels { display: flex; justify-content: space-between; margin-top: 0.35rem; }
-        .time-labels span { font-size: 0.65rem; color: rgba(255,255,255,0.6); }
-        .music-label { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding: 0 0.25rem; }
-        .song-title { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin: 0; }
-        .song-artist { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+        .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; position: relative; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.25rem; }
+        .time-labels span { font-size: 0.6rem; color: rgba(255,255,255,0.5); }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
@@ -430,10 +432,8 @@
         .sheet-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
         .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); align-items: center; }
         .sheet-input input { flex: 1; min-width: 60px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
-        .sheet-input input:focus { outline: none; border-color: var(--accent); }
         .name-input { max-width: 100px; }
-        .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
-        .send-btn:hover { filter: brightness(1.15); transform: scale(1.05); }
+        .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
         .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
@@ -443,13 +443,12 @@
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
         .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0; margin-bottom: 2rem; }
         .book-grid { display: flex; flex-direction: column; gap: 1rem; }
-        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.3s var(--bezier-one); }
+        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); transition: all 0.3s; }
         .book:hover { background: rgba(255,255,255,0.04); border-color: var(--accent-opacity); }
-        .book-cover { width: 48px; height: 70px; border-radius: 6px; background: var(--elevation-two); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.04); }
-        .book-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-        .book-info { display: flex; flex-direction: column; gap: 0.15rem; }
+        .book-cover { width: 48px; height: 70px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+        .book-cover img { width: 100%; height: 100%; object-fit: cover; }
         .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; }
-        .book-info .author { font-size: 0.8rem; opacity: 0.55; color: var(--text-secondary); }
-        .book-info .tag { font-size: 0.65rem; opacity: 0.35; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.15rem; color: var(--text-secondary); }
-        @media (max-width: 600px) { .book { padding: 1rem 1.15rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } .book-info h3 { font-size: 0.95rem; } }
+        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.55; }
+        .book-info .tag { font-size: 0.65rem; opacity: 0.35; text-transform: uppercase; letter-spacing: 1.5px; }
+        @media (max-width: 600px) { .book { padding: 1rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } }
 </style>
