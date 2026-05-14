@@ -14,6 +14,7 @@
         let commentInputs: string[] = ['', '', '', '', '', ''];
         let commentNames: string[] = ['', '', '', '', '', ''];
         let activeSheet: number = -1;
+        let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
@@ -72,6 +73,22 @@
                         if (!comments[index]) comments[index] = [];
                         comments[index] = [...comments[index], { name, text }];
                         commentInputs[index] = '';
+                }
+        }
+
+        async function deleteComment(poemIndex: number, commentIndex: number): Promise<void> {
+                if (!supabase) return;
+                const comment = comments[poemIndex][commentIndex];
+
+                const { error } = await supabase
+                        .from('poem_comments')
+                        .delete()
+                        .eq('comment_text', comment.text)
+                        .eq('comment_name', comment.name);
+
+                if (!error) {
+                        comments[poemIndex] = comments[poemIndex].filter((_, i) => i !== commentIndex);
+                        comments = comments;
                 }
         }
 
@@ -238,8 +255,18 @@
                         </div>
                         <div class="sheet-body">
                                 {#if comments[activeSheet]?.length > 0}
-                                        {#each comments[activeSheet] as comment}
-                                                <div class="comment-bubble">
+                                        {#each comments[activeSheet] as comment, i}
+                                                <div class="comment-bubble"
+                                                        on:touchstart={() => {
+                                                                longPressTimer = setTimeout(() => {
+                                                                        if (confirm('Delete this comment?')) {
+                                                                                deleteComment(activeSheet, i);
+                                                                        }
+                                                                }, 800);
+                                                        }}
+                                                        on:touchend={() => clearTimeout(longPressTimer)}
+                                                        on:touchmove={() => clearTimeout(longPressTimer)}
+                                                >
                                                         <span class="comment-name">{comment.name}</span>
                                                         <p class="comment-text">{comment.text}</p>
                                                 </div>
@@ -251,7 +278,12 @@
                         <div class="sheet-input">
                                 <input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" />
                                 <input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" />
-                                <button class="post-btn" on:click={() => postComment(activeSheet)}>Post</button>
+                                <button class="send-btn" on:click={() => postComment(activeSheet)}>
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                        </svg>
+                                </button>
                         </div>
                 </div>
         </div>
@@ -279,10 +311,12 @@
         .sheet-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .sheet-header h3 { margin: 0; font-size: 1rem; }
         .sheet-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
-        .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
-        .sheet-input input { flex: 1; min-width: 80px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
+        .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); align-items: center; }
+        .sheet-input input { flex: 1; min-width: 60px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
         .sheet-input input:focus { outline: none; border-color: var(--accent); }
         .name-input { max-width: 100px; }
+        .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+        .send-btn:hover { filter: brightness(1.15); transform: scale(1.05); }
         .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
         .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
