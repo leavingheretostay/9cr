@@ -16,6 +16,12 @@
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
+        // Delete comment popup
+        let showDeleteComment = false;
+        let deleteCommentTarget: { poem: number; index: number } | null = null;
+        let deleteCommentPassword = '';
+        let deleteCommentError = '';
+
         // Audio player
         let audioEl: HTMLAudioElement;
         let playing = false;
@@ -68,12 +74,11 @@
         }
 
         onMount(async () => {
-        const savedLiked = localStorage.getItem('poem-liked');
-        if (savedLiked) {
-                try { liked = JSON.parse(savedLiked); } catch (e) {}
-        }
-        // ... rest (keep everything else as is)
-                // Song like
+                const savedLiked = localStorage.getItem('poem-liked');
+                if (savedLiked) {
+                        try { liked = JSON.parse(savedLiked); } catch (e) {}
+                }
+
                 if (localStorage.getItem('song-liked') === 'true') songLiked = true;
 
                 if (supabase) {
@@ -151,6 +156,19 @@
                 }
         }
 
+        async function confirmDeleteComment() {
+                if (deleteCommentPassword !== '9cr2026') {
+                        deleteCommentError = 'Wrong password';
+                        return;
+                }
+                if (deleteCommentTarget) {
+                        await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index);
+                        showDeleteComment = false;
+                        deleteCommentPassword = '';
+                        deleteCommentError = '';
+                }
+        }
+
         function sharePoem(text: string, index: number): void {
                 const url = 'https://9cr.pages.dev';
                 const shareText = `"${text}"\n\n— via 9cr`;
@@ -219,131 +237,21 @@
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
 
-                <div class="quote">
-                        <p>"Love each other or perish."</p>
-                        <span class="quote-author">— Kurt Vonnegut</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[0]} on:click={() => handleLike(0)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[0]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 0}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[0]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('Love each other or perish.', 0)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
-
-                <div class="quote">
-                        <p>"The finest souls are those who gulped pain and avoided making others taste it."</p>
-                        <span class="quote-author">— Nizariat</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[1]} on:click={() => handleLike(1)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[1]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 1}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[1]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('The finest souls are those who gulped pain and avoided making others taste it.', 1)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
-
-                <div class="quote">
-                        <p>"Obsession is the price I pay for my flaws."</p>
-                        <span class="quote-author">— 9cr</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[2]} on:click={() => handleLike(2)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[2]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 2}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[2]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('Obsession is the price I pay for my flaws.', 2)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
-
-                <div class="quote">
-                        <p>"Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls."</p>
-                        <span class="quote-author">— Khalil Gibran</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[3]} on:click={() => handleLike(3)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[3]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 3}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[3]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('Love one another, but make not a bond of love.', 3)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
-
-                <div class="quote">
-                        <p>"Sometimes I am terrified of my intense hunger to live, because dying has always seemed like the easier option."</p>
-                        <span class="quote-author">— Christopher Poindexter</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[4]} on:click={() => handleLike(4)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[4]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 4}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[4]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('Sometimes I am terrified of my intense hunger to live...', 4)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
-
-                <div class="quote">
-                        <p>"Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."</p>
-                        <span class="quote-author">— Margaret Atwood</span>
-                        <div class="quote-actions">
-                                <button class="action-btn" class:liked={liked[5]} on:click={() => handleLike(5)}>
-                                        <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                        <span>{likes[5]}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => activeSheet = 5}>
-                                        <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                        <span>{comments[5]?.length || 0}</span>
-                                </button>
-                                <button class="action-btn" on:click={() => sharePoem('Having experienced both, I am not sure which is worse...', 5)}>
-                                        <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
-                        </div>
-                </div>
+                <div class="quote"><p>"Love each other or perish."</p><span class="quote-author">— Kurt Vonnegut</span><div class="quote-actions"><button class="action-btn" class:liked={liked[0]} on:click={() => handleLike(0)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[0]}</span></button><button class="action-btn" on:click={() => activeSheet = 0}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[0]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Love each other or perish.', 0)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+                <div class="quote"><p>"The finest souls are those who gulped pain and avoided making others taste it."</p><span class="quote-author">— Nizariat</span><div class="quote-actions"><button class="action-btn" class:liked={liked[1]} on:click={() => handleLike(1)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[1]}</span></button><button class="action-btn" on:click={() => activeSheet = 1}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[1]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('The finest souls are those who gulped pain and avoided making others taste it.', 1)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+                <div class="quote"><p>"Obsession is the price I pay for my flaws."</p><span class="quote-author">— 9cr</span><div class="quote-actions"><button class="action-btn" class:liked={liked[2]} on:click={() => handleLike(2)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[2]}</span></button><button class="action-btn" on:click={() => activeSheet = 2}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[2]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Obsession is the price I pay for my flaws.', 2)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+                <div class="quote"><p>"Love one another, but make not a bond of love: Let it rather be a moving sea between the shores of your souls."</p><span class="quote-author">— Khalil Gibran</span><div class="quote-actions"><button class="action-btn" class:liked={liked[3]} on:click={() => handleLike(3)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[3]}</span></button><button class="action-btn" on:click={() => activeSheet = 3}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[3]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Love one another, but make not a bond of love.', 3)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+                <div class="quote"><p>"Sometimes I am terrified of my intense hunger to live, because dying has always seemed like the easier option."</p><span class="quote-author">— Christopher Poindexter</span><div class="quote-actions"><button class="action-btn" class:liked={liked[4]} on:click={() => handleLike(4)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[4]}</span></button><button class="action-btn" on:click={() => activeSheet = 4}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[4]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Sometimes I am terrified of my intense hunger to live...', 4)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+                <div class="quote"><p>"Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."</p><span class="quote-author">— Margaret Atwood</span><div class="quote-actions"><button class="action-btn" class:liked={liked[5]} on:click={() => handleLike(5)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[5]}</span></button><button class="action-btn" on:click={() => activeSheet = 5}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[5]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Having experienced both, I am not sure which is worse...', 5)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
         </section>
 
         <section id="books" class="books wrapper">
                 <h2>bookshelf</h2>
                 <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
                 <div class="book-grid">
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0">
-                                <div class="book-cover"><img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" /></div>
-                                <div class="book-info"><h3>Love Her Wild</h3><span class="author">Atticus</span><span class="tag">Poetry</span></div>
-                        </div>
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} role="button" tabindex="0">
-                                <div class="book-cover"><img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" /></div>
-                                <div class="book-info"><h3>The Alchemist</h3><span class="author">Paulo Coelho</span><span class="tag">Fiction</span></div>
-                        </div>
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} role="button" tabindex="0">
-                                <div class="book-cover"><img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" /></div>
-                                <div class="book-info"><h3>You Are The Best Wife</h3><span class="author">Ajay K. Pandey</span><span class="tag">Fiction</span></div>
-                        </div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" /></div><div class="book-info"><h3>Love Her Wild</h3><span class="author">Atticus</span><span class="tag">Poetry</span></div></div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" /></div><div class="book-info"><h3>The Alchemist</h3><span class="author">Paulo Coelho</span><span class="tag">Fiction</span></div></div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" /></div><div class="book-info"><h3>You Are The Best Wife</h3><span class="author">Ajay K. Pandey</span><span class="tag">Fiction</span></div></div>
                 </div>
         </section>
 
@@ -352,6 +260,7 @@
         <Footer />
 </main>
 
+<!-- Comments Sheet -->
 {#if activeSheet >= 0}
         <div class="comments-overlay" on:click={() => activeSheet = -1}>
                 <div class="comments-sheet" on:click|stopPropagation>
@@ -359,7 +268,16 @@
                         <div class="sheet-body">
                                 {#if comments[activeSheet]?.length > 0}
                                         {#each comments[activeSheet] as comment, i}
-                                                <div class="comment-bubble" on:touchstart={() => { longPressTimer = setTimeout(() => { if (confirm('Delete this comment?')) { deleteComment(activeSheet, i); } }, 800); }} on:touchend={() => clearTimeout(longPressTimer)} on:touchmove={() => clearTimeout(longPressTimer)}>
+                                                <div class="comment-bubble"
+                                                        on:touchstart={() => {
+                                                                longPressTimer = setTimeout(() => {
+                                                                        showDeleteComment = true;
+                                                                        deleteCommentTarget = { poem: activeSheet, index: i };
+                                                                }, 800);
+                                                        }}
+                                                        on:touchend={() => clearTimeout(longPressTimer)}
+                                                        on:touchmove={() => clearTimeout(longPressTimer)}
+                                                >
                                                         <span class="comment-name">{comment.name}</span>
                                                         <p class="comment-text">{comment.text}</p>
                                                 </div>
@@ -374,6 +292,27 @@
                                 <button class="send-btn" on:click={() => postComment(activeSheet)}>
                                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
+                        </div>
+                </div>
+        </div>
+{/if}
+
+<!-- Delete Comment Modal -->
+{#if showDeleteComment}
+        <div class="modal-overlay" on:click={() => showDeleteComment = false} role="dialog" aria-modal="true">
+                <div class="modal-content" on:click|stopPropagation>
+                        <div class="modal-header">
+                                <h3>Delete Comment</h3>
+                                <button class="close-btn" on:click={() => showDeleteComment = false}>✕</button>
+                        </div>
+                        <div class="modal-body">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p>
+                                <input type="password" bind:value={deleteCommentPassword} placeholder="Password" />
+                                {#if deleteCommentError}<p class="error">{deleteCommentError}</p>{/if}
+                        </div>
+                        <div class="modal-footer">
+                                <button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button>
+                                <button class="delete-btn" on:click={confirmDeleteComment}>Delete</button>
                         </div>
                 </div>
         </div>
@@ -395,34 +334,25 @@
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
         .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-.music h2 { font-size: 2rem; margin-bottom: 2rem; }
-.music-player { 
-        border-radius: 16px; overflow: hidden; 
-        background-size: cover; background-position: center;
-        height: 180px; position: relative;
-}
-.music-overlay { 
-        background: linear-gradient(transparent 10%, rgba(0,0,0,0.85)); 
-        padding: 0.75rem 1.25rem; height: 100%; 
-        display: flex; flex-direction: column; justify-content: flex-end; 
-        gap: 0.3rem;
-}
-.player-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
-.player-info { display: flex; flex-direction: column; gap: 0.05rem; }
-.song-title { font-size: 1rem; color: white; font-weight: 600; margin: 0; }
-.song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0; }
-.player-buttons { display: flex; align-items: center; gap: 0.5rem; }
-.ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.ctrl-btn.small { width: 30px; height: 30px; }
-.ctrl-btn.play-btn { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; }
-.ctrl-btn:hover { transform: scale(1.08); }
-.like-btn { gap: 0.2rem; }
-.like-count { font-size: 0.65rem; color: rgba(255,255,255,0.65); }
-.progress-area { width: 100%; margin-top: 0.2rem; }
-.progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; }
-.progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
-.time-labels { display: flex; justify-content: space-between; margin-top: 0.15rem; }
-.time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.4); }
+        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
+        .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; height: 160px; position: relative; }
+        .music-overlay { background: linear-gradient(transparent 5%, rgba(0,0,0,0.9)); padding: 0.6rem 1rem; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.25rem; }
+        .player-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
+        .player-info { display: flex; flex-direction: column; gap: 0; }
+        .song-title { font-size: 1rem; color: white; font-weight: 600; margin: 0; }
+        .song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0; }
+        .player-buttons { display: flex; align-items: center; gap: 0.4rem; }
+        .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .ctrl-btn.small { width: 28px; height: 28px; }
+        .ctrl-btn.play-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .ctrl-btn:hover { transform: scale(1.08); }
+        .like-btn { gap: 0.2rem; }
+        .like-count { font-size: 0.6rem; color: rgba(255,255,255,0.6); }
+        .progress-area { width: 100%; margin-top: 0.15rem; }
+        .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.1rem; }
+        .time-labels span { font-size: 0.5rem; color: rgba(255,255,255,0.4); }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
@@ -438,6 +368,20 @@
         .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
         .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
         .no-comments { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; text-align: center; padding: 1rem 0; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-content { background: var(--bg-color); border: 1px solid var(--elevation-four); border-radius: 16px; padding: 1.5rem; max-width: 460px; width: 100%; animation: slideUp 0.25s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .modal-header h3 { margin: 0; font-size: 1.25rem; }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; }
+        .modal-body { display: flex; flex-direction: column; gap: 0.6rem; }
+        .modal-body input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; }
+        .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
+        .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+        .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; }
+        .delete-btn { background: #ef4444; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; font-family: var(--font-two); }
+        .delete-btn:hover { filter: brightness(1.1); }
 
         .books { margin-top: 5rem; width: 100%; max-width: 700px; }
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
