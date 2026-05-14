@@ -16,6 +16,29 @@
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
+        let currentTrack: { name: string; artist: string; album: string; image: string; url: string } | null = null;
+
+        async function fetchNowPlaying() {
+                try {
+                        const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=nasailone&api_key=8f10877f57d9dbe9d0825b6a25049edd&format=json&limit=1`);
+                        const data = await res.json();
+                        const track = data.recenttracks?.track?.[0];
+                        if (track && track['@attr']?.nowplaying === 'true') {
+                                currentTrack = {
+                                        name: track.name,
+                                        artist: track.artist['#text'],
+                                        album: track.album['#text'] || 'Unknown Album',
+                                        image: track.image?.find((img: any) => img.size === 'large')?.['#text'] || '/default.png',
+                                        url: track.url
+                                };
+                        } else {
+                                currentTrack = null;
+                        }
+                } catch (e) {
+                        currentTrack = null;
+                }
+        }
+
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
                 localStorage.removeItem('poem-liked');
@@ -36,15 +59,20 @@
                                 .select('*')
                                 .order('created_at', { ascending: true });
                         if (!commentError && commentData) {
+                                const newComments: { name: string; text: string }[][] = [[], [], [], [], [], []];
                                 commentData.forEach((row: any) => {
-                                        if (!comments[row.poem_index]) comments[row.poem_index] = [];
-                                        comments[row.poem_index].push({
+                                        if (!newComments[row.poem_index]) newComments[row.poem_index] = [];
+                                        newComments[row.poem_index].push({
                                                 name: row.comment_name || 'Anonymous',
                                                 text: row.comment_text
                                         });
                                 });
+                                comments = newComments;
                         }
                 }
+
+                fetchNowPlaying();
+                setInterval(fetchNowPlaying, 30000);
         });
 
         async function handleLike(index: number): Promise<void> {
@@ -70,8 +98,8 @@
                         .insert({ poem_index: index, comment_text: text, comment_name: name });
 
                 if (!error) {
-                        if (!comments[index]) comments[index] = [];
                         comments[index] = [...comments[index], { name, text }];
+                        comments = comments;
                         commentInputs[index] = '';
                 }
         }
@@ -109,6 +137,24 @@
 <main>
         <Hero />
         <About />
+
+        <section id="now-playing" class="music wrapper">
+                <h2>now playing</h2>
+                {#if currentTrack}
+                        <a href={currentTrack.url} target="_blank" rel="noreferrer" class="track-link">
+                                <div class="track-card">
+                                        <img src={currentTrack.image} alt={currentTrack.album} class="album-art" />
+                                        <div class="track-info">
+                                                <h3 class="track-name">🎵 {currentTrack.name}</h3>
+                                                <p class="artist-name">{currentTrack.artist}</p>
+                                                <p class="album-name">{currentTrack.album}</p>
+                                        </div>
+                                </div>
+                        </a>
+                {:else}
+                        <p class="music-status">Not listening right now</p>
+                {/if}
+        </section>
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
@@ -304,6 +350,18 @@
         .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
         .comment-icon, .share-icon { stroke: currentColor; }
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
+
+        .music { margin-top: 5rem; width: 100%; max-width: 700px; }
+        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
+        .music-status { color: var(--text-secondary); opacity: 0.7; font-size: 0.95rem; }
+        .track-link { text-decoration: none; color: inherit; }
+        .track-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); transition: all 0.3s; }
+        .track-card:hover { background: rgba(255,255,255,0.06); border-color: var(--accent-opacity); }
+        .album-art { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--elevation-two); }
+        .track-info { display: flex; flex-direction: column; gap: 0.2rem; }
+        .track-name { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 600; }
+        .artist-name { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
+        .album-name { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.6; margin: 0; }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
