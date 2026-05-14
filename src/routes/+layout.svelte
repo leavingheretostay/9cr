@@ -7,7 +7,6 @@
 
         let loading = true;
         let playSFX: (() => void) | undefined;
-        let progress = 0;
 
         onMount(() => {
                 playSFX = () => {
@@ -35,13 +34,6 @@
                         });
                 };
                 stopResizeAnimation();
-
-                // Reading progress
-                window.addEventListener('scroll', () => {
-                        const scrollTop = window.scrollY;
-                        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                        progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-                });
 
                 // Particles
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
@@ -84,6 +76,16 @@
                         }
                         animate();
                 }
+
+                // Back to top visibility
+                const backBtn = document.querySelector('.back-to-top');
+                window.addEventListener('scroll', () => {
+                        if (window.scrollY > 300) {
+                                backBtn?.classList.add('visible');
+                        } else {
+                                backBtn?.classList.remove('visible');
+                        }
+                });
         });
 </script>
 
@@ -100,20 +102,13 @@
 
 <svelte:window on:click={playSFX} />
 
-<!-- Particles Background -->
 <canvas id="particles"></canvas>
 
-<!-- Reading Progress Bar -->
-<div class="progress-bar" style="width: {progress}%"></div>
-
-<!-- Back to Top Button -->
-{#if progress > 15}
-        <button class="back-to-top" on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="18 15 12 9 6 15"/>
-                </svg>
-        </button>
-{/if}
+<button class="back-to-top" on:click={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="18 15 12 9 6 15"/>
+        </svg>
+</button>
 
 <Cursor />
 <span class:loading>
@@ -121,67 +116,32 @@
 </span>
 
 <style>
-        .loading * {
-                transition: none;
-        }
+        .loading * { transition: none; }
 
         #particles {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-                pointer-events: none;
-        }
-
-        .progress-bar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 3px;
-                background: var(--accent);
-                z-index: 9999;
-                transition: width 0.1s linear;
-                border-radius: 0 3px 3px 0;
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                z-index: -1; pointer-events: none;
         }
 
         .back-to-top {
-                position: fixed;
-                bottom: 2rem;
-                right: 1.5rem;
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                background: var(--accent);
-                border: none;
-                color: white;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9998;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                animation: fadeInUp 0.3s ease;
-                transition: transform 0.2s, filter 0.2s;
+                position: fixed; bottom: 2rem; right: 1.5rem;
+                width: 44px; height: 44px; border-radius: 50%;
+                background: var(--accent); border: none; color: white;
+                cursor: pointer; display: flex; align-items: center; justify-content: center;
+                z-index: 9998; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                transition: all 0.3s ease;
+                opacity: 0; pointer-events: none; transform: translateY(20px);
+        }
+
+        .back-to-top.visible {
+                opacity: 1; pointer-events: auto; transform: translateY(0);
         }
 
         .back-to-top:hover {
-                transform: translateY(-3px);
-                filter: brightness(1.15);
-        }
-
-        @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
+                transform: translateY(-3px) !important; filter: brightness(1.15);
         }
 
         @media (max-width: 768px) {
-                .back-to-top {
-                        bottom: 5rem;
-                        right: 1rem;
-                        width: 38px;
-                        height: 38px;
-                }
+                .back-to-top { bottom: 5rem; right: 1rem; width: 38px; height: 38px; }
         }
 </style>
