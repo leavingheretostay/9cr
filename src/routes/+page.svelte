@@ -10,9 +10,10 @@
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
         let liked: boolean[] = [false, false, false, false, false, false];
-        let comments: string[][] = [[], [], [], [], [], []];
+        let comments: { name: string; text: string }[][] = [[], [], [], [], [], []];
         let commentInputs: string[] = ['', '', '', '', '', ''];
-        let showComments: boolean[] = [false, false, false, false, false, false];
+        let commentNames: string[] = ['', '', '', '', '', ''];
+        let activeSheet: number = -1;
 
         onMount(async () => {
                 liked = [false, false, false, false, false, false];
@@ -36,7 +37,10 @@
                         if (!commentError && commentData) {
                                 commentData.forEach((row: any) => {
                                         if (!comments[row.poem_index]) comments[row.poem_index] = [];
-                                        comments[row.poem_index].push(row.comment_text);
+                                        comments[row.poem_index].push({
+                                                name: row.comment_name || 'Anonymous',
+                                                text: row.comment_text
+                                        });
                                 });
                         }
                 }
@@ -57,15 +61,16 @@
 
         async function postComment(index: number): Promise<void> {
                 const text = commentInputs[index].trim();
+                const name = commentNames[index].trim() || 'Anonymous';
                 if (!text || !supabase) return;
 
                 const { error } = await supabase
                         .from('poem_comments')
-                        .insert({ poem_index: index, comment_text: text });
+                        .insert({ poem_index: index, comment_text: text, comment_name: name });
 
                 if (!error) {
                         if (!comments[index]) comments[index] = [];
-                        comments[index] = [...comments[index], text];
+                        comments[index] = [...comments[index], { name, text }];
                         commentInputs[index] = '';
                 }
         }
@@ -99,7 +104,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[0]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[0] = !showComments[0]}>
+                                <button class="action-btn" on:click={() => activeSheet = 0}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[0]?.length || 0}</span>
                                 </button>
@@ -107,23 +112,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[0]}
-                                <div class="comments-panel">
-                                        {#if comments[0]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[0] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[0]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(0)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
 
                 <div class="quote">
@@ -134,7 +122,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[1]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[1] = !showComments[1]}>
+                                <button class="action-btn" on:click={() => activeSheet = 1}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[1]?.length || 0}</span>
                                 </button>
@@ -142,23 +130,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[1]}
-                                <div class="comments-panel">
-                                        {#if comments[1]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[1] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[1]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(1)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
 
                 <div class="quote">
@@ -169,7 +140,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[2]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[2] = !showComments[2]}>
+                                <button class="action-btn" on:click={() => activeSheet = 2}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[2]?.length || 0}</span>
                                 </button>
@@ -177,23 +148,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[2]}
-                                <div class="comments-panel">
-                                        {#if comments[2]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[2] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[2]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(2)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
 
                 <div class="quote">
@@ -204,7 +158,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[3]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[3] = !showComments[3]}>
+                                <button class="action-btn" on:click={() => activeSheet = 3}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[3]?.length || 0}</span>
                                 </button>
@@ -212,23 +166,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[3]}
-                                <div class="comments-panel">
-                                        {#if comments[3]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[3] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[3]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(3)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
 
                 <div class="quote">
@@ -239,7 +176,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[4]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[4] = !showComments[4]}>
+                                <button class="action-btn" on:click={() => activeSheet = 4}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[4]?.length || 0}</span>
                                 </button>
@@ -247,23 +184,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[4]}
-                                <div class="comments-panel">
-                                        {#if comments[4]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[4] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[4]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(4)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
 
                 <div class="quote">
@@ -274,7 +194,7 @@
                                         <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                         <span>{likes[5]}</span>
                                 </button>
-                                <button class="action-btn" on:click={() => showComments[5] = !showComments[5]}>
+                                <button class="action-btn" on:click={() => activeSheet = 5}>
                                         <svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                         <span>{comments[5]?.length || 0}</span>
                                 </button>
@@ -282,23 +202,6 @@
                                         <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                         </div>
-                        {#if showComments[5]}
-                                <div class="comments-panel">
-                                        {#if comments[5]?.length > 0}
-                                                <div class="comments-list">
-                                                        {#each comments[5] as comment}
-                                                                <p class="comment-item">{comment}</p>
-                                                        {/each}
-                                                </div>
-                                        {:else}
-                                                <p class="no-comments">No comments yet</p>
-                                        {/if}
-                                        <div class="comment-box">
-                                                <input type="text" bind:value={commentInputs[5]} placeholder="Add a comment..." maxlength="200" />
-                                                <button class="post-btn" on:click={() => postComment(5)}>Post</button>
-                                        </div>
-                                </div>
-                        {/if}
                 </div>
         </section>
 
@@ -326,6 +229,34 @@
         <Footer />
 </main>
 
+{#if activeSheet >= 0}
+        <div class="comments-overlay" on:click={() => activeSheet = -1}>
+                <div class="comments-sheet" on:click|stopPropagation>
+                        <div class="sheet-header">
+                                <h3>Comments</h3>
+                                <button class="action-btn" on:click={() => activeSheet = -1}>✕</button>
+                        </div>
+                        <div class="sheet-body">
+                                {#if comments[activeSheet]?.length > 0}
+                                        {#each comments[activeSheet] as comment}
+                                                <div class="comment-bubble">
+                                                        <span class="comment-name">{comment.name}</span>
+                                                        <p class="comment-text">{comment.text}</p>
+                                                </div>
+                                        {/each}
+                                {:else}
+                                        <p class="no-comments">No comments yet. Be the first!</p>
+                                {/if}
+                        </div>
+                        <div class="sheet-input">
+                                <input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" />
+                                <input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" />
+                                <button class="post-btn" on:click={() => postComment(activeSheet)}>Post</button>
+                        </div>
+                </div>
+        </div>
+{/if}
+
 <style lang="scss">
         .poems { margin-top: 5rem; width: 100%; max-width: 700px; }
         .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
@@ -341,14 +272,22 @@
         .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
         .comment-icon, .share-icon { stroke: currentColor; }
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
-        .comments-panel { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); max-height: 200px; overflow-y: auto; }
-        .comments-list { }
-        .comment-item { font-size: 0.8rem; color: var(--text-secondary); padding: 0.3rem 0; margin: 0; line-height: 1.4; }
-        .no-comments { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.5; margin: 0 0 0.5rem 0; }
-        .comment-box { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-        .comment-box input { flex: 1; padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
-        .comment-box input:focus { outline: none; border-color: var(--accent); }
-        .post-btn { background: var(--accent); border: none; color: white; padding: 0.4rem 0.9rem; border-radius: 10px; font-size: 0.8rem; cursor: pointer; font-family: var(--font-two); }
+
+        .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
+        .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
+        @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sheet-header h3 { margin: 0; font-size: 1rem; }
+        .sheet-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
+        .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
+        .sheet-input input { flex: 1; min-width: 80px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
+        .sheet-input input:focus { outline: none; border-color: var(--accent); }
+        .name-input { max-width: 100px; }
+        .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
+        .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
+        .no-comments { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; text-align: center; padding: 1rem 0; }
+
         .books { margin-top: 5rem; width: 100%; max-width: 700px; }
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
         .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0; margin-bottom: 2rem; }
