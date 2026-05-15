@@ -37,7 +37,6 @@
                 };
                 stopResizeAnimation();
 
-                // Back to top - appears on scroll, disappears after stopping
                 window.addEventListener('scroll', () => {
                         if (window.scrollY > 300) {
                                 showBackTop = true;
@@ -50,7 +49,6 @@
                         }
                 });
 
-                // Particles
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
                 if (canvas) {
                         const ctx = canvas.getContext('2d')!;
@@ -97,7 +95,6 @@
 <svelte:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#0f1117" />
         <meta name="og:title" content="9cr" />
         <meta content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" property="og:image" />
         <meta property="og:description" content="Just a boy on the yellow brick road, searching for the viz!" />
