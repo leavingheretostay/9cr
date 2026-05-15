@@ -61,11 +61,8 @@
                                 ctx.clearRect(0,0,canvas.width,canvas.height);
                                 const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
                                 particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle=accent; ctx.globalAlpha=0.35; ctx.fill(); });
-                                // Moving equations
                                 eqX -= 0.6;
-                                ctx.globalAlpha = 0.25;
-                                ctx.fillStyle = accent;
-                                ctx.font = '14px "Geist Mono", monospace';
+                                ctx.globalAlpha = 0.25; ctx.fillStyle = accent; ctx.font = '14px "Geist Mono", monospace';
                                 ctx.fillText(equations[eqIndex], eqX, eqY);
                                 if (eqX < -150) { eqX = canvas.width + 50; eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2; eqIndex = (eqIndex + 1) % equations.length; }
                                 ctx.globalAlpha = 1;
@@ -99,7 +96,7 @@
 <main>
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
-        <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} />
+        <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {updateProgress} {updateDuration} />
         <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art /><Repos /><Footer />
