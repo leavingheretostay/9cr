@@ -13,7 +13,7 @@
 
 <section id="home" class="wrapper">
         <div class="hero-top">
-                <span class="floating-tag">✦ a boy on the yellow brick road ✦</span>
+                <span class="floating-tag">✦ Just a boy on the yellow brick road searching for the wiz ✦</span>
         </div>
         <div>
                 <h1 aria-label="Nasir">
