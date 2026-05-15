@@ -128,6 +128,18 @@
                                 comments = newComments;
                         }
                 }
+
+                // Museum nav trigger
+                setTimeout(() => {
+                        const museumBtn = document.querySelector('a[href="#/"]');
+                        if (museumBtn) {
+                                museumBtn.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        showMuseum = true;
+                                        museumScene = 0;
+                                });
+                        }
+                }, 1000);
         });
 
         async function handleLike(index: number): Promise<void> {
@@ -200,7 +212,7 @@
         }
 </script>
 
-<NavHost onMuseum={() => { showMuseum = true; museumScene = 0; }} />
+<NavHost />
 
 <main>
         <Hero />
