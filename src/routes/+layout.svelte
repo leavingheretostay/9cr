@@ -97,6 +97,7 @@
 <svelte:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0f1117" />
         <meta name="og:title" content="9cr" />
         <meta content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" property="og:image" />
         <meta property="og:description" content="Just a boy on the yellow brick road, searching for the viz!" />
