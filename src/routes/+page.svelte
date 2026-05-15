@@ -29,199 +29,56 @@
         let songLikes = 0;
         let songLiked = false;
 
-        // Museum cinematic
         let showMuseum = false;
         let museumScene = 0;
         const museumScenes = [
-                { emoji: '🔬', title: 'Physics', text: 'Drawn toward atoms and the mysteries they hold.' },
-                { emoji: '🤫', title: 'Silence', text: 'Finding peace in the quiet spaces between thoughts.' },
-                { emoji: '✍️', title: 'Poetry', text: 'Words that breathe, verses that heal.' },
-                { emoji: '💻', title: 'Code', text: 'Building tiny universes with logic and design.' },
-                { emoji: '🎨', title: 'Art', text: 'Creating beauty from chaos, one stroke at a time.' },
-                { emoji: '🌌', title: 'Everything', text: 'Still learning, still wandering, still becoming.' }
+                { title: '⚛️', subtitle: 'Physics', text: 'Drawn toward atoms and the mysteries they hold.' },
+                { title: '🔇', subtitle: 'Silence', text: 'Finding peace in the quiet spaces between thoughts.' },
+                { title: '✍️', subtitle: 'Poetry', text: 'Words that breathe, verses that heal.' },
+                { title: '💻', subtitle: 'Code', text: 'Building tiny universes with logic and design.' },
+                { title: '🎨', subtitle: 'Art', text: 'Creating beauty from chaos, one stroke at a time.' },
+                { title: '🌌', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
         function nextMuseumScene() {
-                if (museumScene < museumScenes.length - 1) {
-                        museumScene++;
-                } else {
-                        showMuseum = false;
-                        museumScene = 0;
-                }
+                if (museumScene < museumScenes.length - 1) { museumScene++; }
+                else { showMuseum = false; museumScene = 0; }
         }
 
-        function togglePlay() {
-                if (!audioEl) return;
-                if (playing) { audioEl.pause(); }
-                else { audioEl.play(); }
-                playing = !playing;
-        }
-
-        function updateProgress() {
-                if (!audioEl) return;
-                progress = (audioEl.currentTime / audioEl.duration) * 100 || 0;
-                const m = Math.floor(audioEl.currentTime / 60);
-                const s = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0');
-                currentTime = `${m}:${s}`;
-        }
-
-        function updateDuration() {
-                if (!audioEl) return;
-                const m = Math.floor(audioEl.duration / 60);
-                const s = Math.floor(audioEl.duration % 60).toString().padStart(2, '0');
-                duration = `${m}:${s}`;
-        }
-
-        function seek(e: MouseEvent | TouchEvent) {
-                if (!audioEl) return;
-                const bar = e.currentTarget as HTMLElement;
-                const rect = bar.getBoundingClientRect();
-                const x = 'touches' in e ? e.touches[0].clientX - rect.left : (e as MouseEvent).clientX - rect.left;
-                audioEl.currentTime = (x / rect.width) * audioEl.duration;
-        }
+        function togglePlay() { if (!audioEl) return; if (playing) { audioEl.pause(); } else { audioEl.play(); } playing = !playing; }
+        function updateProgress() { if (!audioEl) return; progress = (audioEl.currentTime / audioEl.duration) * 100 || 0; const m = Math.floor(audioEl.currentTime / 60); const s = Math.floor(audioEl.currentTime % 60).toString().padStart(2, '0'); currentTime = `${m}:${s}`; }
+        function updateDuration() { if (!audioEl) return; const m = Math.floor(audioEl.duration / 60); const s = Math.floor(audioEl.duration % 60).toString().padStart(2, '0'); duration = `${m}:${s}`; }
+        function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); const x = 'touches' in e ? e.touches[0].clientX - rect.left : (e as MouseEvent).clientX - rect.left; audioEl.currentTime = (x / rect.width) * audioEl.duration; }
 
         async function likeSong() {
-                if (songLiked) return;
-                songLiked = true;
-                songLikes++;
+                if (songLiked) return; songLiked = true; songLikes++;
                 localStorage.setItem('song-liked', 'true');
-                if (supabase) {
-                        await supabase
-                                .from('poem_likes')
-                                .upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' });
-                }
+                if (supabase) { await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
         }
 
         onMount(async () => {
                 const savedLiked = localStorage.getItem('poem-liked');
-                if (savedLiked) {
-                        try { liked = JSON.parse(savedLiked); } catch (e) {}
-                }
-
+                if (savedLiked) { try { liked = JSON.parse(savedLiked); } catch (e) {} }
                 if (localStorage.getItem('song-liked') === 'true') songLiked = true;
 
                 if (supabase) {
-                        const { data: likeData, error: likeError } = await supabase
-                                .from('poem_likes')
-                                .select('*')
-                                .order('poem_index');
-                        if (!likeError && likeData) {
-                                likeData.forEach((row: any) => {
-                                        if (row.poem_index < 6) likes[row.poem_index] = row.like_count;
-                                        if (row.poem_index === 99) songLikes = row.like_count;
-                                });
-                        }
-
-                        const { data: commentData, error: commentError } = await supabase
-                                .from('poem_comments')
-                                .select('*')
-                                .order('created_at', { ascending: true });
-                        if (!commentError && commentData) {
-                                const newComments: { name: string; text: string }[][] = [[], [], [], [], [], []];
-                                commentData.forEach((row: any) => {
-                                        if (!newComments[row.poem_index]) newComments[row.poem_index] = [];
-                                        newComments[row.poem_index].push({
-                                                name: row.comment_name || 'Anonymous',
-                                                text: row.comment_text
-                                        });
-                                });
-                                comments = newComments;
-                        }
+                        const { data: likeData } = await supabase.from('poem_likes').select('*').order('poem_index');
+                        if (likeData) { likeData.forEach((row: any) => { if (row.poem_index < 6) likes[row.poem_index] = row.like_count; if (row.poem_index === 99) songLikes = row.like_count; }); }
+                        const { data: commentData } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true });
+                        if (commentData) { const newComments: { name: string; text: string }[][] = [[], [], [], [], [], []]; commentData.forEach((row: any) => { if (!newComments[row.poem_index]) newComments[row.poem_index] = []; newComments[row.poem_index].push({ name: row.comment_name || 'Anonymous', text: row.comment_text }); }); comments = newComments; }
                 }
-
-                // Museum button - find by "museum" text and attach click
-                setTimeout(() => {
-                        const allH5 = document.querySelectorAll('nav h5');
-                        allH5.forEach((h5) => {
-                                if (h5.textContent?.trim().toLowerCase() === 'museum') {
-                                        const btn = h5.closest('button');
-                                        if (btn) {
-                                                btn.addEventListener('click', (e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        showMuseum = true;
-                                                        museumScene = 0;
-                                                });
-                                        }
-                                }
-                        });
-                }, 1500);
         });
 
-        async function handleLike(index: number): Promise<void> {
-                if (liked[index]) return;
-                liked[index] = true;
-                likes[index]++;
-                localStorage.setItem('poem-liked', JSON.stringify(liked));
-
-                if (supabase) {
-                        await supabase
-                                .from('poem_likes')
-                                .upsert({ poem_index: index, like_count: likes[index] }, { onConflict: 'poem_index' });
-                }
-        }
-
-        async function postComment(index: number): Promise<void> {
-                const text = commentInputs[index].trim();
-                const name = commentNames[index].trim() || 'Anonymous';
-                if (!text || !supabase) return;
-
-                const { error } = await supabase
-                        .from('poem_comments')
-                        .insert({ poem_index: index, comment_text: text, comment_name: name });
-
-                if (!error) {
-                        comments[index] = [...comments[index], { name, text }];
-                        comments = comments;
-                        commentInputs[index] = '';
-                }
-        }
-
-        async function deleteComment(poemIndex: number, commentIndex: number): Promise<void> {
-                if (!supabase) return;
-                const comment = comments[poemIndex][commentIndex];
-
-                const { error } = await supabase
-                        .from('poem_comments')
-                        .delete()
-                        .eq('comment_text', comment.text)
-                        .eq('comment_name', comment.name);
-
-                if (!error) {
-                        comments[poemIndex] = comments[poemIndex].filter((_, i) => i !== commentIndex);
-                        comments = comments;
-                }
-        }
-
-        async function confirmDeleteComment() {
-                if (deleteCommentPassword !== '9cr2026') {
-                        deleteCommentError = 'Wrong password';
-                        return;
-                }
-                if (deleteCommentTarget) {
-                        await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index);
-                        showDeleteComment = false;
-                        deleteCommentPassword = '';
-                        deleteCommentError = '';
-                }
-        }
-
-        function sharePoem(text: string, index: number): void {
-                const url = 'https://9cr.pages.dev';
-                const shareText = `"${text}"\n\n— via 9cr`;
-                if (navigator.share) {
-                        navigator.share({ title: '9cr - fragments', text: shareText, url });
-                } else {
-                        navigator.clipboard.writeText(`${shareText}\n${url}`);
-                        alert('Copied to clipboard!');
-                }
-        }
+        async function handleLike(index: number): Promise<void> { if (liked[index]) return; liked[index] = true; likes[index]++; localStorage.setItem('poem-liked', JSON.stringify(liked)); if (supabase) { await supabase.from('poem_likes').upsert({ poem_index: index, like_count: likes[index] }, { onConflict: 'poem_index' }); } }
+        async function postComment(index: number): Promise<void> { const text = commentInputs[index].trim(); const name = commentNames[index].trim() || 'Anonymous'; if (!text || !supabase) return; const { error } = await supabase.from('poem_comments').insert({ poem_index: index, comment_text: text, comment_name: name }); if (!error) { comments[index] = [...comments[index], { name, text }]; comments = comments; commentInputs[index] = ''; } }
+        async function deleteComment(poemIndex: number, commentIndex: number): Promise<void> { if (!supabase) return; const comment = comments[poemIndex][commentIndex]; const { error } = await supabase.from('poem_comments').delete().eq('comment_text', comment.text).eq('comment_name', comment.name); if (!error) { comments[poemIndex] = comments[poemIndex].filter((_, i) => i !== commentIndex); comments = comments; } }
+        async function confirmDeleteComment() { if (deleteCommentPassword !== '9cr2026') { deleteCommentError = 'Wrong password'; return; } if (deleteCommentTarget) { await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index); showDeleteComment = false; deleteCommentPassword = ''; deleteCommentError = ''; } }
+        function sharePoem(text: string, index: number): void { const url = 'https://9cr.pages.dev'; const shareText = `"${text}"\n\n— via 9cr`; if (navigator.share) { navigator.share({ title: '9cr - fragments', text: shareText, url }); } else { navigator.clipboard.writeText(`${shareText}\n${url}`); alert('Copied to clipboard!'); } }
 </script>
 
 <NavHost />
-
 <main>
-        <Hero />
+        <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; }} />
         <About />
 
         <section id="music" class="music wrapper">
@@ -232,27 +89,17 @@
                                 <div class="player-info"><h3 class="song-title">Deedaar</h3><p class="song-artist">Third Hour</p></div>
                                 <div class="player-buttons">
                                         <button class="ctrl-btn small" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="19,4 8,12 19,20"/><rect x="4" y="4" width="3" height="16" rx="1"/></svg></button>
-                                        <button class="ctrl-btn play-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
-                                                {#if playing}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-                                                {:else}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="7,4 20,12 7,20"/></svg>{/if}
-                                        </button>
+                                        <button class="ctrl-btn play-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>{#if playing}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>{:else}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="7,4 20,12 7,20"/></svg>{/if}</button>
                                         <button class="ctrl-btn small" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,4 16,12 5,20"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg></button>
-                                        <button class="ctrl-btn small like-btn" class:liked={songLiked} on:click={likeSong} aria-label="Like">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><rect x="2" y="9" width="4" height="11"/></svg>
-                                                <span class="like-count">{songLikes}</span>
-                                        </button>
+                                        <button class="ctrl-btn small like-btn" class:liked={songLiked} on:click={likeSong} aria-label="Like"><svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><rect x="2" y="9" width="4" height="11"/></svg><span class="like-count">{songLikes}</span></button>
                                 </div>
-                                <div class="progress-area">
-                                        <div class="progress-track" on:mousedown={seek} on:touchstart={seek}><div class="progress-fill" style="width: {progress}%"></div></div>
-                                        <div class="time-labels"><span>{currentTime}</span><span>{duration}</span></div>
-                                </div>
+                                <div class="progress-area"><div class="progress-track" on:mousedown={seek} on:touchstart={seek}><div class="progress-fill" style="width: {progress}%"></div></div><div class="time-labels"><span>{currentTime}</span><span>{duration}</span></div></div>
                         </div>
                 </div>
                 <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
         </section>
 
-        <section id="fragments" class="poems wrapper">
-                <h2>fragments</h2>
+        <section id="fragments" class="poems wrapper"><h2>fragments</h2>
                 <div class="quote"><p>"Love each other or perish."</p><span class="quote-author">— Kurt Vonnegut</span><div class="quote-actions"><button class="action-btn" class:liked={liked[0]} on:click={() => handleLike(0)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[0]}</span></button><button class="action-btn" on:click={() => activeSheet = 0}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[0]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Love each other or perish.', 0)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
                 <div class="quote"><p>"The finest souls are those who gulped pain and avoided making others taste it."</p><span class="quote-author">— Nizariat</span><div class="quote-actions"><button class="action-btn" class:liked={liked[1]} on:click={() => handleLike(1)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[1]}</span></button><button class="action-btn" on:click={() => activeSheet = 1}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[1]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('The finest souls are those who gulped pain and avoided making others taste it.', 1)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
                 <div class="quote"><p>"Obsession is the price I pay for my flaws."</p><span class="quote-author">— 9cr</span><div class="quote-actions"><button class="action-btn" class:liked={liked[2]} on:click={() => handleLike(2)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[2]}</span></button><button class="action-btn" on:click={() => activeSheet = 2}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[2]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Obsession is the price I pay for my flaws.', 2)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
@@ -261,166 +108,87 @@
                 <div class="quote"><p>"Having experienced both, I am not sure which is worse; intense feeling, or the absence of it."</p><span class="quote-author">— Margaret Atwood</span><div class="quote-actions"><button class="action-btn" class:liked={liked[5]} on:click={() => handleLike(5)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[5]}</span></button><button class="action-btn" on:click={() => activeSheet = 5}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[5]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Having experienced both, I am not sure which is worse...', 5)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
         </section>
 
-        <section id="books" class="books wrapper">
-                <h2>bookshelf</h2>
-                <p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
+        <section id="books" class="books wrapper"><h2>bookshelf</h2><p class="books-subtitle">A few favourites. Free downloads coming soon.</p>
                 <div class="book-grid">
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" /></div><div class="book-info"><h3>Love Her Wild</h3><span class="author">Atticus</span><span class="tag">Poetry</span></div></div>
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" /></div><div class="book-info"><h3>The Alchemist</h3><span class="author">Paulo Coelho</span><span class="tag">Fiction</span></div></div>
-                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} on:keydown={(e) => e.key === 'Enter' && window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" /></div><div class="book-info"><h3>You Are The Best Wife</h3><span class="author">Ajay K. Pandey</span><span class="tag">Fiction</span></div></div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=Love+Her+Wild+Atticus', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/GtrvxGrN/71id-Mby-Wp-OL.jpg" alt="Love Her Wild" /></div><div class="book-info"><h3>Love Her Wild</h3><span class="author">Atticus</span><span class="tag">Poetry</span></div></div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=The+Alchemist+Paulo+Coelho', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/SR0gFn4v/images.jpg" alt="The Alchemist" /></div><div class="book-info"><h3>The Alchemist</h3><span class="author">Paulo Coelho</span><span class="tag">Fiction</span></div></div>
+                        <div class="book" on:click={() => window.open('https://www.amazon.com/s?k=You+Are+The+Best+Wife+Ajay+K+Pandey', '_blank')} role="button" tabindex="0"><div class="book-cover"><img src="https://i.postimg.cc/5ycsdXJK/you-are-the-best-wife.jpg" alt="You Are The Best Wife" /></div><div class="book-info"><h3>You Are The Best Wife</h3><span class="author">Ajay K. Pandey</span><span class="tag">Fiction</span></div></div>
                 </div>
         </section>
 
-        <Art />
-        <Repos />
-        <Footer />
+        <Art /><Repos /><Footer />
 </main>
 
-<!-- Museum Cinematic Overlay -->
 {#if showMuseum}
-        <div class="museum-overlay" on:click={nextMuseumScene}>
-                <div class="museum-scene" on:click|stopPropagation>
-                        <div class="museum-emoji">{museumScenes[museumScene].emoji}</div>
-                        <h2 class="museum-title">{museumScenes[museumScene].title}</h2>
-                        <p class="museum-text">{museumScenes[museumScene].text}</p>
-                        <div class="museum-dots">
-                                {#each museumScenes as _, i}
-                                        <span class="m-dot" class:active={i === museumScene}></span>
-                                {/each}
-                        </div>
-                        <p class="museum-hint">Tap anywhere to continue</p>
-                </div>
-        </div>
+        <div class="museum-overlay" on:click={nextMuseumScene}><div class="museum-scene" on:click|stopPropagation>
+                <div class="museum-emoji">{museumScenes[museumScene].title}</div>
+                <h2 class="museum-title">{museumScenes[museumScene].subtitle}</h2>
+                <p class="museum-text">{museumScenes[museumScene].text}</p>
+                <div class="museum-dots">{#each museumScenes as _, i}<span class="m-dot" class:active={i === museumScene}></span>{/each}</div>
+                <p class="museum-hint">Tap anywhere to continue</p>
+        </div></div>
 {/if}
 
-<!-- Comments Sheet -->
 {#if activeSheet >= 0}
-        <div class="comments-overlay" on:click={() => activeSheet = -1}>
-                <div class="comments-sheet" on:click|stopPropagation>
-                        <div class="sheet-header"><h3>Comments</h3><button class="action-btn" on:click={() => activeSheet = -1}>✕</button></div>
-                        <div class="sheet-body">
-                                {#if comments[activeSheet]?.length > 0}
-                                        {#each comments[activeSheet] as comment, i}
-                                                <div class="comment-bubble" on:touchstart={() => { longPressTimer = setTimeout(() => { showDeleteComment = true; deleteCommentTarget = { poem: activeSheet, index: i }; }, 800); }} on:touchend={() => clearTimeout(longPressTimer)} on:touchmove={() => clearTimeout(longPressTimer)}>
-                                                        <span class="comment-name">{comment.name}</span><p class="comment-text">{comment.text}</p>
-                                                </div>
-                                        {/each}
-                                {:else}<p class="no-comments">No comments yet. Be the first!</p>{/if}
-                        </div>
-                        <div class="sheet-input">
-                                <input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" />
-                                <input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" />
-                                <button class="send-btn" on:click={() => postComment(activeSheet)}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-                        </div>
+        <div class="comments-overlay" on:click={() => activeSheet = -1}><div class="comments-sheet" on:click|stopPropagation>
+                <div class="sheet-header"><h3>Comments</h3><button class="action-btn" on:click={() => activeSheet = -1}>✕</button></div>
+                <div class="sheet-body">
+                        {#if comments[activeSheet]?.length > 0}
+                                {#each comments[activeSheet] as comment, i}<div class="comment-bubble" on:touchstart={() => { longPressTimer = setTimeout(() => { showDeleteComment = true; deleteCommentTarget = { poem: activeSheet, index: i }; }, 800); }} on:touchend={() => clearTimeout(longPressTimer)} on:touchmove={() => clearTimeout(longPressTimer)}><span class="comment-name">{comment.name}</span><p class="comment-text">{comment.text}</p></div>{/each}
+                        {:else}<p class="no-comments">No comments yet. Be the first!</p>{/if}
                 </div>
-        </div>
+                <div class="sheet-input"><input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" /><input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" /><button class="send-btn" on:click={() => postComment(activeSheet)}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
+        </div></div>
 {/if}
 
-<!-- Delete Comment Modal -->
 {#if showDeleteComment}
-        <div class="modal-overlay" on:click={() => showDeleteComment = false} role="dialog" aria-modal="true">
-                <div class="modal-content" on:click|stopPropagation>
-                        <div class="modal-header"><h3>Delete Comment</h3><button class="close-btn" on:click={() => showDeleteComment = false}>✕</button></div>
-                        <div class="modal-body">
-                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p>
-                                <input type="password" bind:value={deleteCommentPassword} placeholder="Password" />
-                                {#if deleteCommentError}<p class="error">{deleteCommentError}</p>{/if}
-                        </div>
-                        <div class="modal-footer"><button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button><button class="delete-btn" on:click={confirmDeleteComment}>Delete</button></div>
-                </div>
-        </div>
+        <div class="modal-overlay" on:click={() => showDeleteComment = false} role="dialog" aria-modal="true"><div class="modal-content" on:click|stopPropagation>
+                <div class="modal-header"><h3>Delete Comment</h3><button class="close-btn" on:click={() => showDeleteComment = false}>✕</button></div>
+                <div class="modal-body"><p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p><input type="password" bind:value={deleteCommentPassword} placeholder="Password" />{#if deleteCommentError}<p class="error">{deleteCommentError}</p>{/if}</div>
+                <div class="modal-footer"><button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button><button class="delete-btn" on:click={confirmDeleteComment}>Delete</button></div>
+        </div></div>
 {/if}
 
 <style lang="scss">
-        .poems { margin-top: 5rem; width: 100%; max-width: 700px; }
-        .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
+        .poems { margin-top: 5rem; width: 100%; max-width: 700px; } .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
         .quote { padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.08); border-radius: 18px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
         .quote p { line-height: 2rem; font-size: 1rem; white-space: pre-line; margin-bottom: 0.5rem; }
         .quote-author { display: block; opacity: 0.85; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; color: var(--text-secondary); }
         .quote-actions { display: flex; gap: 1.5rem; align-items: center; }
-        .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; transition: color 0.2s; }
-        .action-btn:hover { color: var(--text-primary); }
-        .action-btn.liked { color: #ef4444; }
-        .heart-icon, .comment-icon, .share-icon { width: 20px; height: 20px; }
-        .heart-icon { fill: transparent; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; }
-        .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
+        .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; transition: color 0.2s; } .action-btn:hover { color: var(--text-primary); } .action-btn.liked { color: #ef4444; }
+        .heart-icon, .comment-icon, .share-icon { width: 20px; height: 20px; } .heart-icon { fill: transparent; stroke: currentColor; stroke-width: 2; transition: all 0.3s ease; } .action-btn.liked .heart-icon { fill: #ef4444; stroke: #ef4444; animation: heartPop 0.4s ease; }
         @keyframes heartPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.85); } 100% { transform: scale(1); } }
 
-        .music { margin-top: 5rem; width: 100%; max-width: 700px; }
-        .music h2 { font-size: 2rem; margin-bottom: 2rem; }
+        .music { margin-top: 5rem; width: 100%; max-width: 700px; } .music h2 { font-size: 2rem; margin-bottom: 2rem; }
         .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; height: 160px; position: relative; }
         .music-overlay { background: linear-gradient(transparent 5%, rgba(0,0,0,0.9)); padding: 0.6rem 1rem; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.25rem; }
         .player-label { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
-        .player-info { display: flex; flex-direction: column; gap: 0; }
-        .song-title { font-size: 1rem; color: white; font-weight: 600; margin: 0; }
-        .song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin: 0; }
-        .player-buttons { display: flex; align-items: center; gap: 0.4rem; }
-        .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .ctrl-btn.small { width: 28px; height: 28px; }
-        .ctrl-btn.play-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 50%; }
-        .ctrl-btn:hover { transform: scale(1.08); }
-        .like-btn { gap: 0.2rem; }
-        .like-count { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
-        .progress-area { width: 100%; margin-top: 0.15rem; }
-        .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; }
-        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
-        .time-labels { display: flex; justify-content: space-between; margin-top: 0.1rem; }
-        .time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.6); }
+        .player-info { display: flex; flex-direction: column; gap: 0; } .song-title { font-size: 1rem; color: white; font-weight: 600; margin: 0; } .song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin: 0; }
+        .player-buttons { display: flex; align-items: center; gap: 0.4rem; } .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; } .ctrl-btn.small { width: 28px; height: 28px; } .ctrl-btn.play-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 50%; } .ctrl-btn:hover { transform: scale(1.08); }
+        .like-btn { gap: 0.2rem; } .like-count { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
+        .progress-area { width: 100%; margin-top: 0.15rem; } .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; } .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.1rem; } .time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.6); }
 
         .museum-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s ease; cursor: pointer; }
-        .museum-scene { text-align: center; padding: 2rem; animation: sceneIn 0.6s ease; }
-        .museum-emoji { font-size: 6rem; margin-bottom: 1.5rem; animation: float 3s ease infinite; }
-        .museum-title { font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; font-weight: 600; }
+        .museum-scene { text-align: center; padding: 2rem; animation: sceneIn 0.6s ease; } .museum-emoji { font-size: 6rem; margin-bottom: 1rem; animation: float 3s ease infinite; }
+        .museum-title { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; font-weight: 600; }
         .museum-text { font-size: 1.2rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto 2rem auto; line-height: 1.8; }
-        .museum-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
-        .m-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; }
-        .m-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+        .museum-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; } .m-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; } .m-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
         .museum-hint { font-size: 0.8rem; color: rgba(255,255,255,0.3); animation: pulse 2s ease infinite; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes sceneIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes sceneIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } } @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
 
-        .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
-        .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
-        @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .sheet-header h3 { margin: 0; font-size: 1rem; }
-        .sheet-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
-        .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); align-items: center; }
-        .sheet-input input { flex: 1; min-width: 60px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; }
-        .name-input { max-width: 100px; }
-        .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
-        .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; opacity: 0.9; }
-        .no-comments { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; text-align: center; padding: 1rem 0; }
+        .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; } .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; } @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); } .sheet-header h3 { margin: 0; font-size: 1rem; } .sheet-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
+        .sheet-input { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.08); align-items: center; } .sheet-input input { flex: 1; min-width: 60px; padding: 0.55rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.8rem; } .name-input { max-width: 100px; } .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); } .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; } .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; opacity: 0.9; } .no-comments { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; text-align: center; padding: 1rem 0; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-        .modal-content { background: var(--bg-color); border: 1px solid var(--elevation-four); border-radius: 16px; padding: 1.5rem; max-width: 460px; width: 100%; animation: slideUp 0.25s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-        .modal-header h3 { margin: 0; font-size: 1.25rem; }
-        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; }
-        .modal-body { display: flex; flex-direction: column; gap: 0.6rem; }
-        .modal-body input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; }
-        .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
-        .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
-        .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; }
-        .delete-btn { background: #ef4444; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; font-family: var(--font-two); }
-        .delete-btn:hover { filter: brightness(1.1); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; } .modal-content { background: var(--bg-color); border: 1px solid var(--elevation-four); border-radius: 16px; padding: 1.5rem; max-width: 460px; width: 100%; animation: slideUp 0.25s ease; } @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; } .modal-header h3 { margin: 0; font-size: 1.25rem; } .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; }
+        .modal-body { display: flex; flex-direction: column; gap: 0.6rem; } .modal-body input { padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--elevation-four); background: var(--elevation-one); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; } .error { color: #ef4444; font-size: 0.8rem; margin: 0; }
+        .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; } .cancel-btn { background: var(--elevation-two); border: 1px solid var(--elevation-four); color: var(--text-secondary); padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; } .delete-btn { background: #ef4444; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; font-family: var(--font-two); } .delete-btn:hover { filter: brightness(1.1); }
 
-        .books { margin-top: 5rem; width: 100%; max-width: 700px; }
-        .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0; margin-bottom: 2rem; }
-        .book-grid { display: flex; flex-direction: column; gap: 1rem; }
-        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); transition: all 0.3s; }
-        .book:hover { background: var(--elevation-two); border-color: var(--accent-opacity); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        .book-cover { width: 48px; height: 70px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-        .book-cover img { width: 100%; height: 100%; object-fit: cover; }
-        .book-info { display: flex; flex-direction: column; gap: 0.2rem; }
-        .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; }
-        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.85; }
-        .book-info .tag { font-size: 0.6rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.1rem; color: var(--text-secondary); }
+        .books { margin-top: 5rem; width: 100%; max-width: 700px; } .books h2 { font-size: 2rem; margin-bottom: 0.5rem; } .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0; margin-bottom: 2rem; } .book-grid { display: flex; flex-direction: column; gap: 1rem; }
+        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); transition: all 0.3s; } .book:hover { background: var(--elevation-two); border-color: var(--accent-opacity); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .book-cover { width: 48px; height: 70px; border-radius: 6px; overflow: hidden; flex-shrink: 0; } .book-cover img { width: 100%; height: 100%; object-fit: cover; } .book-info { display: flex; flex-direction: column; gap: 0.2rem; } .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; } .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.85; } .book-info .tag { font-size: 0.6rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.1rem; color: var(--text-secondary); }
         @media (max-width: 600px) { .book { padding: 1rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } }
 </style>
