@@ -278,7 +278,7 @@
         .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
         .quote { padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.08); border-radius: 18px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
         .quote p { line-height: 2rem; font-size: 1rem; white-space: pre-line; margin-bottom: 0.5rem; }
-        .quote-author { display: block; opacity: 0.7; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; }
+        .quote-author { display: block; opacity: 0.85; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; color: var(--text-secondary); }
         .quote-actions { display: flex; gap: 1.5rem; align-items: center; }
         .action-btn { display: flex; align-items: center; gap: 0.35rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; font-size: 0.85rem; transition: color 0.2s; }
         .action-btn:hover { color: var(--text-primary); }
@@ -292,22 +292,22 @@
         .music h2 { font-size: 2rem; margin-bottom: 2rem; }
         .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; height: 160px; position: relative; }
         .music-overlay { background: linear-gradient(transparent 5%, rgba(0,0,0,0.9)); padding: 0.6rem 1rem; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.25rem; }
-        .player-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
+        .player-label { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
         .player-info { display: flex; flex-direction: column; gap: 0; }
         .song-title { font-size: 1rem; color: white; font-weight: 600; margin: 0; }
-        .song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0; }
+        .song-artist { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin: 0; }
         .player-buttons { display: flex; align-items: center; gap: 0.4rem; }
         .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .ctrl-btn.small { width: 28px; height: 28px; }
         .ctrl-btn.play-btn { width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 50%; }
         .ctrl-btn:hover { transform: scale(1.08); }
         .like-btn { gap: 0.2rem; }
-        .like-count { font-size: 0.6rem; color: rgba(255,255,255,0.6); }
+        .like-count { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
         .progress-area { width: 100%; margin-top: 0.15rem; }
         .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; }
         .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
         .time-labels { display: flex; justify-content: space-between; margin-top: 0.1rem; }
-        .time-labels span { font-size: 0.5rem; color: rgba(255,255,255,0.4); }
+        .time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.6); }
 
         .comments-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: flex-end; }
         .comments-sheet { background: var(--bg-color); border-radius: 20px 20px 0 0; width: 100%; max-height: 60vh; display: flex; flex-direction: column; animation: slideUpSheet 0.3s ease; }
@@ -321,7 +321,7 @@
         .send-btn { background: var(--accent); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .comment-bubble { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .comment-name { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.15rem; }
-        .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; }
+        .comment-text { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.4; opacity: 0.9; }
         .no-comments { font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5; text-align: center; padding: 1rem 0; }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
@@ -340,7 +340,7 @@
 
         .books { margin-top: 5rem; width: 100%; max-width: 700px; }
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0; margin-bottom: 2rem; }
+        .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0; margin-bottom: 2rem; }
         .book-grid { display: flex; flex-direction: column; gap: 1rem; }
         .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); transition: all 0.3s; }
         .book:hover { background: var(--elevation-two); border-color: var(--accent-opacity); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
@@ -348,7 +348,7 @@
         .book-cover img { width: 100%; height: 100%; object-fit: cover; }
         .book-info { display: flex; flex-direction: column; gap: 0.2rem; }
         .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; }
-        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.65; }
-        .book-info .tag { font-size: 0.6rem; opacity: 0.4; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.1rem; }
+        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.85; }
+        .book-info .tag { font-size: 0.6rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.1rem; color: var(--text-secondary); }
         @media (max-width: 600px) { .book { padding: 1rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } }
 </style>
