@@ -101,10 +101,6 @@
         <Bookshelf />
         <Art />
         <Repos />
-        <section id="museum-section" class="museum-target wrapper">
-                <h2>museum</h2>
-                <p style="color: var(--text-secondary); opacity: 0.7;">Scroll down to sign my website ↓</p>
-        </section>
         <Footer />
 </main>
 
@@ -144,8 +140,6 @@
 <CommentsSheet {comments} {activeSheet} {commentNames} {commentInputs} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {longPressTimer} {postComment} {confirmDeleteComment} {closeSheet} startDelete={startDeleteComment} />
 
 <style lang="scss">
-        .museum-target { margin-top: 5rem; margin-bottom: 3rem; }
-        .museum-target h2 { font-size: 2rem; margin-bottom: 1rem; }
         .museum-overlay { 
                 position: fixed; inset: 0; z-index: 10000; 
                 background: rgba(255,255,255,0.06); 
