@@ -9,6 +9,8 @@
         export let togglePlay: () => void;
         export let seek: (e: MouseEvent | TouchEvent) => void;
         export let likeSong: () => void;
+        export let updateProgress: () => void;
+        export let updateDuration: () => void;
 </script>
 
 <section id="music" class="music wrapper">
@@ -32,7 +34,7 @@
                         <div class="progress-area"><div class="progress-track" on:mousedown={seek} on:touchstart={seek}><div class="progress-fill" style="width: {progress}%"></div></div><div class="time-labels"><span>{currentTime}</span><span>{duration}</span></div></div>
                 </div>
         </div>
-        <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={() => {}} on:loadedmetadata={() => {}} on:ended={() => {}} preload="metadata"></audio>
+        <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
 </section>
 
 <style lang="scss">
