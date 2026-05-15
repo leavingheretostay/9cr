@@ -12,6 +12,9 @@
 </script>
 
 <section id="home" class="wrapper">
+        <div class="hero-top">
+                <span class="floating-tag">✦ a boy on the yellow brick road ✦</span>
+        </div>
         <div>
                 <h1 aria-label="Nasir">
                         <span class="char">N</span><span class="char long">a</span><span class="char">s</span><span
@@ -51,6 +54,33 @@
                 }
         }
 
+        .hero-top {
+                position: absolute;
+                top: 5.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1;
+                
+                @media screen and (max-width: 868px) {
+                        top: 3rem;
+                }
+        }
+
+        .floating-tag {
+                font-family: var(--font-two);
+                font-size: 0.75rem;
+                color: var(--accent);
+                opacity: 0.5;
+                letter-spacing: 2px;
+                text-transform: lowercase;
+                animation: floatTag 3s ease-in-out infinite;
+        }
+
+        @keyframes floatTag {
+                0%, 100% { opacity: 0.4; transform: translateY(0); }
+                50% { opacity: 0.7; transform: translateY(-3px); }
+        }
+
         .socials {
                 margin-top: 1rem;
                 margin-bottom: 1.7rem;
@@ -70,25 +100,11 @@
                         animation-fill-mode: forwards;
                 }
 
-                .char:nth-child(1) {
-                        animation-delay: 0.05s;
-                }
-
-                .char:nth-child(2) {
-                        animation-delay: 0.06s;
-                }
-
-                .char:nth-child(3) {
-                        animation-delay: 0.1s;
-                }
-
-                .char:nth-child(4) {
-                        animation-delay: 0.14s;
-                }
-
-                .char:nth-child(5) {
-                        animation-delay: 0.18s;
-                }
+                .char:nth-child(1) { animation-delay: 0.05s; }
+                .char:nth-child(2) { animation-delay: 0.06s; }
+                .char:nth-child(3) { animation-delay: 0.1s; }
+                .char:nth-child(4) { animation-delay: 0.14s; }
+                .char:nth-child(5) { animation-delay: 0.18s; }
 
                 .char.long {
                         animation-name: header-flicker-long;
@@ -106,86 +122,26 @@
         }
 
         @keyframes header-flicker {
-                0%,
-                100% {
-                        opacity: 1;
-                        filter: brightness(1);
-                }
-
-                6% {
-                        opacity: 0.35;
-                        filter: brightness(0.7);
-                }
-
-                10% {
-                        opacity: 1;
-                }
-
-                18% {
-                        opacity: 0.55;
-                }
-
-                22%,
-                62% {
-                        opacity: 1;
-                }
-
-                66% {
-                        opacity: 0.45;
-                }
-
-                70% {
-                        opacity: 1;
-                }
-
-                92% {
-                        opacity: 0.7;
-                }
+                0%, 100% { opacity: 1; filter: brightness(1); }
+                6% { opacity: 0.35; filter: brightness(0.7); }
+                10% { opacity: 1; }
+                18% { opacity: 0.55; }
+                22%, 62% { opacity: 1; }
+                66% { opacity: 0.45; }
+                70% { opacity: 1; }
+                92% { opacity: 0.7; }
         }
 
         @keyframes header-flicker-long {
-                0%,
-                100% {
-                        opacity: 1;
-                        filter: brightness(1);
-                }
-
-                4%,
-                8% {
-                        opacity: 0.3;
-                        filter: brightness(0.6);
-                }
-
-                12%,
-                22% {
-                        opacity: 1;
-                }
-
-                28% {
-                        opacity: 0.25;
-                }
-
-                34%,
-                44% {
-                        opacity: 1;
-                }
-
-                52% {
-                        opacity: 0.4;
-                }
-
-                60%,
-                74% {
-                        opacity: 1;
-                }
-
-                82% {
-                        opacity: 0.35;
-                }
-
-                90% {
-                        opacity: 1;
-                }
+                0%, 100% { opacity: 1; filter: brightness(1); }
+                4%, 8% { opacity: 0.3; filter: brightness(0.6); }
+                12%, 22% { opacity: 1; }
+                28% { opacity: 0.25; }
+                34%, 44% { opacity: 1; }
+                52% { opacity: 0.4; }
+                60%, 74% { opacity: 1; }
+                82% { opacity: 0.35; }
+                90% { opacity: 1; }
         }
 
         @media screen and (max-width: 1240px) {
@@ -194,7 +150,6 @@
                         font-size: clamp(4rem, 10vw, 6.25rem);
                         line-height: 6rem;
                 }
-
                 h4 {
                         min-height: 0vw;
                         font-size: clamp(1.4rem, 2.4vw, 1.5rem);
