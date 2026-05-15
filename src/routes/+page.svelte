@@ -43,6 +43,7 @@
         function updateDuration() { if (!audioEl) return; duration = `${Math.floor(audioEl.duration/60)}:${Math.floor(audioEl.duration%60).toString().padStart(2,'0')}`; }
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
+        function onSongEnded() { playing = false; }
 
         function startAtomParticles() {
                 setTimeout(() => {
@@ -96,7 +97,7 @@
 <main>
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
-        <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {updateProgress} {updateDuration} />
+        <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {updateProgress} {updateDuration} onEnded={onSongEnded} />
         <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art /><Repos /><Footer />
