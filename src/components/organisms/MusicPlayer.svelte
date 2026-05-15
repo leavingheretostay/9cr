@@ -11,6 +11,7 @@
         export let likeSong: () => void;
         export let updateProgress: () => void;
         export let updateDuration: () => void;
+        export let onEnded: () => void;
 </script>
 
 <section id="music" class="music wrapper">
@@ -34,29 +35,17 @@
                         <div class="progress-area"><div class="progress-track" on:mousedown={seek} on:touchstart={seek}><div class="progress-fill" style="width: {progress}%"></div></div><div class="time-labels"><span>{currentTime}</span><span>{duration}</span></div></div>
                 </div>
         </div>
-        <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
+        <audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={onEnded} preload="metadata"></audio>
 </section>
 
 <style lang="scss">
         .music { margin-top: 5rem; width: 100%; max-width: 700px; } .music h2 { font-size: 2rem; margin-bottom: 2rem; }
         .music-player { border-radius: 16px; overflow: hidden; background-size: cover; background-position: center; height: 200px; position: relative; }
-        .music-overlay { 
-                background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%); 
-                padding: 1.25rem 1.25rem 1rem 1.25rem; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; 
-        }
+        .music-overlay { background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%); padding: 1.25rem 1.25rem 1rem 1.25rem; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; }
         .player-label { font-size: 0.6rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-two); }
-        .player-info { display: flex; flex-direction: column; gap: 0.15rem; } 
-        .song-title { font-size: 1.1rem; color: white; font-weight: 600; margin: 0; } 
-        .song-artist { font-size: 0.8rem; color: rgba(255,255,255,0.75); margin: 0; }
-        .player-buttons { display: flex; align-items: center; gap: 0.5rem; } 
-        .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; } 
-        .ctrl-btn.small { width: 30px; height: 30px; } 
-        .ctrl-btn.play-btn { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; } 
-        .ctrl-btn:hover { transform: scale(1.08); }
+        .player-info { display: flex; flex-direction: column; gap: 0.15rem; } .song-title { font-size: 1.1rem; color: white; font-weight: 600; margin: 0; } .song-artist { font-size: 0.8rem; color: rgba(255,255,255,0.75); margin: 0; }
+        .player-buttons { display: flex; align-items: center; gap: 0.5rem; } .ctrl-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; } .ctrl-btn.small { width: 30px; height: 30px; } .ctrl-btn.play-btn { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; } .ctrl-btn:hover { transform: scale(1.08); }
         .like-btn { gap: 0.2rem; } .like-count { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
-        .progress-area { width: 100%; margin-top: 0.1rem; } 
-        .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; } 
-        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
-        .time-labels { display: flex; justify-content: space-between; margin-top: 0.2rem; } 
-        .time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.55); }
+        .progress-area { width: 100%; margin-top: 0.1rem; } .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; } .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s linear; }
+        .time-labels { display: flex; justify-content: space-between; margin-top: 0.2rem; } .time-labels span { font-size: 0.55rem; color: rgba(255,255,255,0.55); }
 </style>
