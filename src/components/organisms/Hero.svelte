@@ -40,7 +40,7 @@
                 align-items: center;
                 margin-bottom: 5.75rem;
                 margin-top: 7rem;
-                position: relative; // added for absolute positioning context
+                position: relative;
 
                 @media screen and (max-width: 868px) {
                         margin-top: 4rem;
@@ -57,12 +57,13 @@
 
         .hero-top {
                 position: absolute;
-                top: -3.5rem; // moved up significantly
+                top: -3.5rem;
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 1;
                 width: 100%;
                 text-align: center;
+                padding: 0 1rem;
                 
                 @media screen and (max-width: 868px) {
                         top: -3rem;
@@ -74,17 +75,22 @@
 
         .floating-tag {
                 font-family: var(--font-two);
-                font-size: 0.7rem; // slightly smaller
+                font-size: 0.65rem;
                 color: var(--accent);
                 opacity: 0.45;
-                letter-spacing: 2px;
+                letter-spacing: 1.5px;
                 text-transform: lowercase;
                 animation: floatTag 3s ease-in-out infinite;
-                white-space: nowrap;
+                line-height: 1.3;
+                display: inline-block;
+                max-width: 90vw;
                 
                 @media screen and (max-width: 600px) {
-                        font-size: 0.6rem;
-                        letter-spacing: 1.5px;
+                        font-size: 0.55rem;
+                        letter-spacing: 1px;
+                }
+                @media screen and (max-width: 400px) {
+                        font-size: 0.5rem;
                 }
         }
 
