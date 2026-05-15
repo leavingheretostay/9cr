@@ -51,13 +51,24 @@
                         const ctx = canvas.getContext('2d')!;
                         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
                         const particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+                        const equations = ['E=mc²', 'F=ma', 'λ=h/p', 'ΔxΔp≥ℏ/2', 'iℏ∂ψ/∂t=Ĥψ', 'S=k log W', '∇·E=ρ/ε₀', 'P+V=constant'];
                         for (let i = 0; i < 30; i++) {
                                 particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, size: Math.random()*2+0.5 });
                         }
+                        let eqIndex = 0; let eqX = canvas.width; let eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2;
                         function anim() {
                                 if (!document.getElementById('atom-particles')) return;
                                 ctx.clearRect(0,0,canvas.width,canvas.height);
-                                particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); ctx.globalAlpha=0.4; ctx.fill(); });
+                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+                                particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle=accent; ctx.globalAlpha=0.35; ctx.fill(); });
+                                // Moving equations
+                                eqX -= 0.6;
+                                ctx.globalAlpha = 0.25;
+                                ctx.fillStyle = accent;
+                                ctx.font = '14px "Geist Mono", monospace';
+                                ctx.fillText(equations[eqIndex], eqX, eqY);
+                                if (eqX < -150) { eqX = canvas.width + 50; eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2; eqIndex = (eqIndex + 1) % equations.length; }
+                                ctx.globalAlpha = 1;
                                 requestAnimationFrame(anim);
                         }
                         anim();
@@ -140,22 +151,22 @@
         .museum-scene { 
                 position: relative; z-index: 1;
                 text-align: center; padding: 2.5rem;
-                background: rgba(255,255,255,0.04);
+                background: rgba(0,0,0,0.3);
                 border-radius: 24px;
-                border: 1px solid rgba(255,255,255,0.2);
-                box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+                border: 1px solid rgba(255,255,255,0.25);
+                box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
                 animation: sceneIn 0.6s ease; 
                 max-width: 420px; width: 90%;
         }
         .museum-icon { margin-bottom: 1.5rem; animation: float 3s ease infinite; }
         .museum-title { font-size: 1.8rem; color: var(--accent); margin-bottom: 0.75rem; font-weight: 600; }
-        .museum-text { font-size: 1.1rem; color: var(--text-secondary); margin: 0 auto 2rem auto; line-height: 1.8; }
-        .museum-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; } 
-        .m-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: all 0.3s; } 
-        .m-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
-        .museum-hint { font-size: 0.8rem; color: rgba(255,255,255,0.5); animation: pulse 2s ease infinite; margin-top: 0.5rem; }
+        .museum-text { font-size: 1.1rem; color: #ffffff; margin: 0 auto 2rem auto; line-height: 1.8; opacity: 0.9; }
+        .museum-dots { display: flex; gap: 0.6rem; justify-content: center; margin-bottom: 1.5rem; } 
+        .m-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: all 0.3s; border: 1px solid rgba(255,255,255,0.2); } 
+        .m-dot.active { background: var(--accent); width: 28px; border-radius: 6px; border-color: var(--accent); box-shadow: 0 0 12px var(--accent-opacity); }
+        .museum-hint { font-size: 0.85rem; color: rgba(255,255,255,0.7); animation: pulse 2s ease infinite; margin-top: 0.5rem; font-weight: 500; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } 
         @keyframes sceneIn { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } } 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } } 
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 </style>
