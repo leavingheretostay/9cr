@@ -1,6 +1,13 @@
 <script lang="ts">
         import Nav from '../atoms/Nav.svelte';
+        import { createEventDispatcher } from 'svelte';
+        
         let y: number;
+        const dispatch = createEventDispatcher();
+        
+        function openMuseum() {
+                dispatch('museum');
+        }
 </script>
 
 <nav>
@@ -42,7 +49,7 @@
                                         /></svg
                                 >
                         </Nav>
-                        <Nav href="#aw" section="museum" isSelected={y > 650}>
+                        <Nav href="#/" section="museum" isSelected={y > 650} on:click={openMuseum}>
                                 <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="24px"
