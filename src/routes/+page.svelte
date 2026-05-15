@@ -16,13 +16,11 @@
         let activeSheet: number = -1;
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 
-        // Delete comment popup
         let showDeleteComment = false;
         let deleteCommentTarget: { poem: number; index: number } | null = null;
         let deleteCommentPassword = '';
         let deleteCommentError = '';
 
-        // Audio player
         let audioEl: HTMLAudioElement;
         let playing = false;
         let progress = 0;
@@ -191,43 +189,23 @@
                 <h2>music</h2>
                 <div class="music-player" style="background-image: url('https://i.postimg.cc/tJ3DDYyt/3fbc804b902583553c7626f1926a23a9.jpg');">
                         <div class="music-overlay">
-                                <div class="player-header">
-                                        <span class="player-label">9CR Player</span>
-                                </div>
-                                <div class="player-info">
-                                        <h3 class="song-title">Deedaar</h3>
-                                        <p class="song-artist">Third Hour</p>
-                                </div>
+                                <div class="player-header"><span class="player-label">9CR Player</span></div>
+                                <div class="player-info"><h3 class="song-title">Deedaar</h3><p class="song-artist">Third Hour</p></div>
                                 <div class="player-buttons">
-                                        <button class="ctrl-btn small" aria-label="Previous">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="19,4 8,12 19,20"/><rect x="4" y="4" width="3" height="16" rx="1"/></svg>
-                                        </button>
+                                        <button class="ctrl-btn small" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="19,4 8,12 19,20"/><rect x="4" y="4" width="3" height="16" rx="1"/></svg></button>
                                         <button class="ctrl-btn play-btn" on:click={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
-                                                {#if playing}
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-                                                {:else}
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="7,4 20,12 7,20"/></svg>
-                                                {/if}
+                                                {#if playing}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                                                {:else}<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="7,4 20,12 7,20"/></svg>{/if}
                                         </button>
-                                        <button class="ctrl-btn small" aria-label="Next">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,4 16,12 5,20"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg>
-                                        </button>
+                                        <button class="ctrl-btn small" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,4 16,12 5,20"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg></button>
                                         <button class="ctrl-btn small like-btn" class:liked={songLiked} on:click={likeSong} aria-label="Like">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2">
-                                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
-                                                        <rect x="2" y="9" width="4" height="11"/>
-                                                </svg>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill={songLiked ? '#ef4444' : 'none'} stroke="white" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><rect x="2" y="9" width="4" height="11"/></svg>
                                                 <span class="like-count">{songLikes}</span>
                                         </button>
                                 </div>
                                 <div class="progress-area">
-                                        <div class="progress-track" on:mousedown={seek} on:touchstart={seek}>
-                                                <div class="progress-fill" style="width: {progress}%"></div>
-                                        </div>
-                                        <div class="time-labels">
-                                                <span>{currentTime}</span>
-                                                <span>{duration}</span>
-                                        </div>
+                                        <div class="progress-track" on:mousedown={seek} on:touchstart={seek}><div class="progress-fill" style="width: {progress}%"></div></div>
+                                        <div class="time-labels"><span>{currentTime}</span><span>{duration}</span></div>
                                 </div>
                         </div>
                 </div>
@@ -236,7 +214,6 @@
 
         <section id="fragments" class="poems wrapper">
                 <h2>fragments</h2>
-
                 <div class="quote"><p>"Love each other or perish."</p><span class="quote-author">— Kurt Vonnegut</span><div class="quote-actions"><button class="action-btn" class:liked={liked[0]} on:click={() => handleLike(0)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[0]}</span></button><button class="action-btn" on:click={() => activeSheet = 0}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[0]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Love each other or perish.', 0)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
                 <div class="quote"><p>"The finest souls are those who gulped pain and avoided making others taste it."</p><span class="quote-author">— Nizariat</span><div class="quote-actions"><button class="action-btn" class:liked={liked[1]} on:click={() => handleLike(1)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[1]}</span></button><button class="action-btn" on:click={() => activeSheet = 1}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[1]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('The finest souls are those who gulped pain and avoided making others taste it.', 1)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
                 <div class="quote"><p>"Obsession is the price I pay for my flaws."</p><span class="quote-author">— 9cr</span><div class="quote-actions"><button class="action-btn" class:liked={liked[2]} on:click={() => handleLike(2)}><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>{likes[2]}</span></button><button class="action-btn" on:click={() => activeSheet = 2}><svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>{comments[2]?.length || 0}</span></button><button class="action-btn" on:click={() => sharePoem('Obsession is the price I pay for my flaws.', 2)}><svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
@@ -260,7 +237,6 @@
         <Footer />
 </main>
 
-<!-- Comments Sheet -->
 {#if activeSheet >= 0}
         <div class="comments-overlay" on:click={() => activeSheet = -1}>
                 <div class="comments-sheet" on:click|stopPropagation>
@@ -268,52 +244,31 @@
                         <div class="sheet-body">
                                 {#if comments[activeSheet]?.length > 0}
                                         {#each comments[activeSheet] as comment, i}
-                                                <div class="comment-bubble"
-                                                        on:touchstart={() => {
-                                                                longPressTimer = setTimeout(() => {
-                                                                        showDeleteComment = true;
-                                                                        deleteCommentTarget = { poem: activeSheet, index: i };
-                                                                }, 800);
-                                                        }}
-                                                        on:touchend={() => clearTimeout(longPressTimer)}
-                                                        on:touchmove={() => clearTimeout(longPressTimer)}
-                                                >
-                                                        <span class="comment-name">{comment.name}</span>
-                                                        <p class="comment-text">{comment.text}</p>
+                                                <div class="comment-bubble" on:touchstart={() => { longPressTimer = setTimeout(() => { showDeleteComment = true; deleteCommentTarget = { poem: activeSheet, index: i }; }, 800); }} on:touchend={() => clearTimeout(longPressTimer)} on:touchmove={() => clearTimeout(longPressTimer)}>
+                                                        <span class="comment-name">{comment.name}</span><p class="comment-text">{comment.text}</p>
                                                 </div>
                                         {/each}
-                                {:else}
-                                        <p class="no-comments">No comments yet. Be the first!</p>
-                                {/if}
+                                {:else}<p class="no-comments">No comments yet. Be the first!</p>{/if}
                         </div>
                         <div class="sheet-input">
                                 <input type="text" bind:value={commentNames[activeSheet]} placeholder="Your name" maxlength="30" class="name-input" />
                                 <input type="text" bind:value={commentInputs[activeSheet]} placeholder="Add a comment..." maxlength="200" />
-                                <button class="send-btn" on:click={() => postComment(activeSheet)}>
-                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                </button>
+                                <button class="send-btn" on:click={() => postComment(activeSheet)}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
                         </div>
                 </div>
         </div>
 {/if}
 
-<!-- Delete Comment Modal -->
 {#if showDeleteComment}
         <div class="modal-overlay" on:click={() => showDeleteComment = false} role="dialog" aria-modal="true">
                 <div class="modal-content" on:click|stopPropagation>
-                        <div class="modal-header">
-                                <h3>Delete Comment</h3>
-                                <button class="close-btn" on:click={() => showDeleteComment = false}>✕</button>
-                        </div>
+                        <div class="modal-header"><h3>Delete Comment</h3><button class="close-btn" on:click={() => showDeleteComment = false}>✕</button></div>
                         <div class="modal-body">
                                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p>
                                 <input type="password" bind:value={deleteCommentPassword} placeholder="Password" />
                                 {#if deleteCommentError}<p class="error">{deleteCommentError}</p>{/if}
                         </div>
-                        <div class="modal-footer">
-                                <button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button>
-                                <button class="delete-btn" on:click={confirmDeleteComment}>Delete</button>
-                        </div>
+                        <div class="modal-footer"><button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button><button class="delete-btn" on:click={confirmDeleteComment}>Delete</button></div>
                 </div>
         </div>
 {/if}
@@ -321,7 +276,7 @@
 <style lang="scss">
         .poems { margin-top: 5rem; width: 100%; max-width: 700px; }
         .poems h2 { font-size: 2rem; margin-bottom: 2.5rem; }
-        .quote { padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; background: rgba(255,255,255,0.03); backdrop-filter: blur(8px); }
+        .quote { padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.08); border-radius: 18px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
         .quote p { line-height: 2rem; font-size: 1rem; white-space: pre-line; margin-bottom: 0.5rem; }
         .quote-author { display: block; opacity: 0.7; font-size: 0.9rem; font-style: italic; margin-bottom: 0.75rem; }
         .quote-actions { display: flex; gap: 1.5rem; align-items: center; }
@@ -387,12 +342,13 @@
         .books h2 { font-size: 2rem; margin-bottom: 0.5rem; }
         .books-subtitle { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0; margin-bottom: 2rem; }
         .book-grid { display: flex; flex-direction: column; gap: 1rem; }
-        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); transition: all 0.3s; }
-        .book:hover { background: rgba(255,255,255,0.04); border-color: var(--accent-opacity); }
+        .book { cursor: pointer; display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; background: var(--elevation-one); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.04); transition: all 0.3s; }
+        .book:hover { background: var(--elevation-two); border-color: var(--accent-opacity); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
         .book-cover { width: 48px; height: 70px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
         .book-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .book-info { display: flex; flex-direction: column; gap: 0.2rem; }
         .book-info h3 { font-size: 1rem; margin: 0; color: var(--text-primary); font-weight: 500; }
-        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.55; }
-        .book-info .tag { font-size: 0.65rem; opacity: 0.35; text-transform: uppercase; letter-spacing: 1.5px; }
+        .book-info .author { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.65; }
+        .book-info .tag { font-size: 0.6rem; opacity: 0.4; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0.1rem; }
         @media (max-width: 600px) { .book { padding: 1rem; gap: 1rem; } .book-cover { width: 42px; height: 60px; } }
 </style>
