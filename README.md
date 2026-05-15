@@ -1,34 +1,48 @@
-# 🎨 Personal Portfolio
+# 9cr
 
-![mockup](https://github.com/user-attachments/assets/e95760ac-8846-434a-b2de-63f1dfe5d3e1)
+> *"Just a boy on the yellow brick road, searching for the viz."*
 
-A simple site to showcase the art I've made over the years. Check it out at [afn.im](https://afn.im/).
+Personal website of **Nasir Lone** — Physics postgraduate, poet, and developer from Kashmir.
 
-I decided I needed to finally rewrite my site after staring at my horrid old codebase and design for so long. Made using SvelteKit and SCSS.
+---
 
-## 📝 Notes
+## ✨ Features
 
-- Thanks to [Lanyard API](https://github.com/Phineas/lanyard) for exposing my Discord Rich Presence
-- Burn your eyes at [v1.afn.im](https://v1.afn.im/)
+- 🎵 **Music Player** — Play songs directly on the site
+- 📝 **Fragments** — Poems with likes, comments & sharing
+- 📚 **Bookshelf** — Favorite books with purchase links
+- 🖼️ **Art Gallery** — Collection of personal artwork
+- ✍️ **Signature Wall** — Visitors can draw & leave their mark
+- 🎬 **Cinematic Overlay** — Animated story of my journey
+- 🌓 **Dark/Light Mode** — Toggle between themes
+- ⚛️ **Particle Background** — Floating atom-like particles
+- 📱 **Fully Responsive** — Works on all devices
 
-## ☁️ Hosting
+---
 
-Steps to follow if you want to replicate the hosting of this site. You may host with whatever service you prefer.
+## 🛠️ Built With
 
-1. Go to [Cloudflare Pages](https://pages.dev/)
-2. Create a project and connect your repository
-3. Under `Build settings`, select the `SvelteKit` preset
-4. Under `Environmental variables (advanced)`, add the following variable:
-   - Variable name: `NODE_VERSION`
-   - Value: `21`
-5. Save and deploy
+- [SvelteKit](https://kit.svelte.dev/)
+- [Supabase](https://supabase.com/)
+- [SCSS](https://sass-lang.com/)
+- [Cloudflare Pages](https://pages.cloudflare.com/)
 
-## ⚖️ Licensing
+---
 
-### Code
+## 🌐 Live
 
-All website-related code is distributed under the [AGPL license](LICENSE).
+**[9cr.pages.dev](https://9cr.pages.dev)**
 
-### Art Assets
+---
 
-All art assets (files in `static/art/`) are distributed under the [Creative Commons Attribution 4.0 International](static/art/LICENSE-CC-BY) license. You **must** give attribution if you share or repost these assets.
+## 📬 Connect
+
+- Instagram: [@nacirlone](https://instagram.com/nacirlone)
+- X (Twitter): [@beingkashmire](https://twitter.com/beingkashmire)
+- LinkedIn: [leavingheretostay](https://in.linkedin.com/in/leavingheretostay)
+
+---
+
+## 📄 License
+
+MIT © Nasir Lone
