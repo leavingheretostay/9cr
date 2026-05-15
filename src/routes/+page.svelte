@@ -212,7 +212,7 @@
         }
 </script>
 
-<NavHost />
+<NavHost on:museum={() => { showMuseum = true; museumScene = 0; }} />
 
 <main>
         <Hero />
