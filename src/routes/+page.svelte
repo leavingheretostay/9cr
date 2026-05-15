@@ -129,17 +129,23 @@
                         }
                 }
 
-                // Museum nav trigger
+                // Museum button - find by "museum" text and attach click
                 setTimeout(() => {
-                        const museumBtn = document.querySelector('a[href="#/"]');
-                        if (museumBtn) {
-                                museumBtn.addEventListener('click', (e) => {
-                                        e.preventDefault();
-                                        showMuseum = true;
-                                        museumScene = 0;
-                                });
-                        }
-                }, 1000);
+                        const allH5 = document.querySelectorAll('nav h5');
+                        allH5.forEach((h5) => {
+                                if (h5.textContent?.trim().toLowerCase() === 'museum') {
+                                        const btn = h5.closest('button');
+                                        if (btn) {
+                                                btn.addEventListener('click', (e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        showMuseum = true;
+                                                        museumScene = 0;
+                                                });
+                                        }
+                                }
+                        });
+                }, 1500);
         });
 
         async function handleLike(index: number): Promise<void> {
@@ -212,7 +218,7 @@
         }
 </script>
 
-<NavHost on:museum={() => { showMuseum = true; museumScene = 0; }} />
+<NavHost />
 
 <main>
         <Hero />
