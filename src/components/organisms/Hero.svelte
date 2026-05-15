@@ -74,7 +74,7 @@
         }
 
         .floating-tag {
-                font-family: var(--font-two);
+                font-family: var(--font-one); /* matches the rest of the site */
                 font-size: 0.65rem;
                 color: var(--accent);
                 opacity: 0.45;
