@@ -57,7 +57,7 @@
 
         .hero-top {
                 position: absolute;
-                top: -3.5rem;
+                top: -2.5rem;             /* moved down from -3.5rem */
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 1;
@@ -66,36 +66,38 @@
                 padding: 0 1rem;
                 
                 @media screen and (max-width: 868px) {
-                        top: -3rem;
+                        top: -2.2rem;       /* moved down on tablets */
                 }
                 @media screen and (max-width: 600px) {
-                        top: -2.5rem;
+                        top: -1.8rem;       /* moved down on phones */
                 }
         }
 
         .floating-tag {
                 font-family: var(--font-one);
-                font-size: 0.75rem;         /* slightly larger */
+                font-size: 0.75rem;
                 color: var(--accent);
                 opacity: 0.5;
                 letter-spacing: 1.5px;
                 text-transform: lowercase;
-                animation: floatTag 3s ease-in-out infinite;
+                animation: floatTag 3.5s ease-in-out infinite;   /* slightly slower for smoother feel */
                 line-height: 1.3;
                 display: inline-block;
                 max-width: 90vw;
                 
                 @media screen and (max-width: 600px) {
-                        font-size: 0.65rem;   /* slightly larger on mobile too */
+                        font-size: 0.65rem;
                 }
                 @media screen and (max-width: 400px) {
                         font-size: 0.6rem;
                 }
         }
 
+        /* Symmetric up‑down float – mean position is the static position */
         @keyframes floatTag {
-                0%, 100% { opacity: 0.45; transform: translateY(0); }
-                50% { opacity: 0.7; transform: translateY(-6px); }   /* more pronounced float */
+                0%, 100% { transform: translateY(0); opacity: 0.45; }
+                25%      { transform: translateY(-6px); opacity: 0.7; }
+                75%      { transform: translateY(6px); opacity: 0.7; }
         }
 
         .socials {
