@@ -34,7 +34,7 @@
                 { icon: 'silence', subtitle: 'Silence', text: 'Finding peace in the quiet spaces between thoughts.' },
                 { icon: 'poetry', subtitle: 'Poetry', text: 'Words that breathe, verses that heal.' },
                 { icon: 'code', subtitle: 'Code', text: 'Building tiny universes with logic and design.' },
-                { icon: 'art', subtitle: 'Art', text: 'Creating beauty from chaos, one stroke at a time.' },
+                { icon: 'art', subtitle: 'Art', text: 'Painting silence into something you can see.' },
                 { icon: 'everything', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
@@ -44,14 +44,7 @@
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
 
-        onMount(async () => {
-                const savedLiked = localStorage.getItem('poem-liked'); if (savedLiked) try { liked = JSON.parse(savedLiked); } catch(e) {}
-                if (localStorage.getItem('song-liked') === 'true') songLiked = true;
-                if (supabase) {
-                        const { data: ld } = await supabase.from('poem_likes').select('*').order('poem_index'); if (ld) ld.forEach((r: any) => { if (r.poem_index < 6) likes[r.poem_index] = r.like_count; if (r.poem_index === 99) songLikes = r.like_count; });
-                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text }); }); comments = nc; }
-                }
-                // Atom particles for museum
+        function startAtomParticles() {
                 setTimeout(() => {
                         const canvas = document.getElementById('atom-particles') as HTMLCanvasElement;
                         if (!canvas) return;
@@ -69,6 +62,15 @@
                         }
                         anim();
                 }, 100);
+        }
+
+        onMount(async () => {
+                const savedLiked = localStorage.getItem('poem-liked'); if (savedLiked) try { liked = JSON.parse(savedLiked); } catch(e) {}
+                if (localStorage.getItem('song-liked') === 'true') songLiked = true;
+                if (supabase) {
+                        const { data: ld } = await supabase.from('poem_likes').select('*').order('poem_index'); if (ld) ld.forEach((r: any) => { if (r.poem_index < 6) likes[r.poem_index] = r.like_count; if (r.poem_index === 99) songLikes = r.like_count; });
+                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text }); }); comments = nc; }
+                }
         });
 
         async function handleLike(i: number) { if (liked[i]) return; liked[i] = true; likes[i]++; localStorage.setItem('poem-liked', JSON.stringify(liked)); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: i, like_count: likes[i] }, { onConflict: 'poem_index' }); }
@@ -84,7 +86,7 @@
 
 <NavHost />
 <main>
-        <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; }} />
+        <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
         <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} />
         <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
@@ -140,7 +142,8 @@
                 text-align: center; padding: 2.5rem;
                 background: rgba(255,255,255,0.04);
                 border-radius: 24px;
-                border: 1px solid rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.2);
+                box-shadow: 0 8px 40px rgba(0,0,0,0.3);
                 animation: sceneIn 0.6s ease; 
                 max-width: 420px; width: 90%;
         }
@@ -148,11 +151,11 @@
         .museum-title { font-size: 1.8rem; color: var(--accent); margin-bottom: 0.75rem; font-weight: 600; }
         .museum-text { font-size: 1.1rem; color: var(--text-secondary); margin: 0 auto 2rem auto; line-height: 1.8; }
         .museum-dots { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; } 
-        .m-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.3s; } 
+        .m-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: all 0.3s; } 
         .m-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
-        .museum-hint { font-size: 0.75rem; color: rgba(255,255,255,0.25); animation: pulse 2s ease infinite; }
+        .museum-hint { font-size: 0.8rem; color: rgba(255,255,255,0.5); animation: pulse 2s ease infinite; margin-top: 0.5rem; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } 
         @keyframes sceneIn { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } } 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } } 
-        @keyframes pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.5; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
 </style>
