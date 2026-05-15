@@ -74,10 +74,10 @@
         }
 
         .floating-tag {
-                font-family: var(--font-one); /* matches the rest of the site */
-                font-size: 0.65rem;
+                font-family: var(--font-one);
+                font-size: 0.75rem;         /* slightly larger */
                 color: var(--accent);
-                opacity: 0.45;
+                opacity: 0.5;
                 letter-spacing: 1.5px;
                 text-transform: lowercase;
                 animation: floatTag 3s ease-in-out infinite;
@@ -86,17 +86,16 @@
                 max-width: 90vw;
                 
                 @media screen and (max-width: 600px) {
-                        font-size: 0.55rem;
-                        letter-spacing: 1px;
+                        font-size: 0.65rem;   /* slightly larger on mobile too */
                 }
                 @media screen and (max-width: 400px) {
-                        font-size: 0.5rem;
+                        font-size: 0.6rem;
                 }
         }
 
         @keyframes floatTag {
-                0%, 100% { opacity: 0.4; transform: translateY(0); }
-                50% { opacity: 0.65; transform: translateY(-3px); }
+                0%, 100% { opacity: 0.45; transform: translateY(0); }
+                50% { opacity: 0.7; transform: translateY(-6px); }   /* more pronounced float */
         }
 
         .socials {
