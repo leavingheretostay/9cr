@@ -38,12 +38,11 @@
                 { icon: 'everything', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
-        function togglePlay() { if (!audioEl) return; playing ? audioEl.pause() : audioEl.play(); playing = !playing; }
+        function togglePlay() { if (!audioEl) return; if (playing) { audioEl.pause(); } else { audioEl.play(); } playing = !playing; }
         function updateProgress() { if (!audioEl) return; progress = (audioEl.currentTime / audioEl.duration) * 100 || 0; currentTime = `${Math.floor(audioEl.currentTime/60)}:${Math.floor(audioEl.currentTime%60).toString().padStart(2,'0')}`; }
         function updateDuration() { if (!audioEl) return; duration = `${Math.floor(audioEl.duration/60)}:${Math.floor(audioEl.duration%60).toString().padStart(2,'0')}`; }
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
-        function onSongEnded() { playing = false; }
 
         function startAtomParticles() {
                 setTimeout(() => {
@@ -97,11 +96,13 @@
 <main>
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
-        <MusicPlayer {audioEl} {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {updateProgress} {updateDuration} onEnded={onSongEnded} />
+        <MusicPlayer {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} />
         <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art /><Repos /><Footer />
 </main>
+
+<audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
 
 {#if showMuseum}
         <div class="museum-overlay" on:click={nextMuseumScene}>
