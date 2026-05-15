@@ -2,7 +2,7 @@
 
 > *"Just a boy on the yellow brick road, searching for the viz."*
 
-Personal website of **Nasir Lone** — Physics postgraduate, poet, and developer from Kashmir.
+Personal website of **Nasir Lone** — M.Sc. Physics, poet, and developer from Kashmir.
 
 ---
 
