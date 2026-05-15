@@ -1,12 +1,22 @@
 <script lang="ts">
+        import { createEventDispatcher } from 'svelte';
+        
         export let href = '#';
         export let section = 'home';
         export let isSelected: boolean;
 
         import { page } from '$app/stores';
         let currentPage = $page.url.pathname;
+        
+        const dispatch = createEventDispatcher();
 
         async function handleClick() {
+                // Dispatch event to parent first
+                dispatch('click');
+                
+                // If href is #/, don't scroll (handled by parent)
+                if (href === '#/') return;
+                
                 if (currentPage !== '/') {
                         window.location.href = '/' + href;
                         return;
