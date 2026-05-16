@@ -10,21 +10,19 @@
                 dispatch('museum');
         }
 
-        // Update active section based on scroll position and actual section elements
         function updateActiveSection() {
                 const sections = [
                         { id: 'home', el: document.getElementById('home') },
+                        { id: 'music', el: document.getElementById('music') },
                         { id: 'fragments', el: document.getElementById('fragments') },
                         { id: 'books', el: document.getElementById('books') },
                         { id: 'museum', el: document.getElementById('aw') }
                 ];
 
-                // Find the section whose top is closest to (but not past) the top of the viewport
                 let current = 'home';
                 for (const section of sections) {
                         if (section.el) {
                                 const rect = section.el.getBoundingClientRect();
-                                // If the section's top is at or above the viewport top + 100px buffer
                                 if (rect.top <= 120) {
                                         current = section.id;
                                 }
@@ -43,6 +41,9 @@
                 <ul>
                         <Nav href="#home" section="/" isSelected={activeSection === 'home'}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--accent)" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        </Nav>
+                        <Nav href="#music" section="Music" isSelected={activeSection === 'music'}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--accent)" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
                         </Nav>
                         <Nav href="#fragments" section="Fragments" isSelected={activeSection === 'fragments'}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="var(--accent)"><path d="M440-91 160-252q-19-11-29.5-29T120-321v-318q0-22 10.5-40t29.5-29l280-161q19-11 40-11t40 11l280 161q19 11 29.5 29t10.5 40v318q0 22-10.5 40T800-252L520-91q-19 11-40 11t-40-11Zm0-366v274l40 23 40-23v-274l240-139v-42l-43-25-237 137-237-137-43 25v42l240 139Z"/></svg>
@@ -81,7 +82,7 @@
                 border-radius: 44px;
                 padding: 0.5rem 1.5rem;
                 width: 90%;
-                max-width: 500px;
+                max-width: 520px;
                 margin: 0 auto;
                 transition: all 0.4s ease;
                 
@@ -105,8 +106,8 @@
                 }
                 .nav-container {
                         border-radius: 40px;
-                        padding: 0.4rem 0.8rem;
-                        width: 92%;
+                        padding: 0.4rem 0.6rem;
+                        width: 94%;
                         max-width: 100%;
                 }
         }
