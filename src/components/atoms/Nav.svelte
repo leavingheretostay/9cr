@@ -47,26 +47,24 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 38px;                /* fixed size for the icon circle */
-                height: 38px;
+                width: 40px;                /* slightly increased for taller capsule */
+                height: 40px;
                 border-radius: 50%;
                 transition: background-color 0.3s var(--bezier-one);
         }
 
-        /* Active state: accent circle behind the icon */
         .selected .icon-container {
-                background-color: var(--accent-opacity);   /* subtle tinted circle */
+                background-color: var(--accent-opacity);
         }
 
         button:hover {
                 transform: scale(1.1);
         }
 
-        /* Mobile adjustments – slightly smaller touch targets */
         @media screen and (max-width: 868px) {
                 .icon-container {
-                        width: 34px;
-                        height: 34px;
+                        width: 36px;
+                        height: 36px;
                 }
         }
 </style>
