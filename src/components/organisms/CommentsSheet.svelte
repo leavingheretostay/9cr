@@ -5,13 +5,14 @@
         export let commentInputs: string[] = [];
         export let showDeleteComment: boolean;
         export let deleteCommentTarget: { poem: number; index: number } | null;
-        export let deleteCommentPassword: string;
         export let deleteCommentError: string;
         export let longPressTimer: ReturnType<typeof setTimeout> | null;
         export let postComment: (index: number) => void;
-        export let confirmDeleteComment: () => void;
+        export let confirmDeleteComment: (password: string) => void;
         export let closeSheet: () => void;
         export let startDelete: (poem: number, index: number) => void;
+
+        let passwordInput = '';
 </script>
 
 {#if activeSheet >= 0}
@@ -69,18 +70,19 @@
                         </div>
                         <div class="modal-body">
                                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter password to delete:</p>
-                                <input type="password" bind:value={deleteCommentPassword} placeholder="Password" />
+                                <input type="password" bind:value={passwordInput} placeholder="Password" />
                                 {#if deleteCommentError}<p class="error">{deleteCommentError}</p>{/if}
                         </div>
                         <div class="modal-footer">
                                 <button class="cancel-btn" on:click={() => showDeleteComment = false}>Cancel</button>
-                                <button class="delete-btn" on:click={confirmDeleteComment}>Delete</button>
+                                <button class="delete-btn" on:click={() => confirmDeleteComment(passwordInput)}>Delete</button>
                         </div>
                 </div>
         </div>
 {/if}
 
 <style lang="scss">
+        /* ... exact same styles as before ... */
         .comments-overlay {
                 position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000;
                 display: flex; align-items: flex-end;
