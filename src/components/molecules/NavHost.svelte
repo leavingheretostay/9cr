@@ -13,7 +13,7 @@
 <nav>
         <div class="nav-container" class:scrolled={y > 20}>
                 <ul>
-                        <Nav href="#home" section="Home" isSelected={y < 500}>
+                        <Nav href="#home" section="/" isSelected={y < 500}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                         </Nav>
                         <Nav href="#fragments" section="Fragments" isSelected={y > 500 && y < 1500}>
@@ -50,13 +50,13 @@
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.08);
-                border-radius: 40px;
-                padding: 0.15rem 1rem;
+                border-radius: 44px;           /* slightly more rounded for taller capsule */
+                padding: 0.5rem 1rem;          /* increased vertical padding -> taller pill */
                 transition: all 0.4s ease;
                 
                 ul {
                         display: flex;
-                        gap: 0;
+                        gap: 0.3rem;
                         justify-content: center;
                         margin: 0;
                         padding: 0;
@@ -73,8 +73,10 @@
                         bottom: 0.5rem;
                 }
                 .nav-container {
-                        border-radius: 35px;
-                        padding: 0.1rem 0.5rem;
+                        border-radius: 40px;
+                        padding: 0.4rem 0.6rem;   /* slightly less horizontal padding to fit screen */
+                        max-width: calc(100vw - 1rem);  /* ensures it never overflows */
+                        gap: 0.2rem;              /* tighter icon spacing */
                 }
         }
 </style>
