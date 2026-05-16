@@ -18,29 +18,55 @@
 </script>
 
 <li class:selected={isSelected}>
-        <button on:click={handleClick}>
-                <div class="icon-container"><slot/></div>
-                <h5>{section === '/' ? 'home' : section}</h5>
+        <button on:click={handleClick} aria-label={section}>
+                <div class="icon-container">
+                        <slot />
+                </div>
         </button>
 </li>
 
 <style lang="scss">
-        li { text-decoration: none; list-style: none; }
-        button {
-                background-color: transparent; border: none; color: var(--text-secondary);
-                font-size: 1.1rem; user-select: none; display: flex; align-items: center;
-                gap: 0.75rem; padding: 13px 25px; border-radius: 100px; cursor: pointer;
-                transition: background-color 0.3s var(--bezier-one), transform 0.3s var(--bezier-one);
-                &:hover { background-color: var(--elevation-four); }
+        li {
+                text-decoration: none;
+                list-style: none;
         }
-        h5 { transition: all 0.3s var(--bezier-one); opacity: 0.8; }
-        .icon-container { display: none; }
-        button:hover > h5, .selected h5 { color: var(--text-primary); opacity: 1; }
+
+        button {
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border-radius: 50%;
+                transition: background-color 0.3s var(--bezier-one), transform 0.3s var(--bezier-one);
+        }
+
+        .icon-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 38px;                /* fixed size for the icon circle */
+                height: 38px;
+                border-radius: 50%;
+                transition: background-color 0.3s var(--bezier-one);
+        }
+
+        /* Active state: accent circle behind the icon */
+        .selected .icon-container {
+                background-color: var(--accent-opacity);   /* subtle tinted circle */
+        }
+
+        button:hover {
+                transform: scale(1.1);
+        }
+
+        /* Mobile adjustments – slightly smaller touch targets */
         @media screen and (max-width: 868px) {
-                button { flex-direction: column; gap: 0; font-size: 0.75rem; padding: 6px 8px; margin-bottom: 0; }
-                h5 { transition-delay: 0.5s; font-size: 0.65rem; }
-                .icon-container { display: block; padding: 6px 14px; border-radius: 100px; margin-bottom: 0.3rem; transition: all 0.5s var(--bezier-one); transition-delay: 0.3s; }
-                button:hover { background-color: transparent; }
-                button:hover .icon-container, .selected .icon-container { background-color: var(--accent-opacity); }
+                .icon-container {
+                        width: 34px;
+                        height: 34px;
+                }
         }
 </style>
