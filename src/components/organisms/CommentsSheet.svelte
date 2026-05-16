@@ -19,7 +19,6 @@
                 <div class="comments-sheet" on:click|stopPropagation>
                         <div class="sheet-header">
                                 <h3>Comments</h3>
-                                <!-- Simple cross – no box -->
                                 <button class="close-btn" on:click={closeSheet} aria-label="Close">
                                         ✕
                                 </button>
@@ -32,7 +31,6 @@
                                                                 <span class="comment-name">{comment.name}</span>
                                                                 <p class="comment-text">{comment.text}</p>
                                                         </div>
-                                                        <!-- Delete icon – trash can -->
                                                         <button
                                                                 class="delete-icon"
                                                                 on:click={() => startDelete(activeSheet, i)}
@@ -113,7 +111,6 @@
                 padding: 0.25rem;
                 line-height: 1;
                 transition: color 0.2s;
-                /* no background, no border, no outline on focus */
                 &:hover { color: var(--text-primary); }
                 &:focus { outline: none; }
         }
@@ -124,7 +121,7 @@
 
         .comment-bubble {
                 display: flex;
-                align-items: flex-start;
+                align-items: center;        /* vertically centers the delete icon */
                 gap: 0.75rem;
                 padding: 0.5rem 0;
                 border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -149,7 +146,6 @@
                 padding: 0.15rem;
                 border-radius: 4px;
                 flex-shrink: 0;
-                margin-top: 0.1rem;
                 transition: all 0.2s;
                 display: flex;
                 align-items: center;
@@ -182,7 +178,7 @@
                 text-align: center; padding: 1rem 0;
         }
 
-        /* Delete modal styles (reused from signature wall) */
+        /* Delete modal styles */
         .modal-overlay {
                 position: fixed; inset: 0; background: rgba(0,0,0,0.7);
                 backdrop-filter: blur(4px); z-index: 2000;
