@@ -3,13 +3,13 @@
         import { createEventDispatcher } from 'svelte';
         
         let y: number;
-        let activeSection = 'home';
         const dispatch = createEventDispatcher();
         
         function openMuseum() {
                 dispatch('museum');
         }
 
+        let activeSection = 'home';
         function updateActiveSection() {
                 const sections = [
                         { id: 'home', el: document.getElementById('home') },
@@ -18,22 +18,16 @@
                         { id: 'books', el: document.getElementById('books') },
                         { id: 'museum', el: document.getElementById('aw') }
                 ];
-
                 let current = 'home';
                 for (const section of sections) {
                         if (section.el) {
                                 const rect = section.el.getBoundingClientRect();
-                                if (rect.top <= 120) {
-                                        current = section.id;
-                                }
+                                if (rect.top <= 120) current = section.id;
                         }
                 }
                 activeSection = current;
         }
-
-        $: if (typeof window !== 'undefined') {
-                updateActiveSection();
-        }
+        $: if (typeof window !== 'undefined') updateActiveSection();
 </script>
 
 <nav>
@@ -80,15 +74,16 @@
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.08);
                 border-radius: 44px;
-                padding: 0.5rem 1.5rem;
-                width: 90%;
-                max-width: 520px;
+                padding: 0.5rem 1rem;           /* horizontal padding controls width */
+                width: auto;                     /* shrink to content, not stretch */
+                max-width: calc(100vw - 2rem);   /* never touch screen edges */
                 margin: 0 auto;
                 transition: all 0.4s ease;
                 
                 ul {
                         display: flex;
-                        justify-content: space-between;
+                        gap: 0.6rem;             /* comfortable space between icons */
+                        justify-content: center;
                         width: 100%;
                         margin: 0;
                         padding: 0;
@@ -106,9 +101,11 @@
                 }
                 .nav-container {
                         border-radius: 40px;
-                        padding: 0.4rem 0.6rem;
-                        width: 94%;
-                        max-width: 100%;
+                        padding: 0.4rem 0.7rem;   /* slightly less padding on phones */
+                        max-width: calc(100vw - 1rem);
+                        ul {
+                                gap: 0.5rem;
+                        }
                 }
         }
 </style>
