@@ -50,16 +50,17 @@
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.08);
-                border-radius: 44px;            /* taller pill look */
-                padding: 0.5rem 1.5rem;         /* generous horizontal padding for stretch */
-                width: 90%;                     /* takes up 90% of screen width – near edges */
-                max-width: 500px;               /* but doesn't get too wide on tablets */
-                margin: 0 auto;                 /* centers the pill */
+                border-radius: 44px;          /* taller pill look */
+                padding: 0.5rem 1.2rem;       /* more horizontal space for wider stretch */
+                width: fit-content;
+                max-width: 95%;               /* stretches near screen edges */
+                margin: 0 auto;               /* centers the pill */
                 transition: all 0.4s ease;
                 
                 ul {
                         display: flex;
-                        justify-content: space-between; /* icons evenly spread */
+                        gap: 0.8rem;           /* increased spacing between icons */
+                        justify-content: space-evenly;
                         width: 100%;
                         margin: 0;
                         padding: 0;
@@ -77,9 +78,11 @@
                 }
                 .nav-container {
                         border-radius: 40px;
-                        padding: 0.4rem 0.8rem;
-                        width: 92%;               /* slightly wider on phones */
-                        max-width: 100%;           /* allows full phone width */
+                        padding: 0.4rem 0.8rem; /* slightly less padding on mobile */
+                        max-width: 93%;          /* near edge on phones */
+                        ul {
+                                gap: 0.6rem;
+                        }
                 }
         }
 </style>
