@@ -57,7 +57,7 @@
 
         .hero-top {
                 position: absolute;
-                top: -2.8rem;               /* slight nudge up from -2.5rem – not as high as original */
+                top: -1.8rem;              /* lowered from -2.8rem → more breathing room above the name */
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 1;
@@ -66,10 +66,10 @@
                 padding: 0 1rem;
                 
                 @media screen and (max-width: 868px) {
-                        top: -2.5rem;         /* tablet – moved down a touch */
+                        top: -2.5rem;         /* tablet – unchanged */
                 }
                 @media screen and (max-width: 600px) {
-                        top: -2.2rem;         /* phone – moved down a touch */
+                        top: -2.2rem;         /* phone – unchanged */
                 }
         }
 
@@ -80,7 +80,7 @@
                 opacity: 0.5;
                 letter-spacing: 1.5px;
                 text-transform: lowercase;
-                animation: floatTag 4s ease-in-out infinite;   /* slower for a more relaxed feel */
+                animation: floatTag 4s ease-in-out infinite;
                 line-height: 1.3;
                 display: inline-block;
                 max-width: 90vw;
@@ -93,7 +93,6 @@
                 }
         }
 
-        /* Very gentle float – only 4px up/down */
         @keyframes floatTag {
                 0%, 100% { transform: translateY(0); opacity: 0.45; }
                 50%      { transform: translateY(-4px); opacity: 0.6; }
