@@ -21,7 +21,6 @@
         let longPressTimer: ReturnType<typeof setTimeout> | null = null;
         let showDeleteComment = false;
         let deleteCommentTarget: { poem: number; index: number } | null = null;
-        let deleteCommentPassword = '';
         let deleteCommentError = '';
 
         let audioEl: HTMLAudioElement;
@@ -84,15 +83,16 @@
         async function handleLike(i: number) { if (liked[i]) return; liked[i] = true; likes[i]++; localStorage.setItem('poem-liked', JSON.stringify(liked)); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: i, like_count: likes[i] }, { onConflict: 'poem_index' }); }
         async function postComment(i: number) { const t = commentInputs[i].trim(); const n = commentNames[i].trim() || 'Anonymous'; if (!t || !supabase) return; const { error } = await supabase.from('poem_comments').insert({ poem_index: i, comment_text: t, comment_name: n }); if (!error) { comments[i] = [...comments[i], { name: n, text: t }]; comments = comments; commentInputs[i] = ''; } }
         async function deleteComment(p: number, i: number) { if (!supabase) return; const c = comments[p][i]; await supabase.from('poem_comments').delete().eq('comment_text', c.text).eq('comment_name', c.name); comments[p] = comments[p].filter((_, j) => j !== i); comments = comments; }
-        async function confirmDeleteComment() {
-                if (deleteCommentPassword !== '9cr2026') {
+        
+        // The fix: password is passed as argument from CommentsSheet
+        async function confirmDeleteComment(password: string) {
+                if (password !== '9cr2026') {
                         deleteCommentError = 'Wrong password';
                         return;
                 }
                 if (deleteCommentTarget) {
                         await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index);
                         showDeleteComment = false;
-                        deleteCommentPassword = '';
                         deleteCommentError = '';
                 }
         }
@@ -108,7 +108,7 @@
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
         <MusicPlayer {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} />
-        <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
+        <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art />
         <Repos />
@@ -148,7 +148,7 @@
         </div>
 {/if}
 
-<CommentsSheet {comments} {activeSheet} {commentNames} {commentInputs} {showDeleteComment} {deleteCommentTarget} {deleteCommentPassword} {deleteCommentError} {longPressTimer} {postComment} {confirmDeleteComment} {closeSheet} startDelete={startDeleteComment} />
+<CommentsSheet {comments} {activeSheet} {commentNames} {commentInputs} {showDeleteComment} {deleteCommentTarget} {deleteCommentError} {longPressTimer} {postComment} {confirmDeleteComment} {closeSheet} startDelete={startDeleteComment} />
 
 <style lang="scss">
         .museum-overlay { 
