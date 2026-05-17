@@ -32,6 +32,9 @@
         let hasSignedWithCurrentUser = false;
         let authWaiting = false;
 
+        // --- Visitor counter ---
+        let visitorCount: number | null = null;
+
         $: wallErrorMessage = modalOpen ? '' : errorMessage;
         $: hideAddSignatureButton = Boolean(currentUser && hasSignedWithCurrentUser);
 
@@ -40,6 +43,25 @@
 
                 const setup = async () => {
                         await loadSignatures();
+
+                        // --- Count every visit ---
+                        if (supabase) {
+                                const { data, error: fetchError } = await supabase
+                                        .from('visitor_count')
+                                        .select('count')
+                                        .eq('id', 1)
+                                        .single();
+
+                                if (!fetchError && data) {
+                                        const newCount = data.count + 1;
+                                        await supabase
+                                                .from('visitor_count')
+                                                .update({ count: newCount })
+                                                .eq('id', 1);
+
+                                        visitorCount = newCount;
+                                }
+                        }
 
                         if (!supabase) {
                                 return;
@@ -334,6 +356,11 @@
         <h6 class="footer-meta">
                 Made with 💗 by Nasir Lone
         </h6>
+        {#if visitorCount !== null}
+                <p class="visitor-counter">
+                        👀 {visitorCount.toLocaleString()} visits
+                </p>
+        {/if}
 </footer>
 
 <SignatureModal
@@ -403,5 +430,14 @@
                         border-radius: 7px;
                         width: fit-content;
                 }
+        }
+
+        .visitor-counter {
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+                opacity: 0.7;
+                margin: 0;
+                font-family: var(--font-two);
+                letter-spacing: 0.5px;
         }
 </style>
