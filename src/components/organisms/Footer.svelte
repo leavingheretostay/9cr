@@ -32,7 +32,7 @@
         let hasSignedWithCurrentUser = false;
         let authWaiting = false;
 
-        // --- Visitor counter ---
+        // Visitor counter
         let visitorCount: number | null = null;
 
         $: wallErrorMessage = modalOpen ? '' : errorMessage;
@@ -44,8 +44,10 @@
                 const setup = async () => {
                         await loadSignatures();
 
-                        // --- Count every visit ---
-                        if (supabase) {
+                        // Count visitor (skip owner)
+                        const isOwner = localStorage.getItem('site-owner') === 'true';
+                        
+                        if (supabase && !isOwner) {
                                 const { data, error: fetchError } = await supabase
                                         .from('visitor_count')
                                         .select('count')
@@ -61,6 +63,13 @@
 
                                         visitorCount = newCount;
                                 }
+                        } else if (supabase && isOwner) {
+                                const { data } = await supabase
+                                        .from('visitor_count')
+                                        .select('count')
+                                        .eq('id', 1)
+                                        .single();
+                                if (data) visitorCount = data.count;
                         }
 
                         if (!supabase) {
@@ -357,9 +366,10 @@
                 Made with 💗 by Nasir Lone
         </h6>
         {#if visitorCount !== null}
-                <p class="visitor-counter">
-                        👀 {visitorCount.toLocaleString()} visits
-                </p>
+                <div class="visitor-badge">
+                        <span class="visitor-dot"></span>
+                        <span class="visitor-label">{visitorCount.toLocaleString()} souls have wandered here</span>
+                </div>
         {/if}
 </footer>
 
@@ -432,12 +442,42 @@
                 }
         }
 
-        .visitor-counter {
-                font-size: 0.8rem;
+        /* Beautiful visitor badge */
+        .visitor-badge {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.35rem 1rem;
+                border-radius: 50px;
+                background: var(--elevation-one);
+                border: 1px solid rgba(255,255,255,0.06);
+                animation: fadeInUp 0.6s ease;
+        }
+
+        .visitor-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #4ade80;
+                box-shadow: 0 0 8px #4ade8080;
+                animation: pulse 2s ease infinite;
+        }
+
+        .visitor-label {
+                font-size: 0.75rem;
                 color: var(--text-secondary);
-                opacity: 0.7;
-                margin: 0;
+                opacity: 0.8;
                 font-family: var(--font-two);
-                letter-spacing: 0.5px;
+                letter-spacing: 0.3px;
+        }
+
+        @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+                0%, 100% { opacity: 1; box-shadow: 0 0 8px #4ade8080; }
+                50% { opacity: 0.5; box-shadow: 0 0 4px #4ade8040; }
         }
 </style>
