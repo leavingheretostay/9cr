@@ -362,15 +362,15 @@
 
 <footer class="wrapper">
         <Socials />
-        <h6 class="footer-meta">
-                Made with 💗 by Nasir Lone
-        </h6>
         {#if visitorCount !== null}
                 <div class="visitor-badge">
                         <span class="visitor-dot"></span>
                         <span class="visitor-label">{visitorCount.toLocaleString()} souls have wandered here</span>
                 </div>
         {/if}
+        <h6 class="footer-meta">
+                Made with 💗 by Nasir Lone
+        </h6>
 </footer>
 
 <SignatureModal
@@ -401,7 +401,7 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                gap: 1rem;
+                gap: 0.75rem;
 
                 @media screen and (max-width: 768px) {
                         flex-direction: column;
@@ -442,7 +442,6 @@
                 }
         }
 
-        /* Beautiful visitor badge */
         .visitor-badge {
                 display: flex;
                 align-items: center;
