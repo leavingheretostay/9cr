@@ -6,9 +6,22 @@
         import { GitForkIcon } from '@indaco/svelte-iconoir/git-fork';
         import { OpenNewWindowIcon } from '@indaco/svelte-iconoir/open-new-window';
 
-        let repos: Repo[];
+        let repos: Repo[] = [];
+
+        // Static entry for Whisper
+        const whisperRepo: Repo = {
+                link: 'https://github.com/leavingheretostay/Whisper',
+                owner: 'leavingheretostay',
+                repo: 'Whisper',
+                description: 'Receive anonymous thoughts & confessions beautifully.',
+                language: 'TypeScript',
+                languageColor: '#3178c6',   // TypeScript blue
+                stars: '0',
+                forks: '0'
+        };
 
         onMount(async () => {
+                // Fetch pinned repos from xafn (ReVanced is there)
                 const response = await fetch('https://gh-pinned-repos-tsj7ta5xfhep.deno.dev/?username=xafn');
                 let unpatched = await response.json();
                 // patch repo owners having a slash at the end of them
@@ -18,8 +31,11 @@
                                 unpatched[i].owner = unpatched[i].owner.slice(0, -1);
                         }
                 }
-                // Filter to keep only revanced-website
-                repos = unpatched.filter((repo: Repo) => repo.repo === 'revanced-website');
+                // Keep only revanced-website
+                const revanced = unpatched.filter((repo: Repo) => repo.repo === 'revanced-website');
+
+                // Combine: ReVanced first, then Whisper
+                repos = [...revanced, whisperRepo];
         });
 </script>
 
@@ -28,7 +44,7 @@
                 <h2>oss</h2>
         </div>
         <div class="grid">
-                {#if repos && repos.length > 0}
+                {#if repos.length > 0}
                         {#each repos as { link, owner, repo, description, languageColor, language, stars, forks }}
                                 <a href={link} target="_blank" rel="noreferrer">
                                         <div class="repo-card">
@@ -71,7 +87,7 @@
                                 </a>
                         {/each}
                 {:else}
-                        {#each Array(1) as _}
+                        {#each Array(2) as _}
                                 <div class="repo-card shimmer" />
                         {/each}
                 {/if}
