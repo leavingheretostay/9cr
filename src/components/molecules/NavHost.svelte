@@ -17,7 +17,7 @@
                         { id: 'fragments', el: document.getElementById('fragments') },
                         { id: 'books', el: document.getElementById('books') },
                         { id: 'museum', el: document.getElementById('aw') },
-                        { id: 'code', el: document.getElementById('code') }    // OSS section added
+                        { id: 'code', el: document.getElementById('code') }
                 ];
 
                 let current = 'home';
@@ -56,7 +56,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="var(--accent)"><path d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160l160-160 160 160h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm80-160h480L570-440 450-280l-90-120-120 160Zm502.5-217.5Q760-475 760-500t-17.5-42.5Q725-560 700-560t-42.5 17.5Q640-525 640-500t17.5 42.5Q675-440 700-440t42.5-17.5ZM404-720h152l-76-76-76 76Z"/></svg>
                         </Nav>
                         <Nav href="#code" section="OSS" isSelected={activeSection === 'code'}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--accent)" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                        <rect x="3" y="3" width="18" height="18" rx="4" fill="var(--accent)" />
+                                        <path d="M8 8L5 12L8 16" fill="none" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M16 8L19 12L16 16" fill="none" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
                         </Nav>
                 </ul>
         </div>
@@ -84,15 +88,15 @@
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255,255,255,0.08);
                 border-radius: 44px;
-                padding: 0.5rem 1.5rem;            /* original desktop padding */
-                width: 90%;                          /* original desktop width */
+                padding: 0.5rem 1.5rem;
+                width: 90%;
                 max-width: 520px;
                 margin: 0 auto;
                 transition: all 0.4s ease;
                 
                 ul {
                         display: flex;
-                        justify-content: space-between;  /* original desktop spacing */
+                        justify-content: space-between;
                         width: 100%;
                         margin: 0;
                         padding: 0;
@@ -110,13 +114,13 @@
                 }
                 .nav-container {
                         border-radius: 40px;
-                        padding: 0.4rem 0.7rem;      /* narrower padding for phones */
-                        width: auto;                  /* shrink to content */
-                        max-width: calc(100vw - 1rem); /* never touch edges */
+                        padding: 0.4rem 0.7rem;
+                        width: auto;
+                        max-width: calc(100vw - 1rem);
                         
                         ul {
-                                gap: 0.5rem;          /* tighter icon spacing */
-                                justify-content: center; /* center the icons */
+                                gap: 0.5rem;
+                                justify-content: center;
                         }
                 }
         }
