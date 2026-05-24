@@ -57,9 +57,11 @@
                         </Nav>
                         <Nav href="#code" section="OSS" isSelected={activeSection === 'code'}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                        <rect x="3" y="3" width="18" height="18" rx="4" fill="var(--accent)" />
-                                        <path d="M8 8L5 12L8 16" fill="none" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M16 8L19 12L16 16" fill="none" stroke="var(--bg-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <!-- Hexagon filled with accent -->
+                                        <path d="M12 2L22 7.5V16.5L12 22L2 16.5V7.5L12 2Z" fill="var(--accent)" />
+                                        <!-- Code bracket cutout -->
+                                        <path d="M9 9L7 12L9 15" fill="none" stroke="var(--bg-color)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M15 9L17 12L15 15" fill="none" stroke="var(--bg-color)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                         </Nav>
                 </ul>
