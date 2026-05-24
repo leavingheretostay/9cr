@@ -16,7 +16,8 @@
                         { id: 'music', el: document.getElementById('music') },
                         { id: 'fragments', el: document.getElementById('fragments') },
                         { id: 'books', el: document.getElementById('books') },
-                        { id: 'museum', el: document.getElementById('aw') }
+                        { id: 'museum', el: document.getElementById('aw') },
+                        { id: 'code', el: document.getElementById('code') }    // OSS section added
                 ];
 
                 let current = 'home';
@@ -53,6 +54,9 @@
                         </Nav>
                         <Nav href="#aw" section="Museum" isSelected={activeSection === 'museum'} on:click={openMuseum}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="var(--accent)"><path d="M160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h160l160-160 160 160h160q33 0 56.5 23.5T880-640v480q0 33-23.5 56.5T800-80H160Zm80-160h480L570-440 450-280l-90-120-120 160Zm502.5-217.5Q760-475 760-500t-17.5-42.5Q725-560 700-560t-42.5 17.5Q640-525 640-500t17.5 42.5Q675-440 700-440t42.5-17.5ZM404-720h152l-76-76-76 76Z"/></svg>
+                        </Nav>
+                        <Nav href="#code" section="OSS" isSelected={activeSection === 'code'}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--accent)" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
                         </Nav>
                 </ul>
         </div>
