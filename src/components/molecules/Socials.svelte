@@ -33,7 +33,7 @@
 </script>
 
 <div class="socials-container">
-        <Social tip="Instagram" link="https://instagram.com/nacirlone">
+        <Social tip="Instagram" link="https://instagram.com/9crlone">
                 <InstagramIcon color="var(--accent)" />
         </Social>
 
