@@ -26,7 +26,7 @@
         let audioEl: HTMLAudioElement;
         let playing = false; let progress = 0; let currentTime = '0:00'; let duration = '0:00';
         let songLikes = 0; let songLiked = false;
-        let audioLoading = true;   // <-- NEW: loading state for music
+        let audioLoading = false;
 
         let showMuseum = false; let museumScene = 0;
         const museumScenes = [
@@ -38,7 +38,26 @@
                 { icon: 'everything', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
-        function togglePlay() { if (!audioEl) return; if (playing) { audioEl.pause(); } else { audioEl.play(); } playing = !playing; }
+        function togglePlay() {
+                if (!audioEl) return;
+                // If audio not loaded yet, show spinner and load
+                if (audioEl.readyState < 2) {
+                        audioLoading = true;
+                        audioEl.load();
+                        audioEl.play().then(() => {
+                                playing = true;
+                        }).catch(() => {
+                                // will retry on next tap
+                        });
+                        return;
+                }
+                if (playing) {
+                        audioEl.pause();
+                } else {
+                        audioEl.play();
+                }
+                playing = !playing;
+        }
         function updateProgress() { if (!audioEl) return; progress = (audioEl.currentTime / audioEl.duration) * 100 || 0; currentTime = `${Math.floor(audioEl.currentTime/60)}:${Math.floor(audioEl.currentTime%60).toString().padStart(2,'0')}`; }
         function updateDuration() { if (!audioEl) return; duration = `${Math.floor(audioEl.duration/60)}:${Math.floor(audioEl.duration%60).toString().padStart(2,'0')}`; }
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
@@ -115,8 +134,7 @@
         <Footer />
 </main>
 
-<!-- UPDATED: local file + loading state -->
-<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="metadata"></audio>
+<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="none"></audio>
 
 {#if showMuseum}
         <div class="museum-overlay" on:click={nextMuseumScene}>
