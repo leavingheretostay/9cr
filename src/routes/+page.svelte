@@ -26,6 +26,7 @@
         let audioEl: HTMLAudioElement;
         let playing = false; let progress = 0; let currentTime = '0:00'; let duration = '0:00';
         let songLikes = 0; let songLiked = false;
+        let audioLoading = true;   // <-- NEW: loading state for music
 
         let showMuseum = false; let museumScene = 0;
         const museumScenes = [
@@ -84,7 +85,6 @@
         async function postComment(i: number) { const t = commentInputs[i].trim(); const n = commentNames[i].trim() || 'Anonymous'; if (!t || !supabase) return; const { error } = await supabase.from('poem_comments').insert({ poem_index: i, comment_text: t, comment_name: n }); if (!error) { comments[i] = [...comments[i], { name: n, text: t }]; comments = comments; commentInputs[i] = ''; } }
         async function deleteComment(p: number, i: number) { if (!supabase) return; const c = comments[p][i]; await supabase.from('poem_comments').delete().eq('comment_text', c.text).eq('comment_name', c.name); comments[p] = comments[p].filter((_, j) => j !== i); comments = comments; }
         
-        // The fix: password is passed as argument from CommentsSheet
         async function confirmDeleteComment(password: string) {
                 if (password !== '9cr2026') {
                         deleteCommentError = 'Wrong password';
@@ -107,7 +107,7 @@
 <main>
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
-        <MusicPlayer {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} />
+        <MusicPlayer {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {audioLoading} />
         <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art />
@@ -115,7 +115,8 @@
         <Footer />
 </main>
 
-<audio bind:this={audioEl} src="https://files.catbox.moe/7ezaax.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} preload="metadata"></audio>
+<!-- UPDATED: local file + loading state -->
+<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="metadata"></audio>
 
 {#if showMuseum}
         <div class="museum-overlay" on:click={nextMuseumScene}>
