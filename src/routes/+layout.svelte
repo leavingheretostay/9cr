@@ -37,6 +37,7 @@
                 };
                 stopResizeAnimation();
 
+                // Back to top - appears on scroll, disappears after stopping
                 window.addEventListener('scroll', () => {
                         if (window.scrollY > 300) {
                                 showBackTop = true;
@@ -49,10 +50,15 @@
                         }
                 });
 
+                // Space Warp Particles
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
                 if (canvas) {
                         const ctx = canvas.getContext('2d')!;
-                        let particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+                        let stars: { x: number; y: number; z: number; size: number; speed: number }[] = [];
+                        
+                        // Center of the screen
+                        const cx = window.innerWidth / 2;
+                        const cy = window.innerHeight / 2;
 
                         function resize() {
                                 canvas.width = window.innerWidth;
@@ -61,30 +67,75 @@
                         resize();
                         window.addEventListener('resize', resize);
 
-                        for (let i = 0; i < 40; i++) {
-                                particles.push({
-                                        x: Math.random() * canvas.width,
-                                        y: Math.random() * canvas.height,
-                                        vx: (Math.random() - 0.5) * 0.5,
-                                        vy: (Math.random() - 0.5) * 0.5,
-                                        size: Math.random() * 2 + 1
+                        // Create stars at random positions
+                        for (let i = 0; i < 200; i++) {
+                                stars.push({
+                                        x: (Math.random() - 0.5) * window.innerWidth * 2,
+                                        y: (Math.random() - 0.5) * window.innerHeight * 2,
+                                        z: Math.random() * 1000 + 1,
+                                        size: Math.random() * 2 + 0.5,
+                                        speed: Math.random() * 3 + 1
                                 });
                         }
 
                         function animate() {
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
-                                particles.forEach(p => {
-                                        p.x += p.vx;
-                                        p.y += p.vy;
-                                        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                                        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                
+                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#a78bfa';
+                                const centerX = canvas.width / 2;
+                                const centerY = canvas.height / 2;
+
+                                ctx.save();
+                                ctx.translate(centerX, centerY);
+
+                                for (let i = 0; i < stars.length; i++) {
+                                        const star = stars[i];
+                                        
+                                        // Move star toward viewer (increase z)
+                                        star.z -= star.speed;
+                                        
+                                        // Reset star when it passes the viewer
+                                        if (star.z <= 1) {
+                                                star.x = (Math.random() - 0.5) * canvas.width * 2;
+                                                star.y = (Math.random() - 0.5) * canvas.height * 2;
+                                                star.z = 1000;
+                                                star.size = Math.random() * 2 + 0.5;
+                                                star.speed = Math.random() * 3 + 1;
+                                        }
+
+                                        // Project 3D to 2D
+                                        const px = star.x / star.z * 300;
+                                        const py = star.y / star.z * 300;
+                                        
+                                        // Size based on depth (closer = bigger)
+                                        const size = (1 - star.z / 1000) * star.size * 3;
+                                        
+                                        // Opacity based on depth (closer = brighter)
+                                        const alpha = (1 - star.z / 1000) * 0.8;
+                                        
+                                        // Trail effect - draw a line from previous position
+                                        const prevZ = star.z + star.speed * 2;
+                                        const prevX = star.x / prevZ * 300;
+                                        const prevY = star.y / prevZ * 300;
+                                        
                                         ctx.beginPath();
-                                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                                        ctx.moveTo(prevX, prevY);
+                                        ctx.lineTo(px, py);
+                                        ctx.strokeStyle = accent;
+                                        ctx.globalAlpha = alpha * 0.5;
+                                        ctx.lineWidth = size * 0.5;
+                                        ctx.stroke();
+                                        
+                                        // Draw the star
+                                        ctx.beginPath();
+                                        ctx.arc(px, py, size, 0, Math.PI * 2);
                                         ctx.fillStyle = accent;
-                                        ctx.globalAlpha = 0.3;
+                                        ctx.globalAlpha = alpha;
                                         ctx.fill();
-                                });
+                                }
+
+                                ctx.restore();
                                 requestAnimationFrame(animate);
                         }
                         animate();
@@ -95,6 +146,7 @@
 <svelte:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0f1117" />
         <meta name="og:title" content="9cr" />
         <meta content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" property="og:image" />
         <meta property="og:description" content="Just a boy on the yellow brick road, searching for the viz!" />
@@ -126,6 +178,7 @@
         #particles {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 z-index: -1; pointer-events: none;
+                background: var(--bg-color);
         }
 
         .back-to-top {
