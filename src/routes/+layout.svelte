@@ -49,22 +49,21 @@
                         }
                 });
 
-                // ============ CINEMATIC 3D PARTICLE FIELD ============
+                // ============ SPACE BACKGROUND ============
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
                 if (canvas) {
                         const ctx = canvas.getContext('2d')!;
                         let width: number, height: number;
                         let animationId: number;
-                        let particleColor = '167, 139, 250'; // default accent
+                        let accentRGB = '167, 139, 250';
 
-                        // Get accent color for particles
                         function updateAccentColor() {
                                 const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
                                 if (accent.startsWith('#')) {
                                         const r = parseInt(accent.slice(1, 3), 16);
                                         const g = parseInt(accent.slice(3, 5), 16);
                                         const b = parseInt(accent.slice(5, 7), 16);
-                                        particleColor = `${r}, ${g}, ${b}`;
+                                        accentRGB = `${r}, ${g}, ${b}`;
                                 }
                         }
 
@@ -72,138 +71,145 @@
                                 width = canvas.width = window.innerWidth;
                                 height = canvas.height = window.innerHeight;
                         }
-
                         resize();
                         window.addEventListener('resize', resize);
 
-                        // Particle class with true 3D perspective
-                        class Particle3D {
-                                x: number = 0;
-                                y: number = 0;
-                                z: number = 0;          // depth: 0 (far) to 1 (near)
-                                vx: number = 0;          // horizontal drift
-                                vy: number = 0;          // vertical drift
-                                vz: number = 0;          // forward speed
-                                size: number = 1;        // base size
-                                opacity: number = 0.5;
-                                blur: number = 0;        // Gaussian blur amount
-                                life: number = 0;        // current lifetime progress
-                                maxLife: number = 1;     // total lifetime
-
-                                init(w: number, h: number) {
-                                        // Random starting position in a wide area
-                                        this.x = (Math.random() - 0.5) * w * 2;
-                                        this.y = (Math.random() - 0.5) * h * 2;
-                                        
-                                        // Start from deep distance
-                                        this.z = Math.random() * 0.05 + 0.01;
-                                        
-                                        // Very slow organic drift
-                                        this.vx = (Math.random() - 0.5) * 0.3;
-                                        this.vy = (Math.random() - 0.5) * 0.2;
-                                        
-                                        // Forward speed - varies per particle
-                                        this.vz = Math.random() * 0.0004 + 0.0002;
-                                        
-                                        // Size variation - fewer large particles
-                                        this.size = Math.random() < 0.15 
-                                                ? Math.random() * 2 + 1.5   // 15% chance: larger
-                                                : Math.random() * 1.2 + 0.3; // 85% chance: tiny
-                                        
-                                        this.opacity = Math.random() * 0.4 + 0.15;
-                                        this.blur = Math.random() * 1.5;
-                                        this.life = 0;
-                                        this.maxLife = Math.random() * 0.8 + 0.4;
-                                }
-
-                                update(w: number, h: number) {
-                                        // Move forward (increase depth)
-                                        this.z += this.vz;
-                                        this.life += 0.001;
-                                        
-                                        // Organic drift with subtle randomness
-                                        this.x += this.vx + (Math.random() - 0.5) * 0.05;
-                                        this.y += this.vy + (Math.random() - 0.5) * 0.03;
-                                        
-                                        // Reset when particle passes the viewer or expires
-                                        if (this.z >= 0.95 || this.life >= this.maxLife) {
-                                                this.init(w, h);
-                                                this.z = 0.01; // start from far again
-                                        }
-                                }
-
-                                draw(ctx: CanvasRenderingContext2D, w: number, h: number, color: string) {
-                                        // Perspective projection: z=0 far, z=1 near
-                                        const scale = 0.3 + this.z * 2.5;
-                                        const projectedSize = this.size * scale;
-                                        
-                                        // Calculate screen position with perspective
-                                        const centerX = w / 2;
-                                        const centerY = h / 2;
-                                        const px = centerX + (this.x / (0.2 + this.z)) * 300;
-                                        const py = centerY + (this.y / (0.2 + this.z)) * 200;
-                                        
-                                        // Skip if way off screen
-                                        if (px < -50 || px > w + 50 || py < -50 || py > h + 50) return;
-                                        
-                                        // Opacity fades in from distance, peaks mid-way, fades near
-                                        const depthFade = this.z < 0.3 
-                                                ? this.z / 0.3 
-                                                : 1 - ((this.z - 0.3) / 0.65);
-                                        const alpha = this.opacity * Math.max(0.1, depthFade) * 0.7;
-                                        
-                                        // Draw particle with optional blur
-                                        if (this.blur > 0.5) {
-                                                ctx.save();
-                                                ctx.filter = `blur(${this.blur * scale * 0.8}px)`;
-                                        }
-                                        
-                                        ctx.beginPath();
-                                        ctx.arc(px, py, projectedSize, 0, Math.PI * 2);
-                                        ctx.fillStyle = `rgba(${color}, ${alpha})`;
-                                        ctx.fill();
-                                        
-                                        if (this.blur > 0.5) {
-                                                ctx.restore();
-                                        }
-                                }
+                        // --- Stars ---
+                        interface Star {
+                                x: number; y: number; r: number;
+                                twinkle: number; twinkleSpeed: number;
+                                baseOpacity: number;
+                        }
+                        const stars: Star[] = [];
+                        for (let i = 0; i < 180; i++) {
+                                stars.push({
+                                        x: Math.random() * width,
+                                        y: Math.random() * height,
+                                        r: Math.random() * 2 + 0.3,
+                                        twinkle: Math.random() * Math.PI * 2,
+                                        twinkleSpeed: Math.random() * 0.015 + 0.005,
+                                        baseOpacity: Math.random() * 0.7 + 0.3
+                                });
                         }
 
-                        // Create particles
-                        const particleCount = 120;
-                        const particles3D: Particle3D[] = [];
-                        
-                        for (let i = 0; i < particleCount; i++) {
-                                const p = new Particle3D();
-                                p.init(width, height);
-                                // Stagger initial depths
-                                p.z = Math.random();
-                                particles3D.push(p);
+                        // --- Slow drifting dust ---
+                        interface Dust {
+                                x: number; y: number; r: number;
+                                vx: number; vy: number;
+                                opacity: number;
+                        }
+                        const dust: Dust[] = [];
+                        for (let i = 0; i < 50; i++) {
+                                dust.push({
+                                        x: Math.random() * width,
+                                        y: Math.random() * height,
+                                        r: Math.random() * 1.2 + 0.3,
+                                        vx: (Math.random() - 0.5) * 0.2,
+                                        vy: (Math.random() - 0.5) * 0.2,
+                                        opacity: Math.random() * 0.35 + 0.1
+                                });
+                        }
+
+                        // --- Shooting stars ---
+                        interface ShootingStar {
+                                x: number; y: number; len: number;
+                                speed: number; angle: number;
+                                opacity: number; active: boolean;
+                        }
+                        const shootingStars: ShootingStar[] = [];
+                        for (let i = 0; i < 3; i++) {
+                                shootingStars.push({
+                                        x: 0, y: 0, len: 0,
+                                        speed: 0, angle: 0,
+                                        opacity: 0, active: false
+                                });
+                        }
+
+                        function spawnShootingStar(s: ShootingStar) {
+                                s.x = Math.random() * width;
+                                s.y = Math.random() * height * 0.6;
+                                s.len = Math.random() * 120 + 60;
+                                s.speed = Math.random() * 6 + 4;
+                                s.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.5;
+                                s.opacity = 1;
+                                s.active = true;
                         }
 
                         function animate() {
                                 updateAccentColor();
                                 ctx.clearRect(0, 0, width, height);
-                                
-                                // Draw faint center glow
-                                const glow = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.min(width, height) * 0.4);
-                                glow.addColorStop(0, `rgba(${particleColor}, 0.04)`);
-                                glow.addColorStop(0.5, `rgba(${particleColor}, 0.01)`);
+
+                                // --- Central nebula glow ---
+                                const glow = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.min(width, height) * 0.45);
+                                glow.addColorStop(0, `rgba(${accentRGB}, 0.05)`);
+                                glow.addColorStop(0.4, `rgba(${accentRGB}, 0.015)`);
                                 glow.addColorStop(1, 'transparent');
                                 ctx.fillStyle = glow;
                                 ctx.fillRect(0, 0, width, height);
 
-                                // Sort by depth for proper rendering
-                                particles3D.sort((a, b) => b.z - a.z);
-                                
-                                for (const p of particles3D) {
-                                        p.update(width, height);
-                                        p.draw(ctx, width, height, particleColor);
+                                // --- Cosmic dust ---
+                                for (const d of dust) {
+                                        d.x += d.vx;
+                                        d.y += d.vy;
+                                        if (d.x < -10) d.x = width + 10;
+                                        if (d.x > width + 10) d.x = -10;
+                                        if (d.y < -10) d.y = height + 10;
+                                        if (d.y > height + 10) d.y = -10;
+                                        ctx.beginPath();
+                                        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                                        ctx.fillStyle = `rgba(${accentRGB}, ${d.opacity})`;
+                                        ctx.fill();
                                 }
-                                
+
+                                // --- Stars ---
+                                for (const s of stars) {
+                                        s.twinkle += s.twinkleSpeed;
+                                        const alpha = s.baseOpacity * (0.6 + 0.4 * Math.sin(s.twinkle));
+                                        ctx.beginPath();
+                                        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                                        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                                        ctx.fill();
+                                        if (s.r > 1.3) {
+                                                const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3);
+                                                halo.addColorStop(0, `rgba(200, 210, 255, ${alpha * 0.35})`);
+                                                halo.addColorStop(1, 'transparent');
+                                                ctx.fillStyle = halo;
+                                                ctx.beginPath();
+                                                ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+                                                ctx.fill();
+                                        }
+                                }
+
+                                // --- Shooting stars ---
+                                for (const s of shootingStars) {
+                                        if (!s.active && Math.random() < 0.003) {
+                                                spawnShootingStar(s);
+                                        }
+                                        if (s.active) {
+                                                s.x += Math.cos(s.angle) * s.speed;
+                                                s.y += Math.sin(s.angle) * s.speed;
+                                                s.opacity -= 0.012;
+                                                if (s.opacity <= 0 || s.x < -50 || s.x > width + 50 || s.y < -50 || s.y > height + 50) {
+                                                        s.active = false;
+                                                        s.opacity = 0;
+                                                } else {
+                                                        const ex = s.x - Math.cos(s.angle) * s.len;
+                                                        const ey = s.y - Math.sin(s.angle) * s.len;
+                                                        const gradient = ctx.createLinearGradient(ex, ey, s.x, s.y);
+                                                        gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
+                                                        gradient.addColorStop(1, `rgba(255, 255, 255, ${s.opacity})`);
+                                                        ctx.beginPath();
+                                                        ctx.moveTo(ex, ey);
+                                                        ctx.lineTo(s.x, s.y);
+                                                        ctx.strokeStyle = gradient;
+                                                        ctx.lineWidth = 1.2;
+                                                        ctx.stroke();
+                                                }
+                                        }
+                                }
+
                                 animationId = requestAnimationFrame(animate);
                         }
-                        
                         animate();
                 }
         });
@@ -243,7 +249,7 @@
 
         #particles {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                z-index: -1; pointer-events: none;
+                z-index: 0; pointer-events: none; display: block;
         }
 
         .back-to-top {
