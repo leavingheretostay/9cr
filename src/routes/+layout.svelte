@@ -49,43 +49,75 @@
                         }
                 });
 
+                // ====== DRIFTING PARTICLES ======
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
                 if (canvas) {
                         const ctx = canvas.getContext('2d')!;
-                        let particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+                        let width = canvas.width;
+                        let height = canvas.height;
+                        let particles: { x: number; y: number; r: number; vx: number; vy: number; opacity: number; fadeDir: number; fadeSpeed: number; maxOpacity: number }[] = [];
+                        let dotColor = '167, 139, 250';
+                        let animationId: number;
+
+                        function getAccentRGB() {
+                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+                                if (accent.startsWith('#')) {
+                                        const r = parseInt(accent.slice(1, 3), 16);
+                                        const g = parseInt(accent.slice(3, 5), 16);
+                                        const b = parseInt(accent.slice(5, 7), 16);
+                                        dotColor = `${r}, ${g}, ${b}`;
+                                }
+                        }
 
                         function resize() {
-                                canvas.width = window.innerWidth;
-                                canvas.height = window.innerHeight;
+                                width = canvas.width = window.innerWidth;
+                                height = canvas.height = window.innerHeight;
+                                getAccentRGB();
                         }
                         resize();
                         window.addEventListener('resize', resize);
 
-                        for (let i = 0; i < 40; i++) {
-                                particles.push({
-                                        x: Math.random() * canvas.width,
-                                        y: Math.random() * canvas.height,
-                                        vx: (Math.random() - 0.5) * 0.5,
-                                        vy: (Math.random() - 0.5) * 0.5,
-                                        size: Math.random() * 2 + 1
-                                });
+                        function createParticle() {
+                                return {
+                                        x: Math.random() * width,
+                                        y: Math.random() * height,
+                                        r: Math.random() * 1.5 + 0.5,
+                                        vx: (Math.random() - 0.5) * 0.15,
+                                        vy: -(Math.random() * 0.2 + 0.05),
+                                        opacity: Math.random() * 0.3,
+                                        fadeDir: Math.random() > 0.5 ? 1 : -1,
+                                        fadeSpeed: Math.random() * 0.005 + 0.002,
+                                        maxOpacity: Math.random() * 0.3 + 0.12
+                                };
+                        }
+
+                        for (let i = 0; i < 60; i++) {
+                                particles.push(createParticle());
                         }
 
                         function animate() {
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
-                                particles.forEach(p => {
+                                ctx.clearRect(0, 0, width, height);
+
+                                for (const p of particles) {
                                         p.x += p.vx;
                                         p.y += p.vy;
-                                        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                                        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                                        if (p.x < -10) p.x = width + 10;
+                                        if (p.x > width + 10) p.x = -10;
+                                        if (p.y < -10) p.y = height + 10;
+                                        if (p.y > height + 10) p.y = -10;
+
+                                        p.opacity += p.fadeSpeed * p.fadeDir;
+                                        if (p.opacity >= p.maxOpacity) p.fadeDir = -1;
+                                        if (p.opacity <= 0) p.fadeDir = 1;
+
                                         ctx.beginPath();
-                                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                                        ctx.fillStyle = accent;
-                                        ctx.globalAlpha = 0.3;
+                                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                                        ctx.fillStyle = `rgba(${dotColor}, ${p.opacity})`;
                                         ctx.fill();
-                                });
-                                requestAnimationFrame(animate);
+                                }
+
+                                animationId = requestAnimationFrame(animate);
                         }
                         animate();
                 }
@@ -95,6 +127,7 @@
 <svelte:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0f1117" />
         <meta name="og:title" content="9cr" />
         <meta content="https://i.postimg.cc/s2Hmshnf/1778611198152.jpg" property="og:image" />
         <meta property="og:description" content="Just a boy on the yellow brick road, searching for the viz!" />
