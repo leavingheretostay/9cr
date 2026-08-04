@@ -49,7 +49,7 @@
                         }
                 });
 
-                // ============ SPACE BACKGROUND ============
+                // ============ MORPHE-STYLE SPACE ============
                 const canvas = document.getElementById('particles') as HTMLCanvasElement;
                 if (canvas) {
                         const ctx = canvas.getContext('2d')!;
@@ -74,137 +74,83 @@
                         resize();
                         window.addEventListener('resize', resize);
 
-                        // --- Stars ---
-                        interface Star {
-                                x: number; y: number; r: number;
-                                twinkle: number; twinkleSpeed: number;
-                                baseOpacity: number;
-                        }
-                        const stars: Star[] = [];
-                        for (let i = 0; i < 180; i++) {
-                                stars.push({
-                                        x: Math.random() * width,
-                                        y: Math.random() * height,
-                                        r: Math.random() * 2 + 0.3,
-                                        twinkle: Math.random() * Math.PI * 2,
-                                        twinkleSpeed: Math.random() * 0.015 + 0.005,
-                                        baseOpacity: Math.random() * 0.7 + 0.3
-                                });
-                        }
-
-                        // --- Slow drifting dust ---
-                        interface Dust {
+                        // Particle types: 0=small star, 1=medium, 2=large glowing, 3=dust
+                        const particles: {
                                 x: number; y: number; r: number;
                                 vx: number; vy: number;
-                                opacity: number;
-                        }
-                        const dust: Dust[] = [];
-                        for (let i = 0; i < 50; i++) {
-                                dust.push({
+                                opacity: number; pulse: number; pulseSpeed: number;
+                                type: number; hue: number;
+                        }[] = [];
+
+                        // Create 250 particles
+                        for (let i = 0; i < 250; i++) {
+                                const type = Math.random() < 0.1 ? 2 : (Math.random() < 0.3 ? 1 : (Math.random() < 0.6 ? 0 : 3));
+                                particles.push({
                                         x: Math.random() * width,
                                         y: Math.random() * height,
-                                        r: Math.random() * 1.2 + 0.3,
-                                        vx: (Math.random() - 0.5) * 0.2,
-                                        vy: (Math.random() - 0.5) * 0.2,
-                                        opacity: Math.random() * 0.35 + 0.1
+                                        r: type === 2 ? Math.random() * 2.5 + 1.5 :
+                                           type === 1 ? Math.random() * 1.5 + 0.5 :
+                                           type === 3 ? Math.random() * 0.8 + 0.2 :
+                                           Math.random() * 1 + 0.3,
+                                        vx: (Math.random() - 0.5) * 0.5,
+                                        vy: (Math.random() - 0.5) * 0.5,
+                                        opacity: 0,
+                                        pulse: Math.random() * Math.PI * 2,
+                                        pulseSpeed: Math.random() * 0.02 + 0.005,
+                                        type,
+                                        hue: Math.random() * 60 + 220
                                 });
-                        }
-
-                        // --- Shooting stars ---
-                        interface ShootingStar {
-                                x: number; y: number; len: number;
-                                speed: number; angle: number;
-                                opacity: number; active: boolean;
-                        }
-                        const shootingStars: ShootingStar[] = [];
-                        for (let i = 0; i < 3; i++) {
-                                shootingStars.push({
-                                        x: 0, y: 0, len: 0,
-                                        speed: 0, angle: 0,
-                                        opacity: 0, active: false
-                                });
-                        }
-
-                        function spawnShootingStar(s: ShootingStar) {
-                                s.x = Math.random() * width;
-                                s.y = Math.random() * height * 0.6;
-                                s.len = Math.random() * 120 + 60;
-                                s.speed = Math.random() * 6 + 4;
-                                s.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.5;
-                                s.opacity = 1;
-                                s.active = true;
+                                particles[i].opacity = Math.random() * 0.6 + 0.2;
                         }
 
                         function animate() {
                                 updateAccentColor();
-                                ctx.clearRect(0, 0, width, height);
-
-                                // --- Central nebula glow ---
-                                const glow = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.min(width, height) * 0.45);
-                                glow.addColorStop(0, `rgba(${accentRGB}, 0.05)`);
-                                glow.addColorStop(0.4, `rgba(${accentRGB}, 0.015)`);
-                                glow.addColorStop(1, 'transparent');
-                                ctx.fillStyle = glow;
+                                // Semi-transparent clear for trail effect
+                                ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
                                 ctx.fillRect(0, 0, width, height);
 
-                                // --- Cosmic dust ---
-                                for (const d of dust) {
-                                        d.x += d.vx;
-                                        d.y += d.vy;
-                                        if (d.x < -10) d.x = width + 10;
-                                        if (d.x > width + 10) d.x = -10;
-                                        if (d.y < -10) d.y = height + 10;
-                                        if (d.y > height + 10) d.y = -10;
-                                        ctx.beginPath();
-                                        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-                                        ctx.fillStyle = `rgba(${accentRGB}, ${d.opacity})`;
-                                        ctx.fill();
-                                }
+                                for (const p of particles) {
+                                        // Move
+                                        p.x += p.vx;
+                                        p.y += p.vy;
 
-                                // --- Stars ---
-                                for (const s of stars) {
-                                        s.twinkle += s.twinkleSpeed;
-                                        const alpha = s.baseOpacity * (0.6 + 0.4 * Math.sin(s.twinkle));
-                                        ctx.beginPath();
-                                        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                                        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                                        ctx.fill();
-                                        if (s.r > 1.3) {
-                                                const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3);
-                                                halo.addColorStop(0, `rgba(200, 210, 255, ${alpha * 0.35})`);
-                                                halo.addColorStop(1, 'transparent');
-                                                ctx.fillStyle = halo;
+                                        // Wrap around edges
+                                        if (p.x < -20) p.x = width + 20;
+                                        if (p.x > width + 20) p.x = -20;
+                                        if (p.y < -20) p.y = height + 20;
+                                        if (p.y > height + 20) p.y = -20;
+
+                                        // Subtle pulsing
+                                        p.pulse += p.pulseSpeed;
+                                        const alpha = p.opacity * (0.7 + 0.3 * Math.sin(p.pulse));
+
+                                        if (p.type === 3) {
+                                                // Dust - accent colored, very subtle
                                                 ctx.beginPath();
-                                                ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+                                                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                                                ctx.fillStyle = `rgba(${accentRGB}, ${alpha * 0.35})`;
                                                 ctx.fill();
-                                        }
-                                }
-
-                                // --- Shooting stars ---
-                                for (const s of shootingStars) {
-                                        if (!s.active && Math.random() < 0.003) {
-                                                spawnShootingStar(s);
-                                        }
-                                        if (s.active) {
-                                                s.x += Math.cos(s.angle) * s.speed;
-                                                s.y += Math.sin(s.angle) * s.speed;
-                                                s.opacity -= 0.012;
-                                                if (s.opacity <= 0 || s.x < -50 || s.x > width + 50 || s.y < -50 || s.y > height + 50) {
-                                                        s.active = false;
-                                                        s.opacity = 0;
-                                                } else {
-                                                        const ex = s.x - Math.cos(s.angle) * s.len;
-                                                        const ey = s.y - Math.sin(s.angle) * s.len;
-                                                        const gradient = ctx.createLinearGradient(ex, ey, s.x, s.y);
-                                                        gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
-                                                        gradient.addColorStop(1, `rgba(255, 255, 255, ${s.opacity})`);
-                                                        ctx.beginPath();
-                                                        ctx.moveTo(ex, ey);
-                                                        ctx.lineTo(s.x, s.y);
-                                                        ctx.strokeStyle = gradient;
-                                                        ctx.lineWidth = 1.2;
-                                                        ctx.stroke();
-                                                }
+                                        } else if (p.type === 2) {
+                                                // Large glowing star
+                                                const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+                                                glow.addColorStop(0, `rgba(${accentRGB}, ${alpha * 0.5})`);
+                                                glow.addColorStop(0.5, `rgba(${accentRGB}, ${alpha * 0.15})`);
+                                                glow.addColorStop(1, 'transparent');
+                                                ctx.fillStyle = glow;
+                                                ctx.beginPath();
+                                                ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+                                                ctx.fill();
+                                                // Core
+                                                ctx.beginPath();
+                                                ctx.arc(p.x, p.y, p.r * 0.6, 0, Math.PI * 2);
+                                                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                                                ctx.fill();
+                                        } else {
+                                                // Regular star
+                                                ctx.beginPath();
+                                                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                                                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                                                ctx.fill();
                                         }
                                 }
 
