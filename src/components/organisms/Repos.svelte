@@ -1,42 +1,17 @@
 <script lang="ts">
-        import { onMount } from 'svelte';
-        import type { Repo } from '../../util/types';
-
-        import { StarIcon } from '@indaco/svelte-iconoir/star';
-        import { GitForkIcon } from '@indaco/svelte-iconoir/git-fork';
-        import { OpenNewWindowIcon } from '@indaco/svelte-iconoir/open-new-window';
-
-        let repos: Repo[] = [];
-
-        // Static entry for Whisper
-        const whisperRepo: Repo = {
-                link: 'https://github.com/leavingheretostay/Whisper',
-                owner: 'leavingheretostay',
-                repo: 'Whisper',
-                description: 'Receive anonymous thoughts & confessions beautifully.',
-                language: 'TypeScript',
-                languageColor: '#3178c6',   // TypeScript blue
-                stars: '0',
-                forks: '0'
-        };
-
-        onMount(async () => {
-                // Fetch pinned repos from xafn (ReVanced is there)
-                const response = await fetch('https://gh-pinned-repos-tsj7ta5xfhep.deno.dev/?username=xafn');
-                let unpatched = await response.json();
-                // patch repo owners having a slash at the end of them
-                for (let i = 0; i < unpatched.length; i++) {
-                        const element = unpatched[i];
-                        if ((element.owner as string).endsWith('/')) {
-                                unpatched[i].owner = unpatched[i].owner.slice(0, -1);
-                        }
+        // Only your own project – no external API needed
+        const repos = [
+                {
+                        link: 'https://github.com/leavingheretostay/Whisper',
+                        owner: 'leavingheretostay',
+                        repo: 'Whisper',
+                        description: 'Receive anonymous thoughts & confessions beautifully.',
+                        language: 'TypeScript',
+                        languageColor: '#3178c6',
+                        stars: '0',
+                        forks: '0'
                 }
-                // Keep only revanced-website
-                const revanced = unpatched.filter((repo: Repo) => repo.repo === 'revanced-website');
-
-                // Combine: ReVanced first, then Whisper
-                repos = [...revanced, whisperRepo];
-        });
+        ];
 </script>
 
 <section class="wrapper" id="code">
@@ -44,53 +19,43 @@
                 <h2>oss</h2>
         </div>
         <div class="grid">
-                {#if repos.length > 0}
-                        {#each repos as { link, owner, repo, description, languageColor, language, stars, forks }}
-                                <a href={link} target="_blank" rel="noreferrer">
-                                        <div class="repo-card">
-                                                <div id="top-part">
-                                                        <div class="info">
-                                                                <img
-                                                                        src="https://github.com/{owner}.png"
-                                                                        alt="{owner}'s profile picture"
-                                                                        id="pfp"
-                                                                />
-                                                                <h6>{owner}</h6>
-                                                        </div>
-                                                        <div id="open">
-                                                                <OpenNewWindowIcon color="var(--text-secondary)" size="20px" />
-                                                        </div>
+                {#each repos as { link, owner, repo, description, languageColor, language, stars, forks }}
+                        <a href={link} target="_blank" rel="noreferrer">
+                                <div class="repo-card">
+                                        <div id="top-part">
+                                                <div class="info">
+                                                        <img src="https://github.com/{owner}.png" alt="{owner}'s profile picture" id="pfp" />
+                                                        <h6>{owner}</h6>
                                                 </div>
-                                                <div>
-                                                        <h3>{repo}</h3>
-                                                        <h6>{description}</h6>
-                                                </div>
-                                                <div class="info-container">
-                                                        <div class="info">
-                                                                <span class="dot" style="background-color: {languageColor}" />
-                                                                <h6>{language}</h6>
-                                                        </div>
-                                                        <div class="info">
-                                                                {#if stars}
-                                                                        <StarIcon color="var(--text-secondary)" size="16px" />
-                                                                        <h6>{stars}</h6>
-                                                                {/if}
-                                                        </div>
-                                                        <div class="info">
-                                                                {#if forks}
-                                                                        <GitForkIcon color="var(--text-secondary)" size="16px" />
-                                                                        <h6>{forks}</h6>
-                                                                {/if}
-                                                        </div>
+                                                <div id="open">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                                 </div>
                                         </div>
-                                </a>
-                        {/each}
-                {:else}
-                        {#each Array(2) as _}
-                                <div class="repo-card shimmer" />
-                        {/each}
-                {/if}
+                                        <div>
+                                                <h3>{repo}</h3>
+                                                <h6>{description}</h6>
+                                        </div>
+                                        <div class="info-container">
+                                                <div class="info">
+                                                        <span class="dot" style="background-color: {languageColor}" />
+                                                        <h6>{language}</h6>
+                                                </div>
+                                                <div class="info">
+                                                        {#if stars}
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                                                <h6>{stars}</h6>
+                                                        {/if}
+                                                </div>
+                                                <div class="info">
+                                                        {#if forks}
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                                                                <h6>{forks}</h6>
+                                                        {/if}
+                                                </div>
+                                        </div>
+                                </div>
+                        </a>
+                {/each}
         </div>
 </section>
 
@@ -106,6 +71,7 @@
                         justify-content: left;
                 }
         }
+
         .repo-card {
                 padding: 1rem 1.25rem;
                 background-color: var(--elevation-two);
@@ -125,35 +91,7 @@
                 &:hover {
                         transform: translateY(-2px);
                         box-shadow: 0px 15px 25px -10px rgba(0, 0, 0, 0.25);
-
-                        #open {
-                                filter: brightness(1.3);
-                        }
-                }
-        }
-
-        .shimmer {
-                animation-duration: 2.2s;
-                animation-fill-mode: forwards;
-                animation-iteration-count: infinite;
-                animation-name: shimmer;
-                animation-timing-function: linear;
-                background: #ddd;
-                background: linear-gradient(
-                        to right,
-                        var(--elevation-two) 8%,
-                        var(--elevation-one) 18%,
-                        var(--elevation-two) 33%
-                );
-                background-size: 1200px 100%;
-        }
-
-        @keyframes shimmer {
-                0% {
-                        background-position: -1200px 0;
-                }
-                100% {
-                        background-position: 1200px 0;
+                        #open { filter: brightness(1.3); }
                 }
         }
 
@@ -182,10 +120,6 @@
         #open {
                 height: 20px;
                 transition: filter 0.3s var(--bezier-one);
-        }
-
-        span {
-                color: var(--accent);
         }
 
         .grid {
