@@ -7,7 +7,7 @@
 
 <Tooltip {tip}>
 	<div>
-		<a href={link} target="_blank" rel="noreferrer">
+		<a href={link} target="_blank" rel="noreferrer" aria-label={tip}>
 			<slot/>
 		</a>
 	</div>
@@ -38,6 +38,11 @@
 
 		&:active {
 			transform: scale(98%);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 4px;
 		}
 	}
 </style>
