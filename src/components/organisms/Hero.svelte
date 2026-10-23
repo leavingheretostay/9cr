@@ -35,6 +35,7 @@
 
         section {
                 scroll-margin-top: 20rem;
+                gap: clamp(1.5rem, 4vw, 3rem);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -173,9 +174,42 @@
                 }
         }
 
-        @media screen and (max-width: 400px) {
-                h4 br {
-                        content: '&#160;';
+        @media screen and (max-width: 500px) {
+                section {
+                        margin-top: 5rem;
+                        gap: 1.5rem;
+                }
+
+                h1 {
+                        font-size: clamp(3.2rem, 16vw, 4.5rem);
+                        line-height: 1.15;
+                }
+
+                h4 {
+                        font-size: clamp(1.05rem, 4.8vw, 1.3rem);
+                        line-height: 1.55;
+                        max-width: 34rem;
+                }
+
+                .floating-tag {
+                        max-width: 100%;
+                        letter-spacing: 0.04em;
+                        overflow-wrap: anywhere;
+                }
+
+                .socials {
+                        margin-top: 0.8rem;
+                        margin-bottom: 1.25rem;
+                }
+        }
+
+        @media screen and (max-width: 360px) {
+                .hero-top {
+                        padding-inline: 0.25rem;
+                }
+
+                .floating-tag {
+                        font-size: 0.58rem;
                 }
         }
 </style>
