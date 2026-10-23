@@ -42,9 +42,13 @@
 	}
 
 	.img {
-		border-radius: 36px;
+		border-radius: 28px;
 		width: 425px;
 		height: 400px;
+		border: 1px solid var(--elevation-four);
+		box-shadow: 0 28px 70px -32px rgba(0, 0, 0, 0.38), 0 0 0 8px var(--elevation-one);
+		background-position: center;
+		will-change: transform;
 		z-index: 1;
 		display: block;
 		transition:
@@ -56,18 +60,28 @@
 		background-position: center;
 		background-repeat: no-repeat;
 
-		@media (max-width: 768px) {
-			display: none;
+		@media (max-width: 1240px) {
+			width: clamp(280px, 36vw, 390px);
+			height: clamp(300px, 38vw, 380px);
 		}
 
-		@media (max-width: 1240px) {
-			width: clamp(340px, 40vw, 425px);
-			height: clamp(300px, 40vw, 400px);
+		@media (max-width: 768px) {
+			width: min(100%, 360px);
+			height: clamp(220px, 68vw, 300px);
+			margin: 2.25rem auto 0;
+			border-radius: 22px;
+		}
+
+		@media (max-width: 500px) {
+			width: min(100%, 320px);
+			height: clamp(210px, 62vw, 270px);
 		}
 	}
 
 	.img-container {
 		z-index: 1;
+		flex: 0 1 425px;
+		min-width: 0;
 		animation: float 6s ease-in-out infinite;
 		animation-play-state: running;
 
@@ -75,5 +89,15 @@
 			display: flex;
 			justify-content: center;
 		}
+
+		@media (max-width: 768px) {
+			width: 100%;
+			animation: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.img-container { animation: none; }
+		.img { transition: none; }
 	}
 </style>
