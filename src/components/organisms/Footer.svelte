@@ -354,7 +354,6 @@
         {signatures}
         {loading}
         errorMessage={wallErrorMessage}
-        {authWaiting}
         hideAddButton={hideAddSignatureButton}
         on:open={openModal}
 />
