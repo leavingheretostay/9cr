@@ -3,17 +3,8 @@
 	import Tooltip from '../atoms/Tooltip.svelte';
 
 	// i didnt write this idk
-	let getAge = () => {
-		let birthDate = new Date('1999/11/10');
-		const ageMs = Date.now() - birthDate.getTime();
-		const preciseAge = (ageMs / 31536000000).toFixed(10);
-		return preciseAge;
-	};
-
-	let age = getAge();
-	setInterval(() => {
-		age = getAge();
-	}, 1000);
+	const birthDate = new Date('1999-11-10T00:00:00');
+	const age = (Date.now() - birthDate.getTime()) / 31536000000;
 </script>
 
 <section id="about" class="wrapper">
@@ -23,7 +14,7 @@
 	<div class="text">
 		<h2>bio</h2>
 		<p>
-	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
+	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={String(Math.floor(age))}
 		><span>{Math.floor(Number(age))}</span></Tooltip
 	> year old Physics postgraduate drawn toward <Tooltip tip="tiny universes"
 		><span>atoms</span></Tooltip

@@ -17,27 +17,25 @@
 
                 if (document.readyState === 'complete') {
                         loading = false;
+                } else {
+                        window.addEventListener('load', () => {
+                                loading = false;
+                        }, { once: true });
                 }
 
-                const classes = document.querySelector('body')?.classList;
-                const stopResizeAnimation = () => {
-                        let timer: any = 0;
-                        window.addEventListener('resize', function () {
-                                if (timer) {
-                                        clearTimeout(timer);
-                                        timer = null;
-                                } else {
-                                        classes?.add('stop-transitions');
-                                }
-                                timer = setTimeout(() => {
-                                        classes?.remove('stop-transitions');
-                                        timer = null;
-                                }, 100);
-                        });
-                };
-                stopResizeAnimation();
+                const classes = document.body.classList;
+                let resizeTimer: ReturnType<typeof setTimeout> | undefined;
 
-                window.addEventListener('scroll', () => {
+                const handleResize = () => {
+                        if (resizeTimer) clearTimeout(resizeTimer);
+                        classes.add('stop-transitions');
+                        resizeTimer = setTimeout(() => {
+                                classes.remove('stop-transitions');
+                                resizeTimer = undefined;
+                        }, 120);
+                };
+
+                const handleScroll = () => {
                         if (window.scrollY > 300) {
                                 showBackTop = true;
                                 clearTimeout(scrollTimeout);
@@ -46,49 +44,106 @@
                                 }, 1500);
                         } else {
                                 showBackTop = false;
+                                clearTimeout(scrollTimeout);
                         }
-                });
+                };
 
-                const canvas = document.getElementById('particles') as HTMLCanvasElement;
-                if (canvas) {
-                        const ctx = canvas.getContext('2d')!;
-                        let particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+                window.addEventListener('resize', handleResize, { passive: true });
+                window.addEventListener('scroll', handleScroll, { passive: true });
 
-                        function resize() {
-                                canvas.width = window.innerWidth;
-                                canvas.height = window.innerHeight;
+                const canvas = document.getElementById('particles') as HTMLCanvasElement | null;
+                const context = canvas?.getContext('2d');
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+                let animationFrame = 0;
+                let particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
+                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
+
+                const resizeCanvas = () => {
+                        if (!canvas) return;
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        if (particles.length) {
+                                particles.forEach((particle) => {
+                                        particle.x = Math.min(particle.x, canvas.width);
+                                        particle.y = Math.min(particle.y, canvas.height);
+                                });
                         }
-                        resize();
-                        window.addEventListener('resize', resize);
+                };
 
-                        for (let i = 0; i < 40; i++) {
-                                particles.push({
+                const stopAnimation = () => {
+                        if (animationFrame) cancelAnimationFrame(animationFrame);
+                        animationFrame = 0;
+                };
+
+                const animate = () => {
+                        if (!canvas || !context || document.hidden || reducedMotion.matches) {
+                                stopAnimation();
+                                return;
+                        }
+
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+                        context.fillStyle = accent;
+                        context.globalAlpha = 0.3;
+
+                        particles.forEach((particle) => {
+                                particle.x += particle.vx;
+                                particle.y += particle.vy;
+                                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+                                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+                                context.beginPath();
+                                context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                                context.fill();
+                        });
+
+                        context.globalAlpha = 1;
+                        animationFrame = requestAnimationFrame(animate);
+                };
+
+                const startAnimation = () => {
+                        stopAnimation();
+                        if (!canvas || !context || document.hidden || reducedMotion.matches) return;
+                        if (!particles.length) {
+                                particles = Array.from({ length: 40 }, () => ({
                                         x: Math.random() * canvas.width,
                                         y: Math.random() * canvas.height,
                                         vx: (Math.random() - 0.5) * 0.5,
                                         vy: (Math.random() - 0.5) * 0.5,
                                         size: Math.random() * 2 + 1
-                                });
+                                }));
                         }
+                        animationFrame = requestAnimationFrame(animate);
+                };
 
-                        function animate() {
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#f59e0b';
-                                particles.forEach(p => {
-                                        p.x += p.vx;
-                                        p.y += p.vy;
-                                        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                                        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                                        ctx.beginPath();
-                                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                                        ctx.fillStyle = accent;
-                                        ctx.globalAlpha = 0.3;
-                                        ctx.fill();
-                                });
-                                requestAnimationFrame(animate);
+                const handleVisibilityChange = () => {
+                        if (document.hidden) stopAnimation();
+                        else startAnimation();
+                };
+
+                const handleMotionPreferenceChange = () => {
+                        if (reducedMotion.matches) {
+                                stopAnimation();
+                                context?.clearRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
+                        } else {
+                                startAnimation();
                         }
-                        animate();
-                }
+                };
+
+                resizeCanvas();
+                startAnimation();
+                window.addEventListener('resize', resizeCanvas, { passive: true });
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                reducedMotion.addEventListener?.('change', handleMotionPreferenceChange);
+
+                return () => {
+                        stopAnimation();
+                        window.removeEventListener('resize', handleResize);
+                        window.removeEventListener('resize', resizeCanvas);
+                        window.removeEventListener('scroll', handleScroll);
+                        document.removeEventListener('visibilitychange', handleVisibilityChange);
+                        reducedMotion.removeEventListener?.('change', handleMotionPreferenceChange);
+                        if (resizeTimer) clearTimeout(resizeTimer);
+                        clearTimeout(scrollTimeout);
+                };
         });
 </script>
 
@@ -142,12 +197,11 @@
                 transform: translateY(-3px); filter: brightness(1.15);
         }
 
-        @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) {
+                .back-to-top { bottom: 5rem; right: 1rem; width: 44px; height: 44px; }
         }
 
-        @media (max-width: 768px) {
-                .back-to-top { bottom: 5rem; right: 1rem; width: 38px; height: 38px; }
+        @media (prefers-reduced-motion: reduce) {
+                #particles { display: none; }
         }
 </style>

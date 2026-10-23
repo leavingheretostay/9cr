@@ -14,7 +14,7 @@
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
         let liked: boolean[] = [false, false, false, false, false, false];
-        let comments: { name: string; text: string }[][] = [[], [], [], [], [], []];
+        let comments: { name: string; text: string; created_at?: string }[][] = [[], [], [], [], [], []];
         let commentInputs: string[] = ['', '', '', '', '', ''];
         let commentNames: string[] = ['', '', '', '', '', ''];
         let activeSheet: number = -1;
@@ -38,45 +38,75 @@
                 { icon: 'everything', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
-        function togglePlay() {
+        async function togglePlay() {
                 if (!audioEl) return;
-                // If audio not loaded yet, show spinner and load
-                if (audioEl.readyState < 2) {
-                        audioLoading = true;
-                        audioEl.load();
-                        audioEl.play().then(() => {
-                                playing = true;
-                        }).catch(() => {
-                                // will retry on next tap
-                        });
+                if (!audioEl.paused) {
+                        audioEl.pause();
+                        playing = false;
                         return;
                 }
-                if (playing) {
-                        audioEl.pause();
-                } else {
-                        audioEl.play();
+
+                audioLoading = true;
+                try {
+                        await audioEl.play();
+                        playing = true;
+                } catch {
+                        playing = false;
+                } finally {
+                        audioLoading = false;
                 }
-                playing = !playing;
         }
         function updateProgress() { if (!audioEl) return; progress = (audioEl.currentTime / audioEl.duration) * 100 || 0; currentTime = `${Math.floor(audioEl.currentTime/60)}:${Math.floor(audioEl.currentTime%60).toString().padStart(2,'0')}`; }
         function updateDuration() { if (!audioEl) return; duration = `${Math.floor(audioEl.duration/60)}:${Math.floor(audioEl.duration%60).toString().padStart(2,'0')}`; }
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
 
+        let atomAnimationFrame = 0;
+        let atomResizeCleanup: (() => void) | null = null;
+        let atomStartTimer: ReturnType<typeof setTimeout> | null = null;
+
+        function stopAtomParticles() {
+                if (atomStartTimer) clearTimeout(atomStartTimer);
+                atomStartTimer = null;
+                if (atomAnimationFrame) cancelAnimationFrame(atomAnimationFrame);
+                atomAnimationFrame = 0;
+                atomResizeCleanup?.();
+                atomResizeCleanup = null;
+        }
+
         function startAtomParticles() {
-                setTimeout(() => {
-                        const canvas = document.getElementById('atom-particles') as HTMLCanvasElement;
-                        if (!canvas) return;
-                        const ctx = canvas.getContext('2d')!;
-                        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                stopAtomParticles();
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                atomStartTimer = setTimeout(() => {
+                        atomStartTimer = null;
+                        const canvas = document.getElementById('atom-particles') as HTMLCanvasElement | null;
+                        const ctx = canvas?.getContext('2d');
+                        if (!canvas || !ctx || !showMuseum) return;
+
+                        const resizeCanvas = () => {
+                                canvas.width = window.innerWidth;
+                                canvas.height = window.innerHeight;
+                        };
+                        resizeCanvas();
+                        window.addEventListener('resize', resizeCanvas);
+                        atomResizeCleanup = () => window.removeEventListener('resize', resizeCanvas);
+
                         const particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
                         const equations = ['E=mc²', 'F=ma', 'λ=h/p', 'ΔxΔp≥ℏ/2', 'iℏ∂ψ/∂t=Ĥψ', 'S=k log W', '∇·E=ρ/ε₀', 'P+V=constant'];
                         for (let i = 0; i < 30; i++) {
                                 particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, size: Math.random()*2+0.5 });
                         }
                         let eqIndex = 0; let eqX = canvas.width; let eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2;
-                        function anim() {
-                                if (!document.getElementById('atom-particles')) return;
+                        const anim = () => {
+                                if (!showMuseum || !canvas.isConnected) {
+                                        stopAtomParticles();
+                                        return;
+                                }
+                                if (document.hidden) {
+                                        atomAnimationFrame = requestAnimationFrame(anim);
+                                        return;
+                                }
                                 ctx.clearRect(0,0,canvas.width,canvas.height);
                                 const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
                                 particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle=accent; ctx.globalAlpha=0.35; ctx.fill(); });
@@ -85,8 +115,8 @@
                                 ctx.fillText(equations[eqIndex], eqX, eqY);
                                 if (eqX < -150) { eqX = canvas.width + 50; eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2; eqIndex = (eqIndex + 1) % equations.length; }
                                 ctx.globalAlpha = 1;
-                                requestAnimationFrame(anim);
-                        }
+                                atomAnimationFrame = requestAnimationFrame(anim);
+                        };
                         anim();
                 }, 100);
         }
@@ -96,27 +126,78 @@
                 if (localStorage.getItem('song-liked') === 'true') songLiked = true;
                 if (supabase) {
                         const { data: ld } = await supabase.from('poem_likes').select('*').order('poem_index'); if (ld) ld.forEach((r: any) => { if (r.poem_index < 6) likes[r.poem_index] = r.like_count; if (r.poem_index === 99) songLikes = r.like_count; });
-                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text }); }); comments = nc; }
+                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string; created_at?: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text, created_at: r.created_at }); }); comments = nc; }
                 }
         });
 
         async function handleLike(i: number) { if (liked[i]) return; liked[i] = true; likes[i]++; localStorage.setItem('poem-liked', JSON.stringify(liked)); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: i, like_count: likes[i] }, { onConflict: 'poem_index' }); }
-        async function postComment(i: number) { const t = commentInputs[i].trim(); const n = commentNames[i].trim() || 'Anonymous'; if (!t || !supabase) return; const { error } = await supabase.from('poem_comments').insert({ poem_index: i, comment_text: t, comment_name: n }); if (!error) { comments[i] = [...comments[i], { name: n, text: t }]; comments = comments; commentInputs[i] = ''; } }
-        async function deleteComment(p: number, i: number) { if (!supabase) return; const c = comments[p][i]; await supabase.from('poem_comments').delete().eq('comment_text', c.text).eq('comment_name', c.name); comments[p] = comments[p].filter((_, j) => j !== i); comments = comments; }
-        
-        async function confirmDeleteComment(password: string) {
-                if (password !== '9cr2026') {
-                        deleteCommentError = 'Wrong password';
-                        return;
+        async function postComment(i: number) {
+                const t = commentInputs[i].trim();
+                const n = commentNames[i].trim() || 'Anonymous';
+                if (!t || !supabase) return;
+                const { data, error } = await supabase
+                        .from('poem_comments')
+                        .insert({ poem_index: i, comment_text: t, comment_name: n })
+                        .select('created_at')
+                        .single();
+                if (!error) {
+                        comments[i] = [...comments[i], { name: n, text: t, created_at: data?.created_at }];
+                        comments = comments;
+                        commentInputs[i] = '';
                 }
-                if (deleteCommentTarget) {
-                        await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index);
+        }
+
+        async function deleteComment(p: number, i: number, password: string): Promise<boolean> {
+                const comment = comments[p]?.[i];
+                if (!comment?.created_at) {
+                        deleteCommentError = 'Could not identify this comment. Refresh and try again.';
+                        return false;
+                }
+
+                try {
+                        const response = await fetch('/api/admin/delete-comment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                        password,
+                                        poemIndex: p,
+                                        commentName: comment.name,
+                                        commentText: comment.text,
+                                        createdAt: comment.created_at
+                                })
+                        });
+                        const result = await response.json();
+                        if (!response.ok) {
+                                deleteCommentError = result.error || 'Could not delete the comment.';
+                                return false;
+                        }
+                        comments[p] = comments[p].filter((_, j) => j !== i);
+                        comments = comments;
+                        return true;
+                } catch {
+                        deleteCommentError = 'Network error. Please try again.';
+                        return false;
+                }
+        }
+
+        async function confirmDeleteComment(password: string) {
+                if (!deleteCommentTarget) return;
+                const deleted = await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index, password);
+                if (deleted) {
                         showDeleteComment = false;
                         deleteCommentError = '';
                 }
         }
         function sharePoem(t: string) { const url = 'https://9cr.pages.dev'; const st = `"${t}"\n\n— via 9cr`; if (navigator.share) navigator.share({ title: '9cr - fragments', text: st, url }); else { navigator.clipboard.writeText(`${st}\n${url}`); alert('Copied!'); } }
-        function nextMuseumScene() { museumScene < museumScenes.length - 1 ? museumScene++ : (showMuseum = false, museumScene = 0); }
+        function nextMuseumScene() {
+                if (museumScene < museumScenes.length - 1) {
+                        museumScene++;
+                } else {
+                        showMuseum = false;
+                        museumScene = 0;
+                        stopAtomParticles();
+                }
+        }
         function openSheet(i: number) { activeSheet = i; }
         function closeSheet() { activeSheet = -1; }
         function startDeleteComment(p: number, i: number) { showDeleteComment = true; deleteCommentTarget = { poem: p, index: i }; }
@@ -127,14 +208,14 @@
         <Hero on:cinematic={() => { showMuseum = true; museumScene = 0; startAtomParticles(); }} />
         <About />
         <MusicPlayer {playing} {progress} {currentTime} {duration} {songLikes} {songLiked} {togglePlay} {seek} {likeSong} {audioLoading} />
-        <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {showDeleteComment} {deleteCommentTarget} {deleteCommentError} {handleLike} {postComment} {confirmDeleteComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
+        <Fragments {likes} {liked} {comments} {commentInputs} {commentNames} {activeSheet} {longPressTimer} {handleLike} {postComment} sharePoem={sharePoem} setActiveSheet={openSheet} startDeleteComment={startDeleteComment} />
         <Bookshelf />
         <Art />
         <Repos />
         <Footer />
 </main>
 
-<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="none"></audio>
+<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:play={() => playing = true} on:pause={() => playing = false} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="none"></audio>
 
 {#if showMuseum}
         <div class="museum-overlay" on:click={nextMuseumScene}>
