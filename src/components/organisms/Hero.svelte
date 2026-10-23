@@ -15,13 +15,14 @@
         <div class="hero-top">
                 <span class="floating-tag">✦ Just a boy on the yellow brick road searching for the wiz ✦</span>
         </div>
-        <div>
+        <div class="hero-copy">
+                <p class="hero-kicker"><span class="kicker-dot"></span> PHYSICS · POETRY · THE WEB</p>
                 <h1 aria-label="Nasir">
                         <span class="char">N</span><span class="char long">a</span><span class="char">s</span><span
                                 class="char long">i</span
                         ><span class="char">r</span>
                 </h1>
-                <h4>Physical Science at KU.<br />Drawn toward silence, poetry, atoms and everything they become.</h4>
+                <h4>Physical science at KU.<br /><span class="hero-line">Drawn to silence, poetry, atoms,</span><br /><span class="hero-line">and everything they become.</span></h4>
                 <div class="socials">
                         <Socials />
                 </div>
@@ -34,7 +35,8 @@
         @import '../../styles/mixins.scss';
 
         section {
-                scroll-margin-top: 20rem;
+                isolation: isolate;
+                scroll-margin-top: 8rem;
                 gap: clamp(1.5rem, 4vw, 3rem);
                 display: flex;
                 justify-content: space-between;
@@ -42,6 +44,20 @@
                 margin-bottom: 5.75rem;
                 margin-top: 7rem;
                 position: relative;
+
+                &::before {
+                        content: "";
+                        position: absolute;
+                        z-index: -1;
+                        width: min(58vw, 42rem);
+                        aspect-ratio: 1;
+                        left: -12%;
+                        top: -22%;
+                        border-radius: 50%;
+                        background: radial-gradient(circle, var(--accent-opacity) 0%, transparent 68%);
+                        opacity: 0.42;
+                        pointer-events: none;
+                }
 
                 @media screen and (max-width: 868px) {
                         margin-top: 4rem;
@@ -99,18 +115,56 @@
                 50%      { transform: translateY(-4px); opacity: 0.6; }
         }
 
+        .hero-copy {
+                min-width: 0;
+                flex: 1 1 54%;
+                position: relative;
+                z-index: 2;
+        }
+
+        .hero-kicker {
+                display: flex;
+                align-items: center;
+                gap: 0.55rem;
+                margin-bottom: 0.6rem;
+                font: 600 0.68rem/1.4 var(--font-two);
+                letter-spacing: 0.12em;
+                color: var(--text-secondary);
+                opacity: 0.82;
+        }
+
+        .kicker-dot {
+                width: 0.42rem;
+                height: 0.42rem;
+                border-radius: 50%;
+                background: var(--accent);
+                box-shadow: 0 0 0.85rem var(--accent-opacity);
+                flex: 0 0 auto;
+        }
+
+        .hero-line { display: inline; }
+
         .socials {
-                margin-top: 1rem;
-                margin-bottom: 1.7rem;
+                margin-top: 1.1rem;
+                margin-bottom: 1.45rem;
+                max-width: 22rem;
         }
 
         h4 {
-                margin-top: 1.4rem;
+                margin-top: 1.1rem;
+                max-width: 34rem;
+                font-size: clamp(1.15rem, 2.1vw, 1.55rem);
+                line-height: 1.5;
+                letter-spacing: -0.035em;
         }
 
         h1 {
-                transform: scaleY(1.3);
-                line-height: 8rem;
+                transform: scaleY(1.12);
+                line-height: 1.12;
+                font-size: clamp(4.8rem, 9.5vw, 7.8rem);
+                letter-spacing: -0.09em;
+
+                .char.long { color: var(--accent); }
 
                 .char {
                         display: inline-block;
@@ -164,25 +218,36 @@
 
         @media screen and (max-width: 1240px) {
                 h1 {
-                        min-height: 0vw;
-                        font-size: clamp(4rem, 10vw, 6.25rem);
-                        line-height: 6rem;
+                        min-height: 0;
+                        font-size: clamp(4.4rem, 9.5vw, 6.4rem);
+                        line-height: 1.08;
                 }
                 h4 {
-                        min-height: 0vw;
-                        font-size: clamp(1.4rem, 2.4vw, 1.5rem);
+                        min-height: 0;
+                        font-size: clamp(1.2rem, 2.4vw, 1.5rem);
                 }
         }
 
         @media screen and (max-width: 500px) {
                 section {
-                        margin-top: 5rem;
+                        margin-top: 5.5rem;
+                        margin-bottom: 2.5rem;
                         gap: 1.5rem;
                 }
 
+                section::before {
+                        width: 95vw;
+                        left: -28%;
+                        top: -8%;
+                }
+
+                .hero-copy { width: 100%; }
+
+                .hero-kicker { font-size: 0.6rem; margin-bottom: 0.9rem; }
+
                 h1 {
-                        font-size: clamp(3.2rem, 16vw, 4.5rem);
-                        line-height: 1.15;
+                        font-size: clamp(4rem, 18vw, 6rem);
+                        line-height: 1.05;
                 }
 
                 h4 {
