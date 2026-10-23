@@ -14,7 +14,7 @@
 
         let likes: number[] = [0, 0, 0, 0, 0, 0];
         let liked: boolean[] = [false, false, false, false, false, false];
-        let comments: { name: string; text: string }[][] = [[], [], [], [], [], []];
+        let comments: { name: string; text: string; created_at?: string }[][] = [[], [], [], [], [], []];
         let commentInputs: string[] = ['', '', '', '', '', ''];
         let commentNames: string[] = ['', '', '', '', '', ''];
         let activeSheet: number = -1;
@@ -126,21 +126,64 @@
                 if (localStorage.getItem('song-liked') === 'true') songLiked = true;
                 if (supabase) {
                         const { data: ld } = await supabase.from('poem_likes').select('*').order('poem_index'); if (ld) ld.forEach((r: any) => { if (r.poem_index < 6) likes[r.poem_index] = r.like_count; if (r.poem_index === 99) songLikes = r.like_count; });
-                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text }); }); comments = nc; }
+                        const { data: cd } = await supabase.from('poem_comments').select('*').order('created_at', { ascending: true }); if (cd) { const nc: { name: string; text: string; created_at?: string }[][] = [[], [], [], [], [], []]; cd.forEach((r: any) => { if (!nc[r.poem_index]) nc[r.poem_index] = []; nc[r.poem_index].push({ name: r.comment_name || 'Anonymous', text: r.comment_text, created_at: r.created_at }); }); comments = nc; }
                 }
         });
 
         async function handleLike(i: number) { if (liked[i]) return; liked[i] = true; likes[i]++; localStorage.setItem('poem-liked', JSON.stringify(liked)); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: i, like_count: likes[i] }, { onConflict: 'poem_index' }); }
-        async function postComment(i: number) { const t = commentInputs[i].trim(); const n = commentNames[i].trim() || 'Anonymous'; if (!t || !supabase) return; const { error } = await supabase.from('poem_comments').insert({ poem_index: i, comment_text: t, comment_name: n }); if (!error) { comments[i] = [...comments[i], { name: n, text: t }]; comments = comments; commentInputs[i] = ''; } }
-        async function deleteComment(p: number, i: number) { if (!supabase) return; const c = comments[p][i]; await supabase.from('poem_comments').delete().eq('comment_text', c.text).eq('comment_name', c.name); comments[p] = comments[p].filter((_, j) => j !== i); comments = comments; }
-        
-        async function confirmDeleteComment(password: string) {
-                if (password !== '9cr2026') {
-                        deleteCommentError = 'Wrong password';
-                        return;
+        async function postComment(i: number) {
+                const t = commentInputs[i].trim();
+                const n = commentNames[i].trim() || 'Anonymous';
+                if (!t || !supabase) return;
+                const { data, error } = await supabase
+                        .from('poem_comments')
+                        .insert({ poem_index: i, comment_text: t, comment_name: n })
+                        .select('created_at')
+                        .single();
+                if (!error) {
+                        comments[i] = [...comments[i], { name: n, text: t, created_at: data?.created_at }];
+                        comments = comments;
+                        commentInputs[i] = '';
                 }
-                if (deleteCommentTarget) {
-                        await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index);
+        }
+
+        async function deleteComment(p: number, i: number, password: string): Promise<boolean> {
+                const comment = comments[p]?.[i];
+                if (!comment?.created_at) {
+                        deleteCommentError = 'Could not identify this comment. Refresh and try again.';
+                        return false;
+                }
+
+                try {
+                        const response = await fetch('/api/admin/delete-comment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                        password,
+                                        poemIndex: p,
+                                        commentName: comment.name,
+                                        commentText: comment.text,
+                                        createdAt: comment.created_at
+                                })
+                        });
+                        const result = await response.json();
+                        if (!response.ok) {
+                                deleteCommentError = result.error || 'Could not delete the comment.';
+                                return false;
+                        }
+                        comments[p] = comments[p].filter((_, j) => j !== i);
+                        comments = comments;
+                        return true;
+                } catch {
+                        deleteCommentError = 'Network error. Please try again.';
+                        return false;
+                }
+        }
+
+        async function confirmDeleteComment(password: string) {
+                if (!deleteCommentTarget) return;
+                const deleted = await deleteComment(deleteCommentTarget.poem, deleteCommentTarget.index, password);
+                if (deleted) {
                         showDeleteComment = false;
                         deleteCommentError = '';
                 }
