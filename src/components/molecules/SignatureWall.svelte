@@ -12,6 +12,7 @@
         export let signatures: FooterSignature[] = [];
         export let hideAddButton = false;
         export let loading = false;
+        export let errorMessage = '';
 
         let signatureGridEl: HTMLDivElement | null = null;
         let gridColumns = 1;
@@ -219,6 +220,9 @@
                 {/if}
         </div>
 
+        {#if errorMessage}
+                <p class="notice error">{errorMessage}</p>
+        {/if}
         {#if loading}
                 <p class="notice">Loading signatures…</p>
         {:else if signatures.length === 0}
