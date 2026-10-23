@@ -23,6 +23,7 @@
         <Social tip="Mail Me" link="mailto:lonenasir724@gmail.com">
                 <MailIcon color="var(--accent)" />
         </Social>
+</div>
 
 <style>
         .socials-container {
