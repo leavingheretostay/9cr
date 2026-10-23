@@ -354,7 +354,6 @@
         {signatures}
         {loading}
         errorMessage={wallErrorMessage}
-        supabaseConnected={Boolean(supabase)}
         {authWaiting}
         hideAddButton={hideAddSignatureButton}
         on:open={openModal}
