@@ -6,13 +6,8 @@
         export let commentNames: string[] = [];
         export let activeSheet: number;
         export let longPressTimer: ReturnType<typeof setTimeout> | null;
-        export let showDeleteComment: boolean;
-        export let deleteCommentTarget: { poem: number; index: number } | null;
-        export let deleteCommentPassword: string;
-        export let deleteCommentError: string;
         export let handleLike: (index: number) => void;
         export let postComment: (index: number) => void;
-        export let confirmDeleteComment: () => void;
         export let sharePoem: (text: string, index: number) => void;
         export let setActiveSheet: (index: number) => void;
         export let startDeleteComment: (poem: number, index: number) => void;
