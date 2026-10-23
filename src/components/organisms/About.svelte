@@ -14,7 +14,7 @@
 	<div class="text">
 		<h2>bio</h2>
 		<p>
-	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={age}
+	I'm <Tooltip tip="aka bitta"><span>Nasir Lone</span></Tooltip>, a <Tooltip tip={String(Math.floor(age))}
 		><span>{Math.floor(Number(age))}</span></Tooltip
 	> year old Physics postgraduate drawn toward <Tooltip tip="tiny universes"
 		><span>atoms</span></Tooltip
