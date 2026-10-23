@@ -1,7 +1,7 @@
 <script lang="ts">
-	let zoom: boolean;
-	let xRotation: number;
-	let yRotation: number;
+	let zoom = false;
+	let xRotation = 0;
+	let yRotation = 0;
 
 	function enterRotate3D(e: MouseEvent) {
 		zoom = true;
@@ -23,6 +23,7 @@
 		on:mouseleave={leaveRotate3D}
 		class="img"
 		role="img"
+		aria-label="Featured artwork on Nasir's personal site"
 		style:background-image="url(art/afn.webp)"
 		style:transform="perspective(500px) {zoom ? 'scale(1.05)' : ''} rotateX({xRotation}deg) rotateY({yRotation}deg)"
 	/>
