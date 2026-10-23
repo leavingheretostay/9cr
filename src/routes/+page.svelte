@@ -38,45 +38,73 @@
                 { icon: 'everything', subtitle: 'Everything', text: 'Still learning, still wandering, still becoming.' }
         ];
 
-        function togglePlay() {
+        async function togglePlay() {
                 if (!audioEl) return;
-                // If audio not loaded yet, show spinner and load
-                if (audioEl.readyState < 2) {
-                        audioLoading = true;
-                        audioEl.load();
-                        audioEl.play().then(() => {
-                                playing = true;
-                        }).catch(() => {
-                                // will retry on next tap
-                        });
+                if (!audioEl.paused) {
+                        audioEl.pause();
+                        playing = false;
                         return;
                 }
-                if (playing) {
-                        audioEl.pause();
-                } else {
-                        audioEl.play();
+
+                audioLoading = true;
+                try {
+                        await audioEl.play();
+                        playing = true;
+                } catch {
+                        playing = false;
+                } finally {
+                        audioLoading = false;
                 }
-                playing = !playing;
         }
         function updateProgress() { if (!audioEl) return; progress = (audioEl.currentTime / audioEl.duration) * 100 || 0; currentTime = `${Math.floor(audioEl.currentTime/60)}:${Math.floor(audioEl.currentTime%60).toString().padStart(2,'0')}`; }
         function updateDuration() { if (!audioEl) return; duration = `${Math.floor(audioEl.duration/60)}:${Math.floor(audioEl.duration%60).toString().padStart(2,'0')}`; }
         function seek(e: MouseEvent | TouchEvent) { if (!audioEl) return; const bar = e.currentTarget as HTMLElement; const rect = bar.getBoundingClientRect(); audioEl.currentTime = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width * audioEl.duration; }
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
 
+        let atomAnimationFrame = 0;
+        let atomStartTimer: ReturnType<typeof setTimeout> | null = null;
+
+        function stopAtomParticles() {
+                if (atomStartTimer) clearTimeout(atomStartTimer);
+                atomStartTimer = null;
+                if (atomAnimationFrame) cancelAnimationFrame(atomAnimationFrame);
+                atomAnimationFrame = 0;
+        }
+
         function startAtomParticles() {
-                setTimeout(() => {
-                        const canvas = document.getElementById('atom-particles') as HTMLCanvasElement;
-                        if (!canvas) return;
-                        const ctx = canvas.getContext('2d')!;
-                        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                stopAtomParticles();
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                atomStartTimer = setTimeout(() => {
+                        atomStartTimer = null;
+                        const canvas = document.getElementById('atom-particles') as HTMLCanvasElement | null;
+                        const ctx = canvas?.getContext('2d');
+                        if (!canvas || !ctx || !showMuseum) return;
+
+                        const resizeCanvas = () => {
+                                canvas.width = window.innerWidth;
+                                canvas.height = window.innerHeight;
+                        };
+                        resizeCanvas();
+                        window.addEventListener('resize', resizeCanvas);
+
                         const particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
                         const equations = ['E=mc²', 'F=ma', 'λ=h/p', 'ΔxΔp≥ℏ/2', 'iℏ∂ψ/∂t=Ĥψ', 'S=k log W', '∇·E=ρ/ε₀', 'P+V=constant'];
                         for (let i = 0; i < 30; i++) {
                                 particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, size: Math.random()*2+0.5 });
                         }
                         let eqIndex = 0; let eqX = canvas.width; let eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2;
-                        function anim() {
-                                if (!document.getElementById('atom-particles')) return;
+                        const cleanup = () => window.removeEventListener('resize', resizeCanvas);
+                        const anim = () => {
+                                if (!showMuseum || !canvas.isConnected) {
+                                        cleanup();
+                                        atomAnimationFrame = 0;
+                                        return;
+                                }
+                                if (document.hidden) {
+                                        atomAnimationFrame = requestAnimationFrame(anim);
+                                        return;
+                                }
                                 ctx.clearRect(0,0,canvas.width,canvas.height);
                                 const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
                                 particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle=accent; ctx.globalAlpha=0.35; ctx.fill(); });
@@ -85,8 +113,8 @@
                                 ctx.fillText(equations[eqIndex], eqX, eqY);
                                 if (eqX < -150) { eqX = canvas.width + 50; eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2; eqIndex = (eqIndex + 1) % equations.length; }
                                 ctx.globalAlpha = 1;
-                                requestAnimationFrame(anim);
-                        }
+                                atomAnimationFrame = requestAnimationFrame(anim);
+                        };
                         anim();
                 }, 100);
         }
@@ -116,7 +144,15 @@
                 }
         }
         function sharePoem(t: string) { const url = 'https://9cr.pages.dev'; const st = `"${t}"\n\n— via 9cr`; if (navigator.share) navigator.share({ title: '9cr - fragments', text: st, url }); else { navigator.clipboard.writeText(`${st}\n${url}`); alert('Copied!'); } }
-        function nextMuseumScene() { museumScene < museumScenes.length - 1 ? museumScene++ : (showMuseum = false, museumScene = 0); }
+        function nextMuseumScene() {
+                if (museumScene < museumScenes.length - 1) {
+                        museumScene++;
+                } else {
+                        showMuseum = false;
+                        museumScene = 0;
+                        stopAtomParticles();
+                }
+        }
         function openSheet(i: number) { activeSheet = i; }
         function closeSheet() { activeSheet = -1; }
         function startDeleteComment(p: number, i: number) { showDeleteComment = true; deleteCommentTarget = { poem: p, index: i }; }
@@ -134,7 +170,7 @@
         <Footer />
 </main>
 
-<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="none"></audio>
+<audio bind:this={audioEl} src="/music/deedaar.mp3" on:timeupdate={updateProgress} on:loadedmetadata={updateDuration} on:play={() => playing = true} on:pause={() => playing = false} on:ended={() => playing = false} on:canplay={() => audioLoading = false} preload="none"></audio>
 
 {#if showMuseum}
         <div class="museum-overlay" on:click={nextMuseumScene}>
