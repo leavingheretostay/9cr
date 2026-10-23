@@ -3,17 +3,8 @@
 	import Tooltip from '../atoms/Tooltip.svelte';
 
 	// i didnt write this idk
-	let getAge = () => {
-		let birthDate = new Date('1999/11/10');
-		const ageMs = Date.now() - birthDate.getTime();
-		const preciseAge = (ageMs / 31536000000).toFixed(10);
-		return preciseAge;
-	};
-
-	let age = getAge();
-	setInterval(() => {
-		age = getAge();
-	}, 1000);
+	const birthDate = new Date('1999-11-10T00:00:00');
+	const age = (Date.now() - birthDate.getTime()) / 31536000000;
 </script>
 
 <section id="about" class="wrapper">
