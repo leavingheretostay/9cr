@@ -62,6 +62,7 @@
         async function likeSong() { if (songLiked) return; songLiked = true; songLikes++; localStorage.setItem('song-liked','true'); if (supabase) await supabase.from('poem_likes').upsert({ poem_index: 99, like_count: songLikes }, { onConflict: 'poem_index' }); }
 
         let atomAnimationFrame = 0;
+        let atomResizeCleanup: (() => void) | null = null;
         let atomStartTimer: ReturnType<typeof setTimeout> | null = null;
 
         function stopAtomParticles() {
@@ -69,6 +70,8 @@
                 atomStartTimer = null;
                 if (atomAnimationFrame) cancelAnimationFrame(atomAnimationFrame);
                 atomAnimationFrame = 0;
+                atomResizeCleanup?.();
+                atomResizeCleanup = null;
         }
 
         function startAtomParticles() {
@@ -87,6 +90,7 @@
                         };
                         resizeCanvas();
                         window.addEventListener('resize', resizeCanvas);
+                        atomResizeCleanup = () => window.removeEventListener('resize', resizeCanvas);
 
                         const particles: { x: number; y: number; vx: number; vy: number; size: number }[] = [];
                         const equations = ['E=mc²', 'F=ma', 'λ=h/p', 'ΔxΔp≥ℏ/2', 'iℏ∂ψ/∂t=Ĥψ', 'S=k log W', '∇·E=ρ/ε₀', 'P+V=constant'];
@@ -94,11 +98,9 @@
                                 particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, size: Math.random()*2+0.5 });
                         }
                         let eqIndex = 0; let eqX = canvas.width; let eqY = Math.random() * canvas.height * 0.6 + canvas.height * 0.2;
-                        const cleanup = () => window.removeEventListener('resize', resizeCanvas);
                         const anim = () => {
                                 if (!showMuseum || !canvas.isConnected) {
-                                        cleanup();
-                                        atomAnimationFrame = 0;
+                                        stopAtomParticles();
                                         return;
                                 }
                                 if (document.hidden) {
