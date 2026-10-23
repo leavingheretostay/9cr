@@ -28,16 +28,17 @@
 <style>
         .socials-container {
                 display: flex;
-                flex-wrap: wrap;
-                gap: 0.85rem;
                 align-items: center;
-                justify-content: center;
-                width: 100%;
+                justify-content: space-between;
+                gap: 0.5rem;
+                width: min(100%, 22rem);
+                margin-inline: auto;
         }
 
         @media (max-width: 480px) {
                 .socials-container {
-                        gap: 0.65rem;
+                        width: min(100%, 20rem);
+                        gap: 0.25rem;
                 }
         }
 </style>
