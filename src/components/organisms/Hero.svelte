@@ -16,7 +16,6 @@
                 <span class="floating-tag">✦ Just a boy on the yellow brick road searching for the wiz ✦</span>
         </div>
         <div class="hero-copy">
-                <p class="hero-kicker"><span class="kicker-dot"></span> PHYSICS · POETRY · THE WEB</p>
                 <h1 aria-label="Nasir">
                         <span class="char">N</span><span class="char long">a</span><span class="char">s</span><span
                                 class="char long">i</span
@@ -122,26 +121,6 @@
                 z-index: 2;
         }
 
-        .hero-kicker {
-                display: flex;
-                align-items: center;
-                gap: 0.55rem;
-                margin-bottom: 0.6rem;
-                font: 600 0.68rem/1.4 var(--font-two);
-                letter-spacing: 0.12em;
-                color: var(--text-secondary);
-                opacity: 0.82;
-        }
-
-        .kicker-dot {
-                width: 0.42rem;
-                height: 0.42rem;
-                border-radius: 50%;
-                background: var(--accent);
-                box-shadow: 0 0 0.85rem var(--accent-opacity);
-                flex: 0 0 auto;
-        }
-
         .hero-line { display: inline; }
 
         .socials {
@@ -242,8 +221,6 @@
                 }
 
                 .hero-copy { width: 100%; }
-
-                .hero-kicker { font-size: 0.6rem; margin-bottom: 0.9rem; }
 
                 h1 {
                         font-size: clamp(4rem, 18vw, 6rem);
