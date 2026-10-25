@@ -37,7 +37,7 @@ Personal website of **Nasir Lone** — Physics postgraduate, poet, and developer
 
 ## 📬 Connect
 
-- Instagram: [@nacirlone](https://instagram.com/nacirlone)
+- Instagram: [@nacirlone](https://instagram.com/9crlone)
 - X (Twitter): [@beingkashmire](https://twitter.com/beingkashmire)
 - LinkedIn: [leavingheretostay](https://in.linkedin.com/in/leavingheretostay)
 
