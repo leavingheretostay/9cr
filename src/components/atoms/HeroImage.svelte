@@ -92,6 +92,7 @@
 		}
 
 		@media (max-width: 768px) {
+			display: none;
 			width: 100%;
 			animation: none;
 		}
