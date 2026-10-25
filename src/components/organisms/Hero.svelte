@@ -13,7 +13,7 @@
 
 <section id="home" class="wrapper">
         <div class="hero-top">
-                <span class="floating-tag">✦ Just a boy on the yellow brick road searching for the wiz ✦</span>
+                <span class="floating-tag">✦ Just a boy on the yellow brick road<br />searching for the wiz ✦</span>
         </div>
         <div class="hero-copy">
                 <p class="hero-kicker"><span class="kicker-dot"></span> PHYSICS · POETRY · THE WEB</p>
@@ -86,7 +86,7 @@
                         top: -2.5rem;         /* tablet – unchanged */
                 }
                 @media screen and (max-width: 600px) {
-                        top: -2.2rem;         /* phone – unchanged */
+                        top: -3.2rem;
                 }
         }
 
@@ -103,10 +103,10 @@
                 max-width: 90vw;
                 
                 @media screen and (max-width: 600px) {
-                        font-size: 0.65rem;
+                        font-size: 0.85rem;
                 }
                 @media screen and (max-width: 400px) {
-                        font-size: 0.6rem;
+                        font-size: 0.78rem;
                 }
         }
 
@@ -274,7 +274,7 @@
                 }
 
                 .floating-tag {
-                        font-size: 0.58rem;
+                        font-size: 0.72rem;
                 }
         }
 </style>
